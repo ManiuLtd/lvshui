@@ -10,14 +10,16 @@ use Illuminate\Support\Facades\DB;
 class MallNavController extends Controller
 {
     //
-    public function index(){
-        $mallNav = MallNav::where('sid',0)->with('allChildrenNavs')->get()->toArray();
-        $data = $this->TreeToArray($mallNav,0);
+    public function index()
+    {
+        $mallNav = MallNav::where('sid', 0)->with('allChildrenNavs')->get()->toArray();
+        $data = $this->TreeToArray($mallNav, 0);
         return $data;
     }
 
-    public function store(){
-        $request = request(['name','img_url','sid']);
+    public function store()
+    {
+        $request = request(['name', 'img_url', 'sid']);
         DB::beginTransaction();
         try {
             MallNav::create($request);
@@ -31,7 +33,7 @@ class MallNavController extends Controller
 
     public function update()
     {
-        $list = request(['name','img_url','sid']);
+        $list = request(['name', 'img_url', 'sid']);
         $id = request()->mallnav;
         DB::beginTransaction();
         try {
@@ -47,15 +49,15 @@ class MallNavController extends Controller
     public function destroy()
     {
         $id = request()->mallnav;
-        $mallNav = MallNav::where([['sid',0],['id',$id]])->with('allChildrenNavs')->first()->toArray();
+        $mallNav = MallNav::where([['sid', 0], ['id', $id]])->with('allChildrenNavs')->first()->toArray();
         $arr = [];
-        array_walk_recursive($mallNav,function ($v, $k) use(&$arr) {
-            if($k == 'id')
+        array_walk_recursive($mallNav, function ($v, $k) use (&$arr) {
+            if ($k == 'id')
                 $arr[] = $v;
         });
         DB::beginTransaction();
         try {
-            MallNav::whereIn('id',$arr)->delete();
+            MallNav::whereIn('id', $arr)->delete();
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
@@ -65,21 +67,21 @@ class MallNavController extends Controller
     }
 
 
-    public function TreeToArray($tree,$i)
+    public function TreeToArray($tree, $i)
     {
         $i++;
         foreach ($tree as $v) {
             $kong = '';
-            for($j=1;$j<$i;$j++){
+            for ($j = 1; $j < $i; $j++) {
                 $kong .= '-';
             }
 
-            $v['name'] = $kong.$v['name'];
+            $v['name'] = $kong . $v['name'];
             $son = $v['all_children_navs'];
             unset($v['all_children_navs']);
             $array[] = $v;
-            if(!empty($son)){
-                $array = array_merge($array,$this->TreeToArray($son,$i));
+            if (!empty($son)) {
+                $array = array_merge($array, $this->TreeToArray($son, $i));
             }
         }
         return $array;
