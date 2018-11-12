@@ -23,8 +23,20 @@ class ActivityController extends  Controller
 
     public function store(ActivityRequest $request)
     {
+        $data = request([
+            'name', 'places', 'content', 'thumb'
+        ]);
+        if(isset(request()->sign_time)&&isset(request()->activity_time)){
+            $sign_time = explode('-',request('sign_time'));
+            $data['sign_start_time'] =trim($sign_time[0]);
+            $data['sign_end_time'] =trim($sign_time[1]);
 
-        $activity=Activity::create($request->all());
+            $activity_time = explode('-',request('activity_time'));
+            $data['start_time'] =trim($activity_time[0]);
+            $data['end_time'] =trim($activity_time[1]);
+
+        }
+        $activity=Activity::create($data);
         if($activity){
             return response()->json(['status' => 'success', 'msg' => '新增成功!']);
         }
@@ -33,8 +45,20 @@ class ActivityController extends  Controller
 
     public function update(ActivityRequest $request)
     {
-        $request=request()->all();
-        if(Activity::find(request()->activity)->update($request)){
+        $data = request([
+            'name', 'places', 'content', 'thumb'
+        ]);
+        if(isset(request()->sign_time)&&isset(request()->activity_time)){
+            $sign_time = explode('-',request('sign_time'));
+            $data['sign_start_time'] =trim($sign_time[0]);
+            $data['sign_end_time'] =trim($sign_time[1]);
+
+            $activity_time = explode('-',request('activity_time'));
+            $data['start_time'] =trim($activity_time[0]);
+            $data['end_time'] =trim($activity_time[1]);
+
+        }
+        if(Activity::find(request()->activity)->update($data)){
             return response()->json(['status' => 'success', 'msg' => '更新成功！']);
         }
         return response()->json(['status' => 'error', 'msg' => '更新失败！']);
