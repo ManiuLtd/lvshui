@@ -9,4 +9,8 @@ class MallGood extends Model
     protected $table = 'mail_goods';
     protected $guarded=[];
 
+    public function nav()
+    {
+        return $this->hasManyThrough(MallNav::class,MallGoodMallNav::class,'good_id','id','id','nav_id');
+    }
 }
