@@ -27,11 +27,11 @@ class ActivityController extends  Controller
             'name', 'places', 'content', 'thumb'
         ]);
         if(isset(request()->sign_time)&&isset(request()->activity_time)){
-            $sign_time = explode('~',request('sign_time'));
+            $sign_time = explode('-',request('sign_time'));
             $data['sign_start_time'] =trim($sign_time[0]);
             $data['sign_end_time'] =trim($sign_time[1]);
 
-            $activity_time = explode('~',request('activity_time'));
+            $activity_time = explode('-',request('activity_time'));
             $data['start_time'] =trim($activity_time[0]);
             $data['end_time'] =trim($activity_time[1]);
 
@@ -49,11 +49,11 @@ class ActivityController extends  Controller
             'name', 'places', 'content', 'thumb'
         ]);
         if(isset(request()->sign_time)&&isset(request()->activity_time)){
-            $sign_time = explode('~',request('sign_time'));
+            $sign_time = explode('-',request('sign_time'));
             $data['sign_start_time'] =trim($sign_time[0]);
             $data['sign_end_time'] =trim($sign_time[1]);
 
-            $activity_time = explode('~',request('activity_time'));
+            $activity_time = explode('-',request('activity_time'));
             $data['start_time'] =trim($activity_time[0]);
             $data['end_time'] =trim($activity_time[1]);
 
