@@ -9,12 +9,12 @@ class MallGood extends Model
     protected $table = 'mail_goods';
     protected $guarded=[];
 
-    public function nav()
+    public function navs()
     {
         return $this->hasManyThrough(MallNav::class,MallGoodMallNav::class,'good_id','id','id','nav_id');
     }
 
-    public function img()
+    public function imgs()
     {
         return $this->hasMany(MallImage::class,'good_id','id');
     }

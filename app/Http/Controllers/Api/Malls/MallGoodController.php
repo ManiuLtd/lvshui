@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Malls;
 
 use App\Models\MallGood;
 use App\Models\MallGoodMallNav;
+use App\Models\MallImage;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
@@ -13,7 +14,7 @@ class MallGoodController extends Controller
     //
     public function index()
     {
-        $mallGoods = MallGood::with('nav')->get();
+        $mallGoods = MallGood::with('navs')->with('imgs')->get();
         return $mallGoods ;
     }
 
@@ -21,6 +22,7 @@ class MallGoodController extends Controller
     {
         $rGoods = request(['name', 'content', 'total','limit','price','discount','monthly_sales','is_up','sratr_date','end_date']);
         $rNavs = request('navs');
+        $rImgs = request('imgs');
 
         DB::beginTransaction();
         try {
@@ -28,6 +30,9 @@ class MallGoodController extends Controller
             $gid=$mallGood->id;
             foreach ($rNavs as $item){
                 MallGoodMallNav::create(['good_id'=>$gid,'nav_id'=>$item]);
+            }
+            foreach ($rImgs as $item){
+                MallImage::create(['good_id'=>$gid,'url'=>$item]);
             }
             DB::commit();
         } catch (\Exception $e) {
@@ -41,16 +46,23 @@ class MallGoodController extends Controller
     {
         $rGoods = request(['name', 'content', 'total','limit','price','discount','monthly_sales','is_up','sratr_date','end_date']);
         $rNavs = request('navs');
-
+        $rImgs = request('imgs');
         $id = request()->mallgood;
 
         DB::beginTransaction();
         try {
             MallGood::where('id',$id)->update($rGoods);
             MallGoodMallNav::where('good_id',$id)->delete();
+            MallImage::where('good_id',$id)->delete();
+
             foreach ($rNavs as $item){
                 MallGoodMallNav::create(['good_id'=>$id,'nav_id'=>$item]);
             }
+
+            foreach ($rImgs as $item){
+                MallImage::create(['good_id'=>$gid,'url'=>$item]);
+            }
+
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
