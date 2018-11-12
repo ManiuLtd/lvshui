@@ -13,4 +13,9 @@ class MallGood extends Model
     {
         return $this->hasManyThrough(MallNav::class,MallGoodMallNav::class,'good_id','id','id','nav_id');
     }
+
+    public function img()
+    {
+        return $this->hasMany(MallImage::class,'good_id','id');
+    }
 }

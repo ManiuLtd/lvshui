@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Mall;
+namespace App\Http\Controllers\Api\Malls;
 
 use App\Models\MallNav;
 use Illuminate\Http\Request;
