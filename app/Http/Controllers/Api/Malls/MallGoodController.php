@@ -15,6 +15,7 @@ class MallGoodController extends Controller
     //
     public function index()
     {
+
         $mallGoods = MallGood::with('navs')->with('imgs')->get();
         $mallNav = MallNav::where('sid', 0)->with('allChildrenNavs')->get()->toArray();
         $data = $this->TreeToArray($mallNav, 0);
