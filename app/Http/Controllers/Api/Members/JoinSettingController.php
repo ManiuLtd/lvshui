@@ -15,7 +15,7 @@ class JoinSettingController extends Controller
         return response()->json(['status' => 'success', 'setting' => $setting]);   
     }
 
-    public function store(SettingRequest $request) 
+    public function store(JoinSettingRequest $request) 
     {   
         $data = request()->all();  
 
@@ -34,7 +34,7 @@ class JoinSettingController extends Controller
         return response()->json(['status' => $status, 'data' => $setting]);   
     }
 
-    public function update(SettingRequest $request)
+    public function update(JoinSettingRequest $request)
     {
         $data = request()->all();   
              
