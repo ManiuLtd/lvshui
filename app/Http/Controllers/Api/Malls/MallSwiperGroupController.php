@@ -6,6 +6,7 @@ use App\Models\MallSwiper;
 use App\Models\MallSwiperGroup;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 
 class MallSwiperGroupController extends Controller
 {
@@ -33,8 +34,8 @@ class MallSwiperGroupController extends Controller
 
     public function show()
     {
-        $group = MallSwiperGroup::find(request()->mallgroup)->with('swipers');
-        return response()->json(['status' => success, 'data' => $group]);
+        $group = MallSwiperGroup::find(request()->mallgroup)->with('swipers')->get();
+        return response()->json(['data' => $group]);
     }
 
     public function update()
