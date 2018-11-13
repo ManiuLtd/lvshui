@@ -18,7 +18,6 @@ class ActivityRequest extends CommonRequest
             'places' => 'integer',
             'sign_type'=> 'integer',
             'sign_price'=>'integer',
-
         ];
     }
 }
