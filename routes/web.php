@@ -22,7 +22,7 @@ Route::group(['middleware' => ['cors']], function () {
         //会员卡
         Route::post('members/change-integral', 'Api\Members\MemberController@changeIntegral');
         Route::post('members/join', 'Api\Members\MemberController@join');
-        Route::get('members/{member_id}/select-tag', 'Api\Members\MemberController@selectTag');
+        Route::get('members/{member}/select-tag', 'Api\Members\MemberController@selectTag');
         Route::post('members/add-tag', 'Api\Members\MemberController@addTag');
         Route::post('members/delete-tag', 'Api\Members\MemberController@deleteTag');
         Route::apiResource('members', 'Api\Members\MemberController');
