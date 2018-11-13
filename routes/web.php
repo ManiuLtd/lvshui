@@ -17,4 +17,9 @@ Route::get('/', function () {
 
 Route::apiResource('mallnavs', 'Api\Malls\MallNavController');
 Route::apiResource('mallgoods', 'Api\Malls\MallGoodController');
+Route::post('mallgoods/{mallgood}','Api\Malls\MallGoodController@show')->name('mallgoods');
+Route::apiResource('mallswipers', 'Api\Malls\MallSwiperController');
+Route::apiResource('mallgroups', 'Api\Malls\MallSwiperGroupController');
 Route::apiResource('activitys','Api\Activities\ActivityController');
+
+Route::post('activitys/{activity}','Api\Activities\ActivityController@show')->name('activitys');
