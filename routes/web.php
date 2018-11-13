@@ -18,7 +18,7 @@ Route::group(['middleware' => ['cors']], function () {
 
     Route::apiResource('mallnavs', 'Api\Malls\MallNavController');
     Route::apiResource('mallgoods', 'Api\Malls\MallGoodController');
-    Route::apiResource('activitys','Api\Activities\ActivityController');
+
     //会员卡
     Route::post('/members/changeIntegral', 'Api\Members\MemberController@changeIntegral');
     Route::post('/members/join', 'Api\Members\MemberController@join');
@@ -31,8 +31,10 @@ Route::group(['middleware' => ['cors']], function () {
     //会员标签
     Route::apiResource('member_tags', 'Api\Members\TagController');
 
-
+    //个性定制
     Route::apiResource('divactivitys','Api\Activities\DiyAcitvityController');
+    //活动
+    Route::apiResource('activitys','Api\Activities\ActivityController');
 });
 Route::apiResource('mallnavs', 'Api\Malls\MallNavController');
 Route::apiResource('mallgoods', 'Api\Malls\MallGoodController');
