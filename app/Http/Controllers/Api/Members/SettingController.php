@@ -3,13 +3,15 @@
 namespace App\Http\Controllers\Api\Members;
 
 use Illuminate\Http\Request;
+use App\Models\MemberSetting;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SettingRequest;
 
 class SettingController extends Controller
 {
     public function index() 
     {
-        $setting = Setting::first();
+        $setting = MemberSetting::first();
         $setting['offer'] = json_decode($setting['offer']);        
         $groups = Group::getGroup();
         return response()->json(['status' => 'success', 'setting' => $setting, 'groups' => $groups]);   
@@ -33,7 +35,7 @@ class SettingController extends Controller
 
         $data['offer'] = json_encode($data['offer']);
 
-        if(Setting::create($data)) {
+        if(MemberSetting::create($data)) {
             return response()->json(['status' => 'success', 'msg' => '新增成功！']);                             
         }
 
@@ -43,7 +45,7 @@ class SettingController extends Controller
 
     public function show()
     {
-        $setting = Setting::find(request()->setting);
+        $setting = MemberSetting::find(request()->member_setting);
         $offer = json_decode($setting->offer,true);   
         $status = $setting ? 'success' : 'error';
         return response()->json(['status' => $status, 'data' => $setting]);   
@@ -55,7 +57,7 @@ class SettingController extends Controller
 
         $data['offer'] = json_encode($data['offer']);
              
-        if(Setting::where('id', request()->setting)->update($data)) {
+        if(MemberSetting::where('id', request()->member_setting)->update($data)) {
             return response()->json(['status' => 'success', 'msg' => '更新成功！']);                             
         }
 
@@ -64,7 +66,7 @@ class SettingController extends Controller
 
     public function destroy()
     {
-        if(Setting::where('id', request()->setting)->delete()) {
+        if(MemberSetting::where('id', request()->member_setting)->delete()) {
             return response()->json(['status' => 'success', 'msg' => '删除成功！']);                              
         }
 

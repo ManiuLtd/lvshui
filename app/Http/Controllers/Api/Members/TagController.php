@@ -2,21 +2,23 @@
 
 namespace App\Http\Controllers\Api\Members;
 
+use App\Models\MemberTag;
 use Illuminate\Http\Request;
+use App\Http\Requests\TagRequest;
 use App\Http\Controllers\Controller;
 
 class TagController extends Controller
 {
     public function index() 
     {
-        $tags = Tag::get();
+        $tags = MemberTag::get();
         return response()->json(['status' => 'success', 'data' => $tags]);   
     }
 
     public function store(TagRequest $request) 
     {   
         $data = request()->all();  
-        if(Tag::create($data)) {
+        if(MemberTag::create($data)) {
             return response()->json(['status' => 'success', 'msg' => '新增成功！']);                             
         }
 
@@ -25,7 +27,7 @@ class TagController extends Controller
 
     public function show()
     {
-        $tag = Tag::find(request()->tag);
+        $tag = MemberTag::find(request()->member_tag);
         $status = $tag ? 'success' : 'error';
         return response()->json(['status' => $status, 'data' => $tag]);   
     }
@@ -33,7 +35,7 @@ class TagController extends Controller
     public function update(TagRequest $request)
     {
         $data = request()->all();                      
-        if(Tag::where('id', request()->tag)->update($data)) {
+        if(MemberTag::where('id', request()->member_tag)->update($data)) {
             return response()->json(['status' => 'success', 'msg' => '更新成功！']);                             
         }
 
@@ -42,7 +44,7 @@ class TagController extends Controller
 
     public function destroy()
     {
-        if(Tag::where('id', request()->tag)->delete()) {
+        if(MemberTag::where('id', request()->member_tag)->delete()) {
             return response()->json(['status' => 'success', 'msg' => '删除成功！']);                              
         }
 
