@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 class MallGood extends Model
 {
     //
-    protected $table = 'mail_goods';
+    protected $table = 'mall_goods';
     protected $guarded=[];
 
     public function navs()

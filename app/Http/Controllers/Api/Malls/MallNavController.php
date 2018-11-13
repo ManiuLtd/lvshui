@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Malls;
 
+use App\Models\MallGood;
 use App\Models\MallNav;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -14,7 +15,14 @@ class MallNavController extends Controller
     {
         $mallNav = MallNav::where('sid', 0)->with('allChildrenNavs')->get()->toArray();
         $data = $this->TreeToArray($mallNav, 0);
-        return $data;
+        return response()->json(['data' => $data]);
+    }
+
+    public function show()
+    {
+        $id = request()->mallnav;
+        $mallGood = MallNav::where('id',$id)->with('goods')->get();
+        return response()->json(['data' => $mallGood]);
     }
 
     public function store()

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Malls;
 use App\Models\MallGood;
 use App\Models\MallGoodMallNav;
 use App\Models\MallImage;
+use App\Models\MallNav;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +16,9 @@ class MallGoodController extends Controller
     public function index()
     {
         $mallGoods = MallGood::with('navs')->with('imgs')->get();
-        return $mallGoods ;
+        $mallNav = MallNav::where('sid', 0)->with('allChildrenNavs')->get()->toArray();
+        $data = $this->TreeToArray($mallNav, 0);
+        return response()->json(['goods' => $mallGoods, 'nav' => $data]);
     }
 
     public function store()
@@ -60,7 +63,7 @@ class MallGoodController extends Controller
             }
 
             foreach ($rImgs as $item){
-                MallImage::create(['good_id'=>$gid,'url'=>$item]);
+                MallImage::create(['good_id'=>$id,'url'=>$item]);
             }
 
             DB::commit();
@@ -85,5 +88,24 @@ class MallGoodController extends Controller
             return response()->json(['status' => 'error', 'msg' => $e]);
         }
         return response()->json(['status' => 'success', 'msg' => '删除成功！']);
+    }
+    public function TreeToArray($tree, $i)
+    {
+        $i++;
+        foreach ($tree as $v) {
+            $kong = '';
+            for ($j = 1; $j < $i; $j++) {
+                $kong .= '-';
+            }
+
+            $v['name'] = $kong . $v['name'];
+            $son = $v['all_children_navs'];
+            unset($v['all_children_navs']);
+            $array[] = $v;
+            if (!empty($son)) {
+                $array = array_merge($array, $this->TreeToArray($son, $i));
+            }
+        }
+        return $array;
     }
 }
