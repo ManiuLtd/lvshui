@@ -25,26 +25,25 @@ class TagController extends Controller
         return response()->json(['status' => 'error', 'msg' => '新增失败！']);                           
     }
 
-    public function show()
+    public function show(MemberTag $memberTag)
     {
-        $tag = MemberTag::find(request()->member_tag);
-        $status = $tag ? 'success' : 'error';
-        return response()->json(['status' => $status, 'data' => $tag]);   
+        $status = $memberTag ? 'success' : 'error';
+        return response()->json(['status' => $status, 'data' => $memberTag]);   
     }
 
-    public function update(TagRequest $request)
+    public function update(TagRequest $request,MemberTag $memberTag)
     {
         $data = request()->all();                      
-        if(MemberTag::where('id', request()->member_tag)->update($data)) {
+        if(MemberTag::where('id', $memberTag->id)->update($data)) {
             return response()->json(['status' => 'success', 'msg' => '更新成功！']);                             
         }
 
         return response()->json(['status' => 'error', 'msg' => '更新失败！']);                            
     }
 
-    public function destroy()
+    public function destroy(MemberTag $memberTag)
     {
-        if(MemberTag::where('id', request()->member_tag)->delete()) {
+        if(MemberTag::where('id', $memberTag->id)->delete()) {
             return response()->json(['status' => 'success', 'msg' => '删除成功！']);                              
         }
 

@@ -29,7 +29,7 @@ Route::group(['middleware' => ['cors']], function () {
     //会员卡设置
     Route::apiResource('member-settings', 'Api\Members\SettingController');
     //会员充值设置
-    Route::apiResource('member-join_settings', 'Api\Members\JoinSettingController');
+    Route::apiResource('member-join-settings', 'Api\Members\JoinSettingController');
     //会员标签
     Route::apiResource('member-tags', 'Api\Members\TagController');
     
@@ -41,7 +41,7 @@ Route::group(['middleware' => ['cors']], function () {
     
 
     //个性定制
-    Route::apiResource('diyactivitys','Api\Activities\DiyAcitvityController');
+    Route::apiResource('diy-activitys','Api\Activities\DiyAcitvityController');
     //活动
     Route::apiResource('activitys','Api\Activities\ActivityController');
 });
