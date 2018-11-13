@@ -1,6 +1,8 @@
 <?php
 namespace App\Models;
 
+use App\Models\MemberTag;
+
 
 class Member extends Model
 {
@@ -8,7 +10,7 @@ class Member extends Model
 
     public function tags()
     {
-        return $this->belongsToMany(Tag::class, 'member_tag_links', 'member_id', 'tag_id')->withoutGlobalScopes();
+        return $this->belongsToMany(MemberTag::class, 'member_tag_links', 'member_id', 'tag_id')->withoutGlobalScopes();
     }
 
     public function records() 
@@ -33,6 +35,6 @@ class Member extends Model
     public static function getNotHasTags(int $member_id) : Tag
     {
         $memberTags = MemberTag::where('member_id', $member_id)->get()->pluck('tag_id')->toArray();
-        return Tag::whereNotIn('id', $memberTags)->get();
+        return MemberTag::whereNotIn('id', $memberTags)->get();
     }
 }

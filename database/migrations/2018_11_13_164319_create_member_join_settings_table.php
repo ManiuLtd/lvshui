@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateJoinMemberSettingsTable extends Migration
+class CreateMemberJoinSettingsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateJoinMemberSettingsTable extends Migration
      */
     public function up()
     {
-        Schema::create('join_member_settings', function (Blueprint $table) {
+        Schema::create('member_join_settings', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('month_num')->default(0)->comment('开通月份');
             $table->decimal('price', 10, 2)->default(0)->comment('现价');
@@ -29,6 +29,6 @@ class CreateJoinMemberSettingsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('join_member_settings');
+        Schema::dropIfExists('member_join_settings');
     }
 }

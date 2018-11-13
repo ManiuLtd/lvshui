@@ -28,8 +28,11 @@ Route::group(['middleware' => ['cors']], function () {
     Route::apiResource('/members', 'Api\Members\MemberController');
     //会员卡设置
     Route::apiResource('member_settings', 'Api\Members\SettingController');
+    //会员充值设置
+    Route::apiResource('member_join_settings', 'Api\Members\JoinSettingController');
     //会员标签
     Route::apiResource('member_tags', 'Api\Members\TagController');
+    
 
     //个性定制
     Route::apiResource('divactivitys','Api\Activities\DiyAcitvityController');
