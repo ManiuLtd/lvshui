@@ -47,4 +47,9 @@ class DiyAcitvityController extends Controller
 
         return response()->json(['status' => 'error', 'msg' => '删除失败！']);
     }
+
+    public function sign()
+    {
+
+    }
 }
