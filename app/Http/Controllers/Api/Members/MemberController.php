@@ -35,7 +35,7 @@ class MemberController extends Controller
     public function store(MemberRequest $request) 
     {   
         $data = request()->all();   
-        $data['card_id'] = time().random(1,9);
+        $data['card_id'] = time().rand(1,9);
         if(Member::create($data)) {
             return response()->json(['status' => 'success', 'msg' => '新增成功！']);                             
         }
@@ -76,7 +76,7 @@ class MemberController extends Controller
     {
         $data = request()->all();   
         $data['fan_id'] = request('fan_id') ?? Token::getUid();
-        $data['card_id'] = time().random(1,9);
+        $data['card_id'] = time().rand(1,9);
         if(Member::create($data)) {
             return response()->json(['status' => 'success', 'msg' => '领取成功！']);                             
         }

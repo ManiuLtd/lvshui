@@ -11,6 +11,10 @@ class Member extends Model
         return $this->belongsToMany(Tag::class, 'member_tag_links', 'member_id', 'tag_id')->withoutGlobalScopes();
     }
 
+    public function records() 
+    {
+        return $this->hasMany(MemberRecord::class);
+    }
 
     public static function changeIntegral(int $member_id, int $value)
     {
