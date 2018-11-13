@@ -16,7 +16,6 @@ class CreateMallGoodsTable extends Migration
         Schema::create('mall_goods', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name',100)->comment('名称');
-            $table->tinyInteger('nav_id')->comment('类型id');
             $table->longText('content')->comment('详细描述');
             $table->tinyInteger('total')->comment('商品数量');
             $table->tinyInteger('limit')->comment('用户购买上限');
