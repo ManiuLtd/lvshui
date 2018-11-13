@@ -14,7 +14,10 @@
 Route::get('/', function () {
     return view('welcome');
 });
+Route::group(['middleware' => ['cors']], function () {
 
-Route::apiResource('mallnavs', 'Api\Malls\MallNavController');
-Route::apiResource('mallgoods', 'Api\Malls\MallGoodController');
-Route::apiResource('activitys','Api\Activities\ActivityController');
+    Route::apiResource('mallnavs', 'Api\Malls\MallNavController');
+    Route::apiResource('mallgoods', 'Api\Malls\MallGoodController');
+    Route::apiResource('activitys','Api\Activities\ActivityController');
+
+});
