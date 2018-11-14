@@ -57,9 +57,10 @@ Route::get('authorize', function() {
     $app = \EasyWeChat\Factory::officialAccount(config('wechat.official_account.default'));
 
     $oauth = $app->oauth;
-    dd(session('wechat_user'));
+    // dd(session('wechat_user'));
+    $wechat_user  = \Cache::get('wechat_user');
     // 未登录
-    if (empty(session('wechat_user'))) {
+    if (empty($wechat_user)) {
         
 
         session(['target_url' => 'wechat']);
@@ -70,9 +71,7 @@ Route::get('authorize', function() {
     }
     
     // 已经登录过
-    $user = session('wechat_user');
-
-    return $user;
+    return $wechat_user;
 });
 
 
@@ -81,9 +80,8 @@ Route::get('oauth_callback', function() {
     $oauth = $app->oauth;
     // 获取 OAuth 授权结果用户信息
     $user = $oauth->user();
-
-    session(['wechat_user' => $user->toArray()]);
-    dd(session('wechat_user'));
+    $wechat_user = \Cache::put('wechat_user',$user, 2);
+    dd($wechat_user);
     $targetUrl = empty(session('target_url')) ? '/' : session('target_url');
 
     return redirect($targetUrl);
