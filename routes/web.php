@@ -79,7 +79,7 @@ Route::get('oauth_callback', function() {
     $oauth = $app->oauth;
     // 获取 OAuth 授权结果用户信息
     $user = $oauth->user();
-
+    dd($user);
     $_SESSION['wechat_user'] = $user->toArray();
     return $_SESSION['wechat_user'];
     
