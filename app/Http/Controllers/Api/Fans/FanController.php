@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Api\Fans;
 
+use App\Services\Token;
 use EasyWeChat\Factory;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Services\officialAccountToken;
 
 class FanController extends Controller
 {
@@ -21,7 +23,7 @@ class FanController extends Controller
         // 获取 OAuth 授权结果用户信息
         $user = $oauth->user()->getOriginal();
         $user['privilege'] = json_encode($user['privilege']);
-        $token = \App\Services\officialAccountToken::getToken($user);
+        $token = officialAccountToken::getToken($user);
         return response()->json(['token' => $token]);
     }
 
