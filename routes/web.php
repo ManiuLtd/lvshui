@@ -78,10 +78,7 @@ Route::get('oauth_callback', function() {
     $user = $oauth->user();
 
     $_SESSION['wechat_user'] = $user->toArray();
-
-    return $_SESSION['wechat_user'];
     
-
     $targetUrl = empty($_SESSION['target_url']) ? '/' : $_SESSION['target_url'];
 
     header('location:'. $targetUrl); 
