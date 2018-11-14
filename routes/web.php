@@ -33,7 +33,7 @@ Route::group(['middleware' => ['cors']], function () {
          //会员标签
          Route::apiResource('tags', 'Api\Members\TagController');
     });
-    // 你嘛了个B
+    
     Route::group(['prefix' => 'coupon'], function() {
          //优惠券记录
         Route::get('records/get-user-coupons', 'Api\Coupons\RecordController@get_user_coupons');
