@@ -16,7 +16,7 @@ class officialAccountToken extends Token
         $fans = Fan::getByOpenID($openid);
         if (!$fans)
         {
-            $uid = $this->newUser($openid, $unionid);
+            $uid = $this->newUser($data);
         }else {
             $uid = $fans->id;
         }
