@@ -14,34 +14,51 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
 Route::group(['middleware' => ['cors']], function () {
 
     Route::apiResource('mallnavs', 'Api\Malls\MallNavController');
     Route::apiResource('mallgoods', 'Api\Malls\MallGoodController');
-
-    //会员卡
-    Route::post('/members/change-integral', 'Api\Members\MemberController@changeIntegral');
-    Route::post('/members/join', 'Api\Members\MemberController@join');
-    Route::get('/members/{member_id}/select-tag', 'Api\Members\MemberController@selectTag');
-    Route::post('/members/add-tag', 'Api\Members\MemberController@addTag');
-    Route::post('/members/delete-tag', 'Api\Members\MemberController@deleteTag');
-    Route::apiResource('/members', 'Api\Members\MemberController');
-    //会员卡设置
-    Route::apiResource('member-settings', 'Api\Members\SettingController');
-    //会员充值设置
-    Route::apiResource('member-join_settings', 'Api\Members\JoinSettingController');
-    //会员标签
-    Route::apiResource('member-tags', 'Api\Members\TagController');
+    Route::group(['prefix' => 'member'], function() {
+        //会员卡
+        Route::post('members/change-integral', 'Api\Members\MemberController@changeIntegral');
+        Route::post('members/join', 'Api\Members\MemberController@join');
+        Route::get('members/{member}/select-tag', 'Api\Members\MemberController@selectTag');
+        Route::post('members/add-tag', 'Api\Members\MemberController@addTag');
+        Route::post('members/delete-tag', 'Api\Members\MemberController@deleteTag');
+        Route::apiResource('members', 'Api\Members\MemberController');
+         //会员卡设置
+         Route::apiResource('settings', 'Api\Members\SettingController');
+         //会员充值设置
+         Route::apiResource('join/settings', 'Api\Members\JoinSettingController');
+         //会员标签
+         Route::apiResource('tags', 'Api\Members\TagController');
+    });
     
-    //优惠券
-    Route::apiResource('coupons', 'Api\Coupons\ConponController');
-    //优惠券记录
-    Route::get('coupon-records/get-user-coupons', 'Api\Coupons\RecordController@get_user_coupons');
-    Route::apiResource('coupon-records', 'Api\Coupons\RecordController');
-    
-
+    Route::group(['prefix' => 'coupon'], function() {
+         //优惠券记录
+        Route::get('records/get-user-coupons', 'Api\Coupons\RecordController@get_user_coupons');
+        Route::apiResource('records', 'Api\Coupons\RecordController');
+        //优惠券
+        Route::apiResource('coupons', 'Api\Coupons\ConponController');
+    });
+    Route::group(['prefix' => 'sign'], function() {
+        Route::get('get-sign','Api\Fans\SignInController@get_sign');
+        Route::post('sign-in','Api\Fans\SignInController@signIn');
+        Route::apiResource('tasks','Api\Fans\SignInController');
+    });
     //个性定制
-    Route::apiResource('diyactivitys','Api\Activities\DiyAcitvityController');
+    Route::apiResource('activity/diys','Api\Activities\DiyAcitvityController');
     //活动
-    Route::apiResource('activitys','Api\Activities\ActivityController');
+    Route::apiResource('activity/activitys','Api\Activities\ActivityController');
 });
+
+Route::get('oauth', 'Api\Fans\FanController@oauth');
+Route::get('oauth-callback', 'Api\Fans\FanController@oauthCallback');
+
+Route::group(['middleware' => ['token']], function () {
+    Route::get('wechat', function() {
+        return 'wechat';
+    });
+});
+

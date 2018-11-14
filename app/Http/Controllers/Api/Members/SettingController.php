@@ -22,14 +22,12 @@ class SettingController extends Controller
 
         //满减
         // [
-        //     ['group_id' => 1, 'condition'=> 100, 'discount'=>  10],
-        //     ['group_id' =>  2, 'condition'=> 100, 'discount'=> 20]
+        //     ['condition'=> 100, 'discount'=>  10],
         // ];
 
         //折扣
         // [
-        //     ['group_id '=> 1, 'discount' => 9.5],
-        //     ['group_id'=> 2, 'discount'=>  9]
+        //     ['discount' => 9.5]
         // ];
 
         $data['offer'] = json_encode($data['offer']);
@@ -44,7 +42,7 @@ class SettingController extends Controller
 
     public function show()
     {
-        $setting = MemberSetting::find(request()->member_setting);
+        $setting = MemberSetting::find(request()->setting);
         $offer = json_decode($setting->offer,true);   
         $status = $setting ? 'success' : 'error';
         return response()->json(['status' => $status, 'data' => $setting]);   
@@ -56,7 +54,7 @@ class SettingController extends Controller
 
         $data['offer'] = json_encode($data['offer']);
              
-        if(MemberSetting::where('id', request()->member_setting)->update($data)) {
+        if(MemberSetting::where('id', request()->setting)->update($data)) {
             return response()->json(['status' => 'success', 'msg' => '更新成功！']);                             
         }
 
@@ -65,7 +63,7 @@ class SettingController extends Controller
 
     public function destroy()
     {
-        if(MemberSetting::where('id', request()->member_setting)->delete()) {
+        if(MemberSetting::where('id', request()->setting)->delete()) {
             return response()->json(['status' => 'success', 'msg' => '删除成功！']);                              
         }
 

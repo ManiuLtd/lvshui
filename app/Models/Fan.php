@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
 class Fan extends Model
 {
-    //
+    public static function getByOpenID($openid) 
+    {
+        return self::where('openid', $openid)->first();
+    }
 }

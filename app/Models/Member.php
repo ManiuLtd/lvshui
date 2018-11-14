@@ -1,9 +1,6 @@
 <?php
 namespace App\Models;
 
-use App\Models\MemberTag;
-
-
 class Member extends Model
 {
     protected $table = 'members';

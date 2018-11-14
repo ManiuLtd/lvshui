@@ -102,7 +102,7 @@ class MemberController extends Controller
 
     public function selectTag()
     {
-        $member_id = request('member_id');
+        $member_id = request()->member;
         $tags = Member::getNotHasTags($member_id);
         return response()->json(['status' => 'success', 'data' => $tags]);   
     }

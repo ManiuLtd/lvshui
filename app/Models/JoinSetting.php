@@ -2,9 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
-class MemberJoinSetting extends Model
+class JoinSetting extends Model
 {
     protected $table = 'member_join_settings';
     

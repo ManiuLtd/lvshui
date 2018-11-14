@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers\Api\Members;
 
+use App\Models\JoinSetting;
 use Illuminate\Http\Request;
-use App\Models\MemberJoinSetting;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SettingRequest;
+use App\Http\Requests\JoinSettingRequest;
 
 class JoinSettingController extends Controller
 {
     public function index() 
     {
-        $setting = MemberJoinSetting::get();
+        $setting = JoinSetting::get();
         return response()->json(['status' => 'success', 'setting' => $setting]);   
     }
 
@@ -19,7 +20,7 @@ class JoinSettingController extends Controller
     {   
         $data = request()->all();  
 
-        if(MemberJoinSetting::create($data)) {
+        if(JoinSetting::create($data)) {
             return response()->json(['status' => 'success', 'msg' => '新增成功！']);                             
         }
 
@@ -29,7 +30,7 @@ class JoinSettingController extends Controller
 
     public function show()
     {
-        $setting = MemberJoinSetting::find(request()->member_join_setting);
+        $setting = JoinSetting::find(request()->setting);
         $status = $setting ? 'success' : 'error';
         return response()->json(['status' => $status, 'data' => $setting]);   
     }
@@ -38,7 +39,7 @@ class JoinSettingController extends Controller
     {
         $data = request()->all();   
              
-        if(MemberJoinSetting::where('id', request()->member_join_setting)->update($data)) {
+        if(JoinSetting::where('id', request()->setting)->update($data)) {
             return response()->json(['status' => 'success', 'msg' => '更新成功！']);                             
         }
 
@@ -47,7 +48,7 @@ class JoinSettingController extends Controller
 
     public function destroy()
     {
-        if(MemberJoinSetting::where('id', request()->member_join_setting)->delete()) {
+        if(JoinSetting::where('id', request()->setting)->delete()) {
             return response()->json(['status' => 'success', 'msg' => '删除成功！']);                              
         }
 
