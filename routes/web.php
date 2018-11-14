@@ -14,6 +14,7 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
 Route::group(['middleware' => ['cors']], function () {
 
     Route::apiResource('mallnavs', 'Api\Malls\MallNavController');
@@ -58,7 +59,7 @@ Route::get('authorize', function() {
     // 未登录
     if (empty($_SESSION['wechat_user'])) {
 
-        $_SESSION['target_url'] = 'oauth_callback';
+        $_SESSION['target_url'] = 'wechat';
     
         return $oauth->redirect();
         // 这里不一定是return，如果你的框架action不是返回内容的话你就得使用
@@ -83,5 +84,9 @@ Route::get('oauth_callback', function() {
 
     header('location:'. $targetUrl); 
 
+});
+
+Route::get('wechat', function() {
+    return $_SESSION['wechat_user'];
 });
 
