@@ -86,6 +86,7 @@ Route::get('oauth_callback', function() {
 });
 
 Route::get('wechat', function() {
-    return session('wechat_user');
+    $user = $_SESSION['wechat_user'];
+    return $user;
 });
 
