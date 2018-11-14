@@ -1,0 +1,38 @@
+<?php
+
+namespace App\Services;
+
+use Exception;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+
+class ClientToken extends Token
+{
+    public function getToken(string $app_key, string $app_secret)
+    { 
+        $app = \App\Models\User::check($app_key, $app_secret);
+        
+        if(!$app)
+        {
+            return response()->json(['msg' => '授权失败']);
+        }
+        else{
+            $values = [
+                'uid' => $app->id
+            ];
+            $token = $this->saveToCache($values);
+            return $token;
+        }
+    }
+
+    private function saveToCache(array $values) : string
+    {
+        $token = self::generateToken();
+        $expire_in = config('token.token_expire_in');
+        Cache::put($token, json_encode($values), $expire_in);
+        if(!Cache::get($token)){
+            return response()->json(['msg' => '服务器缓存异常']);
+        }
+        return $token;
+    }
+}

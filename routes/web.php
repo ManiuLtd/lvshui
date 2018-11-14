@@ -53,40 +53,8 @@ Route::group(['middleware' => ['cors']], function () {
     Route::apiResource('activity/activitys','Api\Activities\ActivityController');
 });
 
-Route::get('authorize', function() {
-    $app = \EasyWeChat\Factory::officialAccount(config('wechat.official_account.default'));
-
-    $oauth = $app->oauth;
-    // dd(session('wechat_user'));
-    $wechat_user  = \Cache::get('wechat_user');
-    // 未登录
-    if (empty($wechat_user)) {
-        
-
-        session(['target_url' => 'wechat']);
-    
-        return $oauth->redirect();
-        // 这里不一定是return，如果你的框架action不是返回内容的话你就得使用
-        // $oauth->redirect()->send();
-    }
-    
-    // 已经登录过
-    return $wechat_user;
-});
-
-
-Route::get('oauth_callback', function() {
-    $app = \EasyWeChat\Factory::officialAccount(config('wechat.official_account.default'));
-    $oauth = $app->oauth;
-    // 获取 OAuth 授权结果用户信息
-    $user = $oauth->user();
-    $wechat_user = \Cache::put('wechat_user',$user, 2);
-    dd($wechat_user);
-    $targetUrl = empty(session('target_url')) ? '/' : session('target_url');
-
-    return redirect($targetUrl);
-
-});
+Route::get('authorize', 'Api\Fans\FanController@oauth');
+Route::get('oauth-callback', 'Api\Fans\FanController@oauthCallback');
 
 Route::get('wechat', function() {
     $user = session('target_url');
