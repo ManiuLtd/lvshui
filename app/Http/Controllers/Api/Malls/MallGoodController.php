@@ -6,6 +6,7 @@ use App\Models\MallGood;
 use App\Models\MallGoodMallNav;
 use App\Models\MallImage;
 use App\Models\MallNav;
+use App\Utils\Parameter;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
@@ -15,27 +16,31 @@ class MallGoodController extends Controller
     //
     public function index()
     {
-        $mallGoods = MallGood::with('navs')->with('imgs')->get();
-        $mallNav = MallNav::where('sid', 0)->with('allChildrenNavs')->get()->toArray();
-        $data = $this->TreeToArray($mallNav, 0);
-        return response()->json(['goods' => $mallGoods, 'nav' => $data]);
+        $mallGoods = MallGood::with('navs')->with('imgs')->paginate(20);
+        return response()->json(['data' => $mallGoods]);
+    }
+
+    public function show()
+    {
+        $mallGood = MallGood::where('id', request()->mall_good)->with('navs')->with('imgs')->get();
+        return response()->json(['data' => $mallGood]);
     }
 
     public function store()
     {
-        $rGoods = request(['name', 'content', 'total','limit','price','discount','monthly_sales','is_up','sratr_date','end_date']);
+        $rGoods = request(['name', 'type', 'content', 'total', 'limit', 'price', 'discount', 'monthly_sales', 'is_up', 'sratr_date', 'end_date']);
         $rNavs = request('navs');
         $rImgs = request('imgs');
 
         DB::beginTransaction();
         try {
             $mallGood = MallGood::create($rGoods);
-            $gid=$mallGood->id;
-            foreach ($rNavs as $item){
-                MallGoodMallNav::create(['good_id'=>$gid,'nav_id'=>$item]);
+            $gid = $mallGood->id;
+            foreach ($rNavs as $item) {
+                MallGoodMallNav::create(['good_id' => $gid, 'nav_id' => $item]);
             }
-            foreach ($rImgs as $item){
-                MallImage::create(['good_id'=>$gid,'url'=>$item]);
+            foreach ($rImgs as $item) {
+                MallImage::create(['good_id' => $gid, 'url' => $item]);
             }
             DB::commit();
         } catch (\Exception $e) {
@@ -47,23 +52,23 @@ class MallGoodController extends Controller
 
     public function update()
     {
-        $rGoods = request(['name', 'content', 'total','limit','price','discount','monthly_sales','is_up','sratr_date','end_date']);
+        $rGoods = request(['name', 'content', 'total', 'limit', 'price', 'discount', 'monthly_sales', 'is_up', 'sratr_date', 'end_date']);
         $rNavs = request('navs');
         $rImgs = request('imgs');
-        $id = request()->mallgood;
+        $id = request()->mall_good;
 
         DB::beginTransaction();
         try {
-            MallGood::where('id',$id)->update($rGoods);
-            MallGoodMallNav::where('good_id',$id)->delete();
-            MallImage::where('good_id',$id)->delete();
+            MallGood::where('id', $id)->update($rGoods);
+            MallGoodMallNav::where('good_id', $id)->delete();
+            MallImage::where('good_id', $id)->delete();
 
-            foreach ($rNavs as $item){
-                MallGoodMallNav::create(['good_id'=>$id,'nav_id'=>$item]);
+            foreach ($rNavs as $item) {
+                MallGoodMallNav::create(['good_id' => $id, 'nav_id' => $item]);
             }
 
-            foreach ($rImgs as $item){
-                MallImage::create(['good_id'=>$id,'url'=>$item]);
+            foreach ($rImgs as $item) {
+                MallImage::create(['good_id' => $id, 'url' => $item]);
             }
 
             DB::commit();
@@ -74,38 +79,45 @@ class MallGoodController extends Controller
         return response()->json(['status' => 'success', 'msg' => '修改成功！']);
     }
 
-    public function destroy()
-    {
-        $id = request()->mallgood;
-//        需加入订单判断
-        DB::beginTransaction();
-        try {
-            MallGood::whereIn('id', $id)->delete();
-            MallGoodMallNav::where('good_id',$id)->delete();
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['status' => 'error', 'msg' => $e]);
-        }
-        return response()->json(['status' => 'success', 'msg' => '删除成功！']);
-    }
-    public function TreeToArray($tree, $i)
-    {
-        $i++;
-        foreach ($tree as $v) {
-            $kong = '';
-            for ($j = 1; $j < $i; $j++) {
-                $kong .= '-';
-            }
+//    public function destroy()
+//    {
+//        $id = request()->mall_good;
+////        需加入订单判断
+//        DB::beginTransaction();
+//        try {
+//            MallGood::whereIn('id', $id)->delete();
+//            MallGoodMallNav::where('good_id',$id)->delete();
+//            DB::commit();
+//        } catch (\Exception $e) {
+//            DB::rollBack();
+//            return response()->json(['status' => 'error', 'msg' => $e]);
+//        }
+//        return response()->json(['status' => 'success', 'msg' => '删除成功！']);
+//    }
 
-            $v['name'] = $kong . $v['name'];
-            $son = $v['all_children_navs'];
-            unset($v['all_children_navs']);
-            $array[] = $v;
-            if (!empty($son)) {
-                $array = array_merge($array, $this->TreeToArray($son, $i));
-            }
-        }
-        return $array;
+    public function getMallHots()
+    {
+        $memGoods = MallGood::where('type',Parameter::member)->with('navs')->with('imgs')->orderBy('created_at','desc')->limit(4)->get();
+        $disGoods = MallGood::where('type',Parameter::discount)->with('navs')->with('imgs')->orderBy('created_at','desc')->limit(4)->get();
+        return response()->json(['member' => $memGoods,'discount'=> $disGoods]);
     }
+
+    public function getMemberGoods()
+    {
+        $mallGoods = MallGood::where('type',Parameter::member)->with('navs')->with('imgs')->orderBy('created_at','desc')->paginate(20);
+        return response()->json(['data' => $mallGoods]);
+    }
+
+    public function getDiscountGoods()
+    {
+        $mallGoods = MallGood::where('type',Parameter::discount)->with('navs')->with('imgs')->orderBy('created_at','desc')->paginate(20);
+        return response()->json(['data' => $mallGoods]);
+    }
+
+    public function getGeneralGoods()
+    {
+        $mallGoods = MallGood::where('type',Parameter::general)->with('navs')->with('imgs')->orderBy('created_at','desc')->paginate(20);
+        return response()->json(['data' => $mallGoods]);
+    }
+
 }
