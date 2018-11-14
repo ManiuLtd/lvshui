@@ -78,8 +78,9 @@ Route::get('oauth_callback', function() {
     $oauth = $app->oauth;
     // 获取 OAuth 授权结果用户信息
     $user = $oauth->user();
+
     session('wechat_user', $user->toArray());
-    
+    dd(session('wechat_user'));
     $targetUrl = empty(session('target_url')) ? '/' : session('target_url');
 
     return redirect($targetUrl);
