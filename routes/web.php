@@ -57,7 +57,6 @@ Route::get('oauth', 'Api\Fans\FanController@oauth');
 Route::get('oauth-callback', 'Api\Fans\FanController@oauthCallback');
 
 Route::get('wechat', function() {
-    $user = session('target_url');
-    return $user;
+    return 'wechat';
 });
 

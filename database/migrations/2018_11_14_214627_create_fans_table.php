@@ -18,8 +18,8 @@ class CreateFansTable extends Migration
             $table->string('openid',28)->default('')->comment('openid');
             $table->string('unionid',100)->default('')->comment('unionid');
             $table->string('nickname',50)->default('')->nullable()->comment('昵称');
-            $table->string('sex',512)->default('')->nullable()->comment('头像');
-            $table->tinyInteger('gender')->default(0)->nullable()->comment('性别');
+            $table->string('headimgurl',512)->default('')->nullable()->comment('头像');
+            $table->tinyInteger('sex')->default(0)->nullable()->comment('性别');
             $table->string('city',20)->default('')->nullable()->comment('城市');
             $table->string('province',20)->default('')->nullable()->comment('省份');
             $table->string('country',20)->default('')->nullable()->comment('国家');
