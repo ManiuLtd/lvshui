@@ -81,7 +81,7 @@ Route::get('oauth_callback', function() {
     
     $targetUrl = empty($_SESSION['target_url']) ? '/' : $_SESSION['target_url'];
 
-    header('location:'. $targetUrl); 
+    return redirect($targetUrl);
 
 });
 
