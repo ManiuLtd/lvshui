@@ -33,7 +33,7 @@ class DiyAcitvityController extends Controller
     public function update()
     {
         $data = request()->all();
-        if(DivActivity::find(request()->divactivity)->update($data)){
+        if(DivActivity::find(request()->diy)->update($data)){
             return response()->json(['status' => 'success', 'msg' => '更新成功！']);
         }
         return response()->json(['status' => 'error', 'msg' => '更新失败！']);
@@ -41,7 +41,7 @@ class DiyAcitvityController extends Controller
 
     public function destroy()
     {
-        if(DivActivity::find(request()->divactivity)->delete()) {
+        if(DivActivity::find(request()->diy)->delete()) {
             return response()->json(['status' => 'success', 'msg' => '删除成功！']);
         }
 

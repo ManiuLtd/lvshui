@@ -41,10 +41,14 @@ Route::group(['middleware' => ['cors']], function () {
         //优惠券
         Route::apiResource('coupons', 'Api\Coupons\ConponController');
     });
-    
-
+    Route::group(['prefix' => 'sign'], function() {
+        Route::get('get-sign','Api\Fans\SignInController@get_sign');
+        Route::post('sign-in','Api\Fans\SignInController@signIn');
+        Route::apiResource('tasks','Api\Fans\SignInController');
+    });
     //个性定制
-    Route::apiResource('activitys/diys','Api\Activities\DiyAcitvityController');
+    Route::apiResource('activity/diys','Api\Activities\DiyAcitvityController');
     //活动
-    Route::apiResource('activitys','Api\Activities\ActivityController');
+    Route::apiResource('activity/activitys','Api\Activities\ActivityController');
 });
+
