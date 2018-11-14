@@ -74,7 +74,7 @@ Route::get('authorize', function() {
 Route::get('oauth_callback', function() {
     $app = \EasyWeChat\Factory::officialAccount(config('wechat.official_account.default'));
     $oauth = $app->oauth;
-
+    return $oauth;
     // 获取 OAuth 授权结果用户信息
     $user = $oauth->user();
 
