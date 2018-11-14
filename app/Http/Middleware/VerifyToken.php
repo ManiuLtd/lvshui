@@ -23,6 +23,7 @@ class VerifyToken
             return $next($request);
         }
         
-       return response()->json(['msg' => 'token不存在或已过期！'])->setStatusCode(401);
+    //    return response()->json(['msg' => 'token不存在或已过期！'])->setStatusCode(401);
+        return redirect('oauth')->route();
     }
 }
