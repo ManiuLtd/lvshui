@@ -68,6 +68,8 @@ Route::get('authorize', function() {
     
     // 已经登录过
     $user = $_SESSION['wechat_user'];
+
+    return $user;
 });
 
 
