@@ -56,7 +56,8 @@ Route::group(['middleware' => ['cors']], function () {
 Route::get('authorize', function() {
     $app = \EasyWeChat\Factory::officialAccount(config('wechat.official_account.default'));
     $oauth = $app->oauth;
-    dd($oauth);
+
+    return $_SESSION;
     // 未登录
     if (empty($_SESSION['wechat_user'])) {
 
