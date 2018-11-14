@@ -35,7 +35,7 @@ class SignInController extends Controller
     public function update(SignInRequest $request)
     {
         $data = request()->all();
-        if(SignTask::where('id', request()->sign_task)->update($data)) {
+        if(SignTask::where('id', request()->task)->update($data)) {
             return response()->json(['status' => 'success', 'msg' => '更新成功！']);
         }
 
@@ -44,7 +44,7 @@ class SignInController extends Controller
 
     public function destroy()
     {
-        if(SignTask::where('id', request()->sign_task)->delete()) {
+        if(SignTask::where('id', request()->task)->delete()) {
             return response()->json(['status' => 'success', 'msg' => '删除成功！']);
         }
 
