@@ -21,6 +21,7 @@ class FanController extends Controller
         // 获取 OAuth 授权结果用户信息
         $user = $oauth->user()->getOriginal();
         $user['privilege'] = json_encode($user['privilege']);
+        dd($user);
         $token = \App\Services\officialAccountToken::getToken($user);
         return response()->json(['token' => $token]);
     }
