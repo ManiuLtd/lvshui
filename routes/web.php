@@ -57,7 +57,7 @@ Route::get('authorize', function() {
     $app = \EasyWeChat\Factory::officialAccount(config('wechat.official_account.default'));
     $oauth = $app->oauth;
 
-    return $_SESSION;
+    return $_SESSION['wechat_user'];
     // 未登录
     if (empty($_SESSION['wechat_user'])) {
 
