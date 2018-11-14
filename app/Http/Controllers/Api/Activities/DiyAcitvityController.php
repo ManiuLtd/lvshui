@@ -10,20 +10,20 @@ namespace App\Http\Controllers\Api\Activities;
 
 
 use App\Http\Controllers\Controller;
-use App\Models\DivActivity;
+use App\Models\DiyActivity;
 
 class DiyAcitvityController extends Controller
 {
     public function index()
     {
-        $activitys=DivActivity::orderBy('created_at','desc')->paginate(20);
+        $activitys=DiyActivity::orderBy('created_at','desc')->paginate(20);
         return response()->json(['status' => 'success', 'data' => $activitys]);
     }
 
     public function store()
     {
         $data = request()->all();
-        $activity=DivActivity::create($data);
+        $activity=DiyActivity::create($data);
         if($activity){
             return response()->json(['status' => 'success', 'msg' => '新增成功!']);
         }
@@ -33,7 +33,7 @@ class DiyAcitvityController extends Controller
     public function update()
     {
         $data = request()->all();
-        if(DivActivity::find(request()->diy)->update($data)){
+        if(DiyActivity::find(request()->diy)->update($data)){
             return response()->json(['status' => 'success', 'msg' => '更新成功！']);
         }
         return response()->json(['status' => 'error', 'msg' => '更新失败！']);
@@ -41,7 +41,7 @@ class DiyAcitvityController extends Controller
 
     public function destroy()
     {
-        if(DivActivity::find(request()->diy)->delete()) {
+        if(DiyActivity::find(request()->diy)->delete()) {
             return response()->json(['status' => 'success', 'msg' => '删除成功！']);
         }
 

@@ -9,7 +9,7 @@
 namespace App\Models;
 
 
-class DivActivity extends Model
+class DiyActivity extends Model
 {
-    protected $table = 'div_activitys';
+    protected $table = 'diy_activitys';
 }
