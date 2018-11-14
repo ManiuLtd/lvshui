@@ -22,14 +22,12 @@ class SettingController extends Controller
 
         //满减
         // [
-        //     ['group_id' => 1, 'condition'=> 100, 'discount'=>  10],
-        //     ['group_id' =>  2, 'condition'=> 100, 'discount'=> 20]
+        //     ['condition'=> 100, 'discount'=>  10],
         // ];
 
         //折扣
         // [
-        //     ['group_id '=> 1, 'discount' => 9.5],
-        //     ['group_id'=> 2, 'discount'=>  9]
+        //     ['discount' => 9.5]
         // ];
 
         $data['offer'] = json_encode($data['offer']);
