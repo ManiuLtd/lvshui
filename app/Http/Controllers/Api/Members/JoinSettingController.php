@@ -6,6 +6,7 @@ use App\Models\JoinSetting;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SettingRequest;
+use App\Http\Requests\JoinSettingRequest;
 
 class JoinSettingController extends Controller
 {
