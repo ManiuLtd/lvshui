@@ -18,14 +18,13 @@ class ActivityController extends  Controller
 {
     public function index()
     {
-        $activitys=Activity::orderBy('created_at','desc')->paginate(20);
+        $activitys=Activity::withCount('fans')->orderBy('created_at','desc')->paginate(20);
         return response()->json(['status' => 'success', 'data' => $activitys]);
     }
 
     public function show()
     {
-        $activity=Activity::with('fans')->withCount('fans')->find(request()->activity);
-        $activity_sign_count=$activity->fans_count;
+        $activity=Activity::with('fans')->find(request()->activity);
         return response()->json(['status' => 'success', 'data' => $activity]);
     }
 

@@ -20,6 +20,12 @@ class DiyAcitvityController extends Controller
         return response()->json(['status' => 'success', 'data' => $activitys]);
     }
 
+    public function show()
+    {
+        $activity=DiyActivity::with('fans')->find(request()->club);
+        return response()->json(['status' => 'success', 'data' => $activity]);
+    }
+
     public function store()
     {
         $data = request()->all();

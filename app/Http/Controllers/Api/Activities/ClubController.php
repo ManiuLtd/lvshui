@@ -16,7 +16,14 @@ class ClubController extends Controller
 {
     public function index()
     {
+        $clubs=Club::withCount('fans')->paginate(20);;
+        return response()->json(['status' => 'success', 'data' => $clubs]);
+    }
 
+    public function show()
+    {
+        $club=Club::with('fans')->find(request()->club);
+        return response()->json(['status' => 'success', 'data' => $club]);
     }
 
     public function store()
