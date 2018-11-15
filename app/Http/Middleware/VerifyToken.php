@@ -23,7 +23,7 @@ class VerifyToken
             return $next($request);
         } else {
             $url = $request->header('url');
-            sesion(['url' => $url]);
+            session(['url' => $url]);
             return redirect('oauth');
         }
         
