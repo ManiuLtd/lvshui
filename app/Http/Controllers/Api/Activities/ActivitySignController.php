@@ -15,15 +15,30 @@ class ActivitySignController extends Controller
 {
      public function show()
      {
-
+         $fan_id='';
+         $activity=Activity::with(['fans'=>function($query){
+             $fan_id='';
+             $query->where('fan_id',$fan_id)->get();
+         }])->withCount('fans')->find(request()->activity);
+         $today=Carbon::parse()->toDateString();
+         if($activity->fans){
+             $sign_buttn='你已报名';
+         }
+         if($activity->fans_count==$activity->places&&$activity->places!=0){
+             $sign_buttn='人数已满';
+         }
+         if ($activity->sign_end_time	==$today){
+             $sign_buttn='报名结束';
+         }
+         return response()->json(['status' => 'success', 'msg' => $activity]);
      }
 
      public function signIn()
      {
         $fan_id='';
-        $activity=Activity::find(request()->avtivity_id);
-        $activity_sign_count=$activity->withCount();
-        if($activity_sign_count>=$activity->places){
+        $activity=Activity::withCount('fans')->find(request()->avtivity_id);
+        $activity_sign_count=$activity->fans_count;
+        if($activity_sign_count>=$activity->places&&$activity->places!=0){
             return response()->json(['status' => 'error', 'msg' => '报名人数已满']);
         }
         if($activity->sign_type==1){
@@ -31,6 +46,9 @@ class ActivitySignController extends Controller
         }
         $sign_in=$activity->fan()
         ->attach($fan_id,['name'=>request()->name,'contact_way'=>request()->contact_way]);
+        if($activity_sign_count+1==$activity->places){
+            Activity::where('id',request()->activity)->update(['status'=>-1]);
+        };
          return response()->json(['status' => 'success', 'msg' => $sign_in]);
      }
 
