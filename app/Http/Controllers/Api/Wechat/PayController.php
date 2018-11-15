@@ -13,7 +13,7 @@ class PayController extends Controller
         $pay = WechatPay::getApp();
         $order = [
             'body' => '任意门支付测试',
-            'out_trade_no' => 5833837456292782,
+            'out_trade_no' => \App\Utils\Common::generateOrderNo(),
             'total_fee' => 0.01 * 100,
             'trade_type' => 'JSAPI',
             'openid' => 'oLOcY0jf0SLhG_LN27yU0FIZJWUo',
