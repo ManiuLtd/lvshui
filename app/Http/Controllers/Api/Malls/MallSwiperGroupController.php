@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Malls;
 
 use App\Models\MallSwiper;
 use App\Models\MallSwiperGroup;
+use App\Utils\Parameter;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
@@ -14,8 +15,7 @@ class MallSwiperGroupController extends Controller
     public function index()
     {
         $groups = MallSwiperGroup::orderBy('display', 'desc')->get();
-        $type = [["ch" => "商品", "value" => MallSwiper::good], ["ch" => "活动", "value" => MallSwiper::active], ["ch" => "其他", "value" => MallSwiper::other]];;
-        return response()->json(['type' => $type, 'groups' => $groups]);
+        return response()->json(['data' => $groups]);
     }
 
     public function store()
@@ -34,7 +34,7 @@ class MallSwiperGroupController extends Controller
 
     public function show()
     {
-        $group = MallSwiperGroup::find(request()->mallgroup)->with('swipers')->get();
+        $group = MallSwiperGroup::find(request()->mall_group)->with('swipers')->get();
         return response()->json(['data' => $group]);
     }
 
@@ -43,7 +43,7 @@ class MallSwiperGroupController extends Controller
         $data = request()->all();
         DB::beginTransaction();
         try {
-            MallSwiperGroup::where('id', request()->mallgroup)->update($data);
+            MallSwiperGroup::where('id', request()->mall_group)->update($data);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
@@ -54,7 +54,7 @@ class MallSwiperGroupController extends Controller
 
     public function destroy()
     {
-        $id = request()->mallgroup;
+        $id = request()->mall_group;
         DB::beginTransaction();
         try {
             MallSwiperGroup::where('id', $id)->delete();
@@ -65,6 +65,12 @@ class MallSwiperGroupController extends Controller
             return response()->json(['status' => 'error', 'msg' => '删除失败' . $e]);
         }
         return response()->json(['status' => 'success', 'msg' => '删除成功！']);
+    }
+
+    public function getSwipers()
+    {
+        $swipers = MallSwiperGroup::where('display',1)->with('swipers')->get();
+        return response()->json(['data' => $swipers]);
     }
 
 

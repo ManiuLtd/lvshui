@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Malls;
 
 use App\Models\MallGood;
 use App\Models\MallNav;
+use App\Utils\Parameter;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
@@ -20,7 +21,7 @@ class MallNavController extends Controller
 
     public function show()
     {
-        $id = request()->mallnav;
+        $id = request()->mall_nav;
         $mallGood = MallNav::where('id',$id)->with('goods')->get();
         return response()->json(['data' => $mallGood]);
     }
@@ -42,7 +43,7 @@ class MallNavController extends Controller
     public function update()
     {
         $list = request(['name', 'img_url', 'sid']);
-        $id = request()->mallnav;
+        $id = request()->mall_nav;
         DB::beginTransaction();
         try {
             MallNav::where('id', $id)->update($list);
@@ -56,7 +57,7 @@ class MallNavController extends Controller
 
     public function destroy()
     {
-        $id = request()->mallnav;
+        $id = request()->mall_nav;
         $mallNav = MallNav::where([['sid', 0], ['id', $id]])->with('allChildrenNavs')->first()->toArray();
         $arr = [];
         array_walk_recursive($mallNav, function ($v, $k) use (&$arr) {
@@ -95,5 +96,21 @@ class MallNavController extends Controller
         return $array;
     }
 
+    public function getTopNavs()
+    {
+
+    }
+    public function getSubNavs()
+    {
+
+    }
+
+
+    public function getParameter()
+    {
+        $good = [["ch" => Parameter::ch_discount, "value" => Parameter::discount], ["ch" => Parameter::ch_general, "value" => Parameter::general], ["ch" => Parameter::ch_member, "value" => Parameter::member]];
+        $swiper = [["ch" => Parameter::ch_good, "value" => Parameter::good], ["ch" => Parameter::ch_active, "value" => Parameter::active], ["ch" => Parameter::ch_other, "value" => Parameter::other]];
+        return response()->json(['good' => $good,'swiper'=>$swiper]);
+    }
 
 }

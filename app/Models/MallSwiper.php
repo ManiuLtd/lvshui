@@ -6,9 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class MallSwiper extends Model
 {
-    const active ='active';
-    const good = 'good';
-    const other = 'other';
+
     protected $table = 'mall_swipers';
     protected $guarded=[];
 
