@@ -14,21 +14,10 @@
 </body>
 <script>
 
-    function test() {
-        $.ajax({
-            url: "https://www.rdoorweb.com/lvshui/public/wechat",
-            success: function (result) {
-                
-            }
-        })
-    }
-
-    test();
-
     $('#pay').on("click", function (event) {
         var _this = this
         $.ajax({
-            url: "https://www.rdoorweb.com/lvshui/public/pay",
+            url: "https://www.rdoorweb.com/lvshui/public/unify",
             success: function (result) {
                 onBridgeReady(result.payment);
             }
@@ -44,6 +33,8 @@
                     //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
 
                     $('#pay').html('支付成功');
+                } else {
+                    
                 }
             });
     }
