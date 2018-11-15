@@ -22,7 +22,8 @@ class VerifyToken
             cache([$token => cache($token)], config('token.token_expire_in'));  //刷新token时间
             return $next($request);
         } else {
-            $url = $request->header('url');
+            // $url = $request->header('url');
+            $url = 'https://www.rdoorweb.com';
             session(['url' => $url]);
             return redirect('oauth');
         }
