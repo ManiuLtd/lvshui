@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Members;
 
 use App\Models\Member;
+use App\Models\MemberTag;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MemberRequest;
