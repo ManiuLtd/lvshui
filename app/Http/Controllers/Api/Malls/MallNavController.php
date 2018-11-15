@@ -14,7 +14,9 @@ class MallNavController extends Controller
     //
     public function index()
     {
-        $mallNav = MallNav::where('sid', 0)->with('allChildrenNavs')->get()->toArray();
+        $mallNav = MallNav::where('sid', 0)->with(['allChildrenNavs'=>function($query){
+            $query->withCount('goods');
+        }])->get()->toArray();
         $data = $this->TreeToArray($mallNav, 0);
         return response()->json(['data' => $data]);
     }
