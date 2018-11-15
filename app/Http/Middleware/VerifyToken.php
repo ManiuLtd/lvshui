@@ -21,9 +21,11 @@ class VerifyToken
         if(Token::verifyToken($token)){
             cache([$token => cache($token)], config('token.token_expire_in'));  //刷新token时间
             return $next($request);
+        } else {
+            return redirect('oauth');
         }
         
     //    return response()->json(['msg' => 'token不存在或已过期！'])->setStatusCode(401);
-        return redirect('oauth');
+        // return redirect('oauth');
     }
 }
