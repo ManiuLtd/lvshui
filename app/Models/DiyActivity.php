@@ -12,4 +12,11 @@ namespace App\Models;
 class DiyActivity extends Model
 {
     protected $table = 'diy_activitys';
+
+    public function fans()
+    {
+        return $this->belongsToMany(Fan::class,'fan_diys',
+            'diy_id','fan_id')
+            ->withPivot(['fan_id','diy_id','name','contact_way']);
+    }
 }

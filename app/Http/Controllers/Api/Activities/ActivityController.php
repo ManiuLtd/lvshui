@@ -58,11 +58,6 @@ class ActivityController extends  Controller
         return response()->json(['status' => 'error', 'msg' => '删除失败！']);
     }
 
-    public function wx_show()
-    {
-        $activitys=Activity::where('status','1')->orderBy('created_at','desc')->paginate(20);
-        return response()->json(['status' => 'success', 'data' => $activitys]);
-    }
 
     public function time_task()
     {
