@@ -14,7 +14,7 @@ class PayController extends Controller
         $order = [
             'body' => '任意门支付测试',
             'out_trade_no' => \App\Utils\Common::generateOrderNo(),
-            'total_fee' => 0.01 * 100,
+            'total_fee' => 1,
             'trade_type' => 'JSAPI',
             'openid' => 'oLOcY0jf0SLhG_LN27yU0FIZJWUo',
         ];
