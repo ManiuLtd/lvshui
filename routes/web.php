@@ -45,10 +45,15 @@ Route::group(['middleware' => ['cors']], function () {
         Route::post('sign-in', 'Api\Fans\SignInController@signIn');
         Route::apiResource('tasks', 'Api\Fans\SignInController');
     });
-    //个性定制
-    Route::apiResource('activity/diys', 'Api\Activities\DiyAcitvityController');
-    //活动
-    Route::apiResource('activity/activitys', 'Api\Activities\ActivityController');
+    Route::group(['prefix' => 'activity'], function () {
+        //个性定制
+        Route::post('diys/sign/{diy}','Api\Activities\DiyAcitvityController@sign');
+        Route::apiResource('diys', 'Api\Activities\DiyAcitvityController');
+        //活动
+        Route::get('activitys/wx','Api\Activities\ActivitySignController@index');
+        Route::post('activitys/wx/{activity}','Api\Activities\ActivitySignController@show');
+        Route::apiResource('activitys', 'Api\Activities\ActivityController');
+    });
 
     //商城
     //参数档
@@ -73,10 +78,13 @@ Route::group(['middleware' => ['cors']], function () {
 
 Route::get('oauth', 'Api\Fans\FanController@oauth');
 Route::get('oauth-callback', 'Api\Fans\FanController@oauthCallback');
+Route::get('pay', 'Api\Wechat\PayController@pay');
 
 Route::group(['middleware' => ['token']], function () {
     Route::get('wechat', function () {
         return 'wechat';
     });
 });
+
+
 

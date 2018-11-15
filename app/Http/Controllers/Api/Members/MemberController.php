@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api\Members;
 
 use App\Models\Member;
+use App\Models\MemberTag;
 use Illuminate\Http\Request;
+use App\Models\MemberTagLink;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MemberRequest;
 
@@ -109,7 +111,7 @@ class MemberController extends Controller
 
     public function addTag()
     {
-        if(MemberTag::create(request()->all())) {
+        if(MemberTagLink::create(request()->all())) {
             return response()->json(['status' => 'success', 'msg' => '添加成功！']);  
         }
 
@@ -118,7 +120,7 @@ class MemberController extends Controller
 
     public function deleteTag()
     {
-        if(MemberTag::where(request()->all())->delete()) {
+        if(MemberTagLink::where(request()->all())->delete()) {
             return response()->json(['status' => 'success', 'msg' => '删除成功！']);  
         }
 

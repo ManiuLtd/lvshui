@@ -12,6 +12,7 @@ namespace App\Http\Controllers\Api\Activities;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ActivityRequest;
 use App\Models\Activity;
+use Carbon\Carbon;
 
 class ActivityController extends  Controller
 {
@@ -23,8 +24,9 @@ class ActivityController extends  Controller
 
     public function show()
     {
-        $activity=Activity::find(request()->activity);
-         return response()->json(['status' => 'success', 'data' => $activity]);
+        $activity=Activity::with('fans')->withCount('fans')->find(request()->activity);
+        $activity_sign_count=$activity->fans_count;
+        return response()->json(['status' => 'success', 'data' => $activity]);
     }
 
     public function store(ActivityRequest $request)
@@ -56,10 +58,12 @@ class ActivityController extends  Controller
         return response()->json(['status' => 'error', 'msg' => '删除失败！']);
     }
 
-    public function wx_show()
-    {
-        $activitys=Activity::where('status','1')->orderBy('created_at','desc')->paginate(20);
-        return response()->json(['status' => 'success', 'data' => $activitys]);
-    }
 
+    public function time_task()
+    {
+        $today=Carbon::parse()->toDateString();
+        $updte1=Activity::where('sign_start_time',$today)->update(['status'=>'1']);
+        $updte2=Activity::where('end_time',$today)->update(['status'=>'-1']);
+        return true;
+    }
 }

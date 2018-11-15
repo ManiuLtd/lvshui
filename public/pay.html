@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>支付测试</title>
+</head>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+<body>
+    <button id="pay">确认支付</button>
+</body>
+<script>
+    $('#pay').on("click", function (event) {
+        var _this = this
+        $.ajax({
+            url: "https://www.rdoorweb.com/lvshui/public/pay",
+            success: function (result) {
+                onBridgeReady(result.payment);
+            }
+        })
+    });
+
+    function onBridgeReady(payment) {
+        WeixinJSBridge.invoke(
+            'getBrandWCPayRequest', payment,
+            function (res) {
+                if (res.err_msg == "get_brand_wcpay_request:ok") {
+                    // 使用以上方式判断前端返回,微信团队郑重提示：
+                    //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+
+                    $('#pay').html('支付成功');
+                }
+            });
+    }
+    
+    // if (typeof WeixinJSBridge == "undefined") {
+    //     if (document.addEventListener) {
+    //         document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+    //     } else if (document.attachEvent) {
+    //         document.attachEvent('WeixinJSBridgeReady', onBridgeReady);
+    //         document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+    //     }
+    // } 
+    // else {
+    //     onBridgeReady();
+    // }
+</script>
+
+</html>

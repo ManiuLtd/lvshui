@@ -10,28 +10,51 @@ namespace App\Http\Controllers\Api\Activities;
 
 use App\Http\Controllers\Controller;
 use App\Models\Activity;
+use Carbon\Carbon;
 
 class ActivitySignController extends Controller
 {
+     public function index()
+     {
+         $activitys=Activity::where('status','1')->orderBy('created_at','desc')->paginate(20);
+         return response()->json(['status' => 'success', 'data' => $activitys]);
+     }
+
      public function show()
      {
-
+         $activity=Activity::with(['fans'=>function($query){
+             $fan_id=request()->fan_id;
+             $query->where('fan_id',$fan_id)->get();
+         }])->withCount('fans')->find(request()->activity);
+         $today=Carbon::parse()->toDateString();
+         $sign_buttn=true;
+         if(count($activity->fans)){
+             $sign_buttn='你已报名';
+         }
+         if($activity->fans_count==$activity->places&&$activity->places!=0){
+             $sign_buttn='人数已满';
+         }
+         if ($activity->sign_end_time	==$today){
+             $sign_buttn='报名结束';
+         }
+         return response()->json(['status' => 'success',
+             'msg' =>compact('sign_buttn','activity')]);
      }
 
      public function signIn()
      {
         $fan_id='';
-        $activity=Activity::find(request()->avtivity_id);
-        $activity_sign_count=$activity->withCount();
-        if($activity_sign_count>=$activity->places){
+        $activity=Activity::withCount('fans')->find(request()->avtivity_id);
+        $activity_sign_count=$activity->fans_count;
+        if($activity_sign_count>=$activity->places&&$activity->places!=0){
             return response()->json(['status' => 'error', 'msg' => '报名人数已满']);
         }
         if($activity->sign_type==1){
             //微信支付
         }
-        $sign_in=$activity->fan()
+        $sign_in=$activity->fans()
         ->attach($fan_id,['name'=>request()->name,'contact_way'=>request()->contact_way]);
-         return response()->json(['status' => 'success', 'msg' => $sign_in]);
+         return response()->json(['status' => 'success', 'msg' => '更新成功！']);
      }
 
 
