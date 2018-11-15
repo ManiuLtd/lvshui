@@ -78,10 +78,13 @@ Route::group(['middleware' => ['cors']], function () {
 
 Route::get('oauth', 'Api\Fans\FanController@oauth');
 Route::get('oauth-callback', 'Api\Fans\FanController@oauthCallback');
+Route::get('pay', 'Api\Wechat\PayController@pay');
 
 Route::group(['middleware' => ['token']], function () {
     Route::get('wechat', function () {
         return 'wechat';
     });
 });
+
+
 
