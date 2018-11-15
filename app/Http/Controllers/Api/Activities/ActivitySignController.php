@@ -15,7 +15,6 @@ class ActivitySignController extends Controller
 {
      public function show()
      {
-         $fan_id='';
          $activity=Activity::with(['fans'=>function($query){
              $fan_id='';
              $query->where('fan_id',$fan_id)->get();
@@ -30,7 +29,7 @@ class ActivitySignController extends Controller
          if ($activity->sign_end_time	==$today){
              $sign_buttn='报名结束';
          }
-         return response()->json(['status' => 'success', 'msg' => $activity]);
+         return response()->json(['status' => 'success', 'msg' =>compact('sign_buttn','activity')]);
      }
 
      public function signIn()
