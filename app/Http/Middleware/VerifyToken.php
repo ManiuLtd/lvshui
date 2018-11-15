@@ -18,12 +18,12 @@ class VerifyToken
     public function handle($request, Closure $next)
     {
         $token = $request->header('token');
-        dd($_SERVER);
-        // session(['url' => 'value']);
         if(Token::verifyToken($token)){
             cache([$token => cache($token)], config('token.token_expire_in'));  //刷新token时间
             return $next($request);
         } else {
+            $url = $request->header('url');
+            sesion(['url' => $url]);
             return redirect('oauth');
         }
         
