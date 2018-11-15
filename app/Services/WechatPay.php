@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class WechatPay extends Model
 {
-    public function getApp()
+    public static function getApp()
     {
         $config = config('wechat.payment.default');
 
@@ -18,9 +18,9 @@ class WechatPay extends Model
         return $app;
     }
 
-    public function pay($order)
+    public static function pay($order)
     {
-        $app = $this->getApp($order->xcx_id);
+        $app = self::getApp();
 
         // $result = $app->order->unify([
         //     'body' => $order->body,
@@ -40,7 +40,7 @@ class WechatPay extends Model
 
     public function refund($order, $desc = '取消订单') 
     {
-        $app = $this->getApp($order->xcx_id);
+        $app = self::getApp();
         $result = $app->refund->byTransactionId($order->trans_no, 'TK'.$order->order_no, $order->price * 100, $order->price * 100, [
             // 可在此处传入其他参数，详细参数见微信支付文档
             'refund_desc' => $desc,
