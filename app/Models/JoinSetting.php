@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class MemberJoinSetting extends Model
+class JoinSetting extends Model
 {
     protected $table = 'member_join_settings';
     
