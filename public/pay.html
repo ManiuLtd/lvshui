@@ -30,7 +30,7 @@
         })
     });
 
-    function onBridgeReady() {
+    function onBridgeReady(payment) {
         WeixinJSBridge.invoke(
             'getBrandWCPayRequest', payment,
             function (res) {
