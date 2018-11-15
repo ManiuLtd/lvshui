@@ -25,7 +25,8 @@ class FanController extends Controller
         $user['privilege'] = json_encode($user['privilege']);
         $officialAccountToken = new officialAccountToken();
         $token = $officialAccountToken->getToken($user);
-        return response()->json(['token' => $token, 'url' => session('url')]);
+        return redirect(session('url').$token);
+        // return response()->json(['token' => $token, 'url' => session('url')]);
     }
 
     public function verifyToken() 
