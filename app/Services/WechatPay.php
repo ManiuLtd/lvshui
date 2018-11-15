@@ -35,7 +35,7 @@ class WechatPay extends Model
         
         $payment =  $app->jssdk->bridgeConfig($prepay_id, false);
 
-        return array_merge($payment,['prepay_id' => $prepay_id]);
+        return $payment;
     }
 
     public function refund($order, $desc = '取消订单') 

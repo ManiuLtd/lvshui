@@ -18,10 +18,9 @@ class PayController extends Controller
             'trade_type' => 'JSAPI',
             'openid' => 'oLOcY0jf0SLhG_LN27yU0FIZJWUo',
         ];
-        
+
         $payment = WechatPay::pay($order);
         
-
-        dd($payment);
+        return response()->json(['payment' => $payment]);    
     }
 }
