@@ -10,9 +10,10 @@ use App\Services\officialAccountToken;
 
 class FanController extends Controller
 {
-    public function oauth()
+    public function oauth(Request $request)
     {
         $app = Factory::officialAccount(config('wechat.official_account.default'));
+        session(['url' => $request->url]);
         return $app->oauth->redirect();
     }
 
@@ -23,10 +24,12 @@ class FanController extends Controller
         // 获取 OAuth 授权结果用户信息
         $user = $oauth->user()->getOriginal();
         $user['privilege'] = json_encode($user['privilege']);
+
         $officialAccountToken = new officialAccountToken();
+
         $token = $officialAccountToken->getToken($user);
+
         return redirect(session('url').'?token='.$token);
-        // return response()->json(['token' => $token, 'url' => session('url')]);
     }
 
     public function verifyToken() 

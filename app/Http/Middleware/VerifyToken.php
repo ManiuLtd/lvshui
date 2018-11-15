@@ -21,14 +21,9 @@ class VerifyToken
         if(Token::verifyToken($token)){
             cache([$token => cache($token)], config('token.token_expire_in'));  //刷新token时间
             return $next($request);
-        } else {
-            // $url = $request->header('url');
-            $url = 'https://www.rdoorweb.com';
-            session(['url' => $url]);
-            return redirect('oauth');
         }
         
-    //    return response()->json(['msg' => 'token不存在或已过期！'])->setStatusCode(401);
+       return response()->json(['msg' => 'token不存在或已过期！','status' => 'error'])->setStatusCode(401);
         // return redirect('oauth');
     }
 }
