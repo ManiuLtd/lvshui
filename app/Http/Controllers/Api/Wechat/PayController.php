@@ -23,4 +23,10 @@ class PayController extends Controller
         
         return response()->json(['payment' => $payment]);    
     }
+
+    public function refund() 
+    {
+        $payment = WechatPay::refund($order);
+
+    }
 }
