@@ -48,8 +48,11 @@ class DiyAcitvityController extends Controller
         return response()->json(['status' => 'error', 'msg' => '删除失败！']);
     }
 
-    public function sign()
+    public function sign(DiyActivity $diy)
     {
-
+        $fan_id='';
+        $sign=$diy->fans()->attach($fan_id,['name'=>request()->name,'contact_way'=>request()->contact_way]);
+        //发短信给管理员
+        return response()->json(['status' => 'success', 'msg' => '更新成功！']);
     }
 }
