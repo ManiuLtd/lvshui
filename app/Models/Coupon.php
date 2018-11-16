@@ -30,11 +30,6 @@ class Coupon extends Model
         return $time;
     }
 
-    public function products()
-    {
-        return $this->belongsToMany(\App\Models\Commons\Product::class, 'coupon_products', 'coupon_id', 'product_id')->withoutGlobalScopes();
-    }
-
     
 
 }

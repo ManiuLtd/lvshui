@@ -56,7 +56,7 @@ class ClubController extends Controller
 
     public function join(Club $club)
     {
-        $fan_id='';
+        $fan_id=request()->fan_id;
         $sign=$club->fans()->attach($fan_id);
         return response()->json(['status' => 'success', 'msg' => '更新成功！']);
     }
