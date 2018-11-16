@@ -17,6 +17,9 @@ Route::get('/', function () {
 
 Route::group(['middleware' => ['cors']], function () {
 
+    Route::post('qiniu/upload', 'Controller@upload');  //上传图片
+    Route::post('qiniu/delete', 'Controller@delete');   //删除图片
+
     Route::group(['prefix' => 'member'], function () {
         //会员卡
         Route::post('members/change-integral', 'Api\Members\MemberController@changeIntegral');
