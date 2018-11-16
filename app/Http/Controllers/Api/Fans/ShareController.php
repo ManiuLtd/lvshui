@@ -11,6 +11,7 @@ namespace App\Http\Controllers\Api\Fans;
 
 use App\Http\Controllers\Controller;
 use App\Models\Coupon;
+use App\Models\CouponRecord;
 use App\Models\ShareRecords;
 use App\Models\ShareTask;
 
@@ -58,7 +59,7 @@ class ShareController extends Controller
         $share_count=ShareRecords::where('share_id',$share_id)->count();
         $task=ShareTask::where('task',$share_count)->first();
         $time = Coupon::getTime($task->	reward);
-        $save_coupon=Coupon::create(['fan_id'=>$share_id,'coupon_id'=>$task->	reward,'status'=>'0',
+        $save_coupon=CouponRecord::create(['fan_id'=>$share_id,'coupon_id'=>$task->	reward,'status'=>'0',
                     'start_time'=> $time['start'],'end_time'=>$time['end']]);
         return response()->json(['status' => 'success', 'msg' => '更新成功！']);
     }
