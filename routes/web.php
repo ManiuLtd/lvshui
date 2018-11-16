@@ -58,6 +58,11 @@ Route::group(['middleware' => ['cors']], function () {
         Route::apiResource('activitys', 'Api\Activities\ActivityController');
     });
 
+    Route::group(['prefix'=>'share'],function(){
+       Route::post('follow','Api\Fans\ShareController@share');
+       Route::apiResource('tasks','pi\Fans\ShareController');
+    });
+
     //商城
     //参数档
     Route::get('mall-parameter', 'Api\Malls\MallNavController@getParameter');

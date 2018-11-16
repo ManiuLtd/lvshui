@@ -14,7 +14,7 @@ use App\Models\Coupon;
 use App\Models\ShareRecords;
 use App\Models\ShareTask;
 
-class ShaerController extends Controller
+class ShareController extends Controller
 {
     public function index()
     {
