@@ -55,7 +55,7 @@ class ShaerController extends Controller
         $share_id=request()->share_id;
         $beshare_id=request()->beshare_id;
         $save=ShareRecords::create(['share_id'=>$share_id,'beshare_id'=>$beshare_id]);
-        $share_count=ShareRecords::where('shaer_id',$share_id)->count();
+        $share_count=ShareRecords::where('share_id',$share_id)->count();
         $task=ShareTask::where('task',$share_count)->first();
         $time = Coupon::getTime($task->	reward);
         $save_coupon=Coupon::create(['fan_id'=>$share_id,'coupon_id'=>$task->	reward,'status'=>'0',
