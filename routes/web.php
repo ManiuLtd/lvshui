@@ -15,6 +15,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
 Route::group(['middleware' => ['cors']], function () {
 
     Route::group(['prefix' => 'member'], function () {
@@ -64,6 +65,7 @@ Route::group(['middleware' => ['cors']], function () {
     Route::apiResource('mall-goods', 'Api\Malls\MallGoodController');
     Route::post('mall-goods/{mall-good}', 'Api\Malls\MallGoodController@show')->name('mallgoods');
     // 轮播图
+    Route::put('mall-swipers/{mall-swiper}/change','Api\Malls\MallSwiperGroupController@change');
     Route::apiResource('mall-groups', 'Api\Malls\MallSwiperGroupController');
     Route::apiResource('mall-swipers', 'Api\Malls\MallSwiperController');
     // 公众号

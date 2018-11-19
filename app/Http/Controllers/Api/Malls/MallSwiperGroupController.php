@@ -73,5 +73,20 @@ class MallSwiperGroupController extends Controller
         return response()->json(['data' => $swipers]);
     }
 
+    public function change()
+    {
+        DB::beginTransaction();
+        try {
+            MallSwiperGroup::where('id', request()->mall_group)->update(['display'=>1]);
+            MallSwiperGroup::where('id', '!=' , request()->mall_group)->update(['display'=>0]);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => 'error', 'msg' => '修改失败' . $e]);
+        }
+        return response()->json(['status' => 'success', 'msg' => '修改成功！']);
+
+    }
+
 
 }
