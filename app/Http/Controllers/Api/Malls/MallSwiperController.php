@@ -66,7 +66,7 @@ class MallSwiperController extends Controller
         return response()->json(['status' => 'success', 'msg' => '修改成功！']);
     }
 
-    public function destory()
+    public function destroy()
     {
         DB::beginTransaction();
         try {
