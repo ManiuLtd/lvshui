@@ -84,7 +84,7 @@ class MallGoodController extends Controller
         $is_up =request('is_up');
         DB::beginTransaction();
         try {
-            MallGood::where('id', request()->mall_good)->update(['is_up'=>$is_up]);
+            MallGood::where('id', request()->good)->update(['is_up'=>$is_up]);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();

@@ -76,9 +76,8 @@ Route::group(['middleware' => ['cors']], function () {
     Route::put('mall-groups/{group}/change','Api\Malls\MallSwiperGroupController@change');
     Route::apiResource('mall-groups', 'Api\Malls\MallSwiperGroupController');
     Route::apiResource('mall-swipers', 'Api\Malls\MallSwiperController');
-
+    // 公众号
     Route::group(['prefix' => 'mall'], function () {
-        // 公众号
         Route::get('members', 'Api\Malls\MallGoodController@getMemberGoods');
         Route::get('discounts', 'Api\Malls\MallGoodController@getDiscountGoods');
         Route::get('generals', 'Api\Malls\MallGoodController@getGeneralGoods');
