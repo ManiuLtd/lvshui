@@ -70,14 +70,15 @@ Route::group(['middleware' => ['cors']], function () {
     //分类
     Route::apiResource('mall-navs', 'Api\Malls\MallNavController');
     // 商品
-    Route::post('mall-goods/{mall-good}/change','Api\Malls\MallGoodController@change');
+    Route::post('mall-goods/{good}/change','Api\Malls\MallGoodController@change');
     Route::apiResource('mall-goods', 'Api\Malls\MallGoodController');
     // 轮播图
-    Route::put('mall-groups/{mall-group}/change','Api\Malls\MallSwiperGroupController@change');
+    Route::put('mall-groups/{group}/change','Api\Malls\MallSwiperGroupController@change');
     Route::apiResource('mall-groups', 'Api\Malls\MallSwiperGroupController');
     Route::apiResource('mall-swipers', 'Api\Malls\MallSwiperController');
-    // 公众号
+
     Route::group(['prefix' => 'mall'], function () {
+        // 公众号
         Route::get('members', 'Api\Malls\MallGoodController@getMemberGoods');
         Route::get('discounts', 'Api\Malls\MallGoodController@getDiscountGoods');
         Route::get('generals', 'Api\Malls\MallGoodController@getGeneralGoods');
