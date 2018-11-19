@@ -12,7 +12,8 @@ class MallGood extends Model
 
     public function navs()
     {
-        return $this->hasManyThrough(MallNav::class,MallGoodMallNav::class,'good_id','id','id','nav_id');
+
+        return $this->hasOne(MallNav::class,'id','nav_id');
     }
 
     public function imgs()
