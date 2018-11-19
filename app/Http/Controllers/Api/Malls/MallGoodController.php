@@ -79,6 +79,19 @@ class MallGoodController extends Controller
         return response()->json(['status' => 'success', 'msg' => '修改成功！']);
     }
 
+    public function change()
+    {
+        $is_up =request('is_up');
+        DB::beginTransaction();
+        try {
+            MallGood::where('id', request()->mall_good)->update(['is_up'=>$is_up]);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => 'error', 'msg' => '修改失败' . $e]);
+        }
+        return response()->json(['status' => 'success', 'msg' => '修改成功！']);
+    }
 //    public function destroy()
 //    {
 //        $id = request()->mall_good;
