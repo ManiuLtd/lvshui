@@ -18,6 +18,9 @@ Route::get('/', function () {
 
 Route::group(['middleware' => ['cors']], function () {
 
+    Route::post('qiniu/upload', 'Controller@upload');  //上传图片
+    Route::post('qiniu/delete', 'Controller@delete');   //删除图片
+
     Route::group(['prefix' => 'member'], function () {
         //会员卡
         Route::post('members/change-integral', 'Api\Members\MemberController@changeIntegral');
@@ -54,6 +57,11 @@ Route::group(['middleware' => ['cors']], function () {
         Route::get('activitys/wx','Api\Activities\ActivitySignController@index');
         Route::post('activitys/wx/{activity}','Api\Activities\ActivitySignController@show');
         Route::apiResource('activitys', 'Api\Activities\ActivityController');
+    });
+
+    Route::group(['prefix'=>'share'],function(){
+       Route::post('follow','Api\Fans\ShareController@share');
+       Route::apiResource('tasks','pi\Fans\ShareController');
     });
 
     //商城

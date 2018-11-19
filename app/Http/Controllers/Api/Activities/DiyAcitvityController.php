@@ -56,7 +56,7 @@ class DiyAcitvityController extends Controller
 
     public function sign(DiyActivity $diy)
     {
-        $fan_id='';
+        $fan_id=request()->fan_id;
         $sign=$diy->fans()->attach($fan_id,['name'=>request()->name,'contact_way'=>request()->contact_way]);
         //发短信给管理员
         return response()->json(['status' => 'success', 'msg' => '更新成功！']);
