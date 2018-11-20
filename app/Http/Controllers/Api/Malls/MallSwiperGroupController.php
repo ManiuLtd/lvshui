@@ -34,7 +34,7 @@ class MallSwiperGroupController extends Controller
 
     public function show()
     {
-        $group = MallSwiperGroup::where('id',request()->group)->with('swipers')->get();
+        $group = MallSwiperGroup::where('id',request()->mall_group)->with('swipers')->get();
         return response()->json(['data' => $group]);
     }
 
@@ -43,7 +43,7 @@ class MallSwiperGroupController extends Controller
         $data = request()->all();
         DB::beginTransaction();
         try {
-            MallSwiperGroup::where('id', request()->group)->update($data);
+            MallSwiperGroup::where('id', request()->mall_groups)->update($data);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
@@ -54,7 +54,7 @@ class MallSwiperGroupController extends Controller
 
     public function destroy()
     {
-        $id = request()->group;
+        $id = request()->mall_groups;
         DB::beginTransaction();
         try {
             MallSwiperGroup::where('id', $id)->delete();

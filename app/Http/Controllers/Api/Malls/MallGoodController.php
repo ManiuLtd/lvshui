@@ -22,7 +22,7 @@ class MallGoodController extends Controller
 
     public function show()
     {
-        $mallGood = MallGood::where('id', request()->good)->with('navs')->with('imgs')->get();
+        $mallGood = MallGood::where('id', request()->mall_good)->with('navs')->with('imgs')->get();
         return response()->json(['data' => $mallGood]);
     }
 
@@ -50,7 +50,7 @@ class MallGoodController extends Controller
     {
         $rGoods = request(['name', 'content', 'total', 'limit', 'price', 'discount', 'monthly_sales', 'is_up', 'sratr_date', 'end_date','nav_id']);
         $rImgs = request('imgs');
-        $id = request()->good;
+        $id = request()->mall_good;
 
         DB::beginTransaction();
         try {
