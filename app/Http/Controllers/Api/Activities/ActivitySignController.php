@@ -16,7 +16,7 @@ class ActivitySignController extends Controller
 {
      public function index()
      {
-         $activitys=Activity::where('status','1')->orderBy('created_at','desc')->paginate(20);
+         $activitys=Activity::orderBy('created_at','desc')->paginate(20);
          return response()->json(['status' => 'success', 'data' => $activitys]);
      }
 
