@@ -28,17 +28,13 @@ class MallGoodController extends Controller
 
     public function store()
     {
-        $rGoods = request(['name', 'type', 'content', 'total', 'limit', 'price', 'discount', 'monthly_sales', 'is_up', 'sratr_date', 'end_date']);
-        $rNavs = request('navs');
+        $rGoods = request(['name', 'type', 'content', 'total', 'limit', 'price', 'discount', 'monthly_sales', 'is_up', 'sratr_date', 'end_date','nav_id']);
         $rImgs = request('imgs');
 
         DB::beginTransaction();
         try {
             $mallGood = MallGood::create($rGoods);
             $gid = $mallGood->id;
-            foreach ($rNavs as $item) {
-                MallGoodMallNav::create(['good_id' => $gid, 'nav_id' => $item]);
-            }
             foreach ($rImgs as $item) {
                 MallImage::create(['good_id' => $gid, 'url' => $item]);
             }
@@ -52,20 +48,14 @@ class MallGoodController extends Controller
 
     public function update()
     {
-        $rGoods = request(['name', 'content', 'total', 'limit', 'price', 'discount', 'monthly_sales', 'is_up', 'sratr_date', 'end_date']);
-        $rNavs = request('navs');
+        $rGoods = request(['name', 'content', 'total', 'limit', 'price', 'discount', 'monthly_sales', 'is_up', 'sratr_date', 'end_date','nav_id']);
         $rImgs = request('imgs');
         $id = request()->mall_good;
 
         DB::beginTransaction();
         try {
             MallGood::where('id', $id)->update($rGoods);
-            MallGoodMallNav::where('good_id', $id)->delete();
             MallImage::where('good_id', $id)->delete();
-
-            foreach ($rNavs as $item) {
-                MallGoodMallNav::create(['good_id' => $id, 'nav_id' => $item]);
-            }
 
             foreach ($rImgs as $item) {
                 MallImage::create(['good_id' => $id, 'url' => $item]);
@@ -79,6 +69,19 @@ class MallGoodController extends Controller
         return response()->json(['status' => 'success', 'msg' => '修改成功！']);
     }
 
+    public function change()
+    {
+        $is_up =request('is_up');
+        DB::beginTransaction();
+        try {
+            MallGood::where('id', request()->good)->update(['is_up'=>$is_up]);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => 'error', 'msg' => '修改失败' . $e]);
+        }
+        return response()->json(['status' => 'success', 'msg' => '修改成功！']);
+    }
 //    public function destroy()
 //    {
 //        $id = request()->mall_good;

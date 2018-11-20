@@ -14,14 +14,7 @@ class MallSwiperController extends Controller
 
     public function store()
     {
-        $re = request(['url', 'url_id', 'remake', 'display', 'image', 'group', 'type']);
-        if ($re['type'] == Parameter::active) {
-            $re['url'] = route('activitys', ['activity' => $re['url_id']]);
-        } else if ($re['type'] == Parameter::good) {
-            $re['url'] = route('mallgoods', ['mallgood' => $re['url_id']]);
-        } else if ($re['type'] == Parameter::other) {
-            $re['url'] = $re(['url']);
-        }
+        $re = request(['url', 'remake', 'display', 'image', 'group', 'type']);
         DB::beginTransaction();
         try {
             MallSwiper::create($re);
@@ -66,7 +59,7 @@ class MallSwiperController extends Controller
         return response()->json(['status' => 'success', 'msg' => '修改成功！']);
     }
 
-    public function destory()
+    public function destroy()
     {
         DB::beginTransaction();
         try {

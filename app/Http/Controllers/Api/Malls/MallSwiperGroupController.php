@@ -34,7 +34,7 @@ class MallSwiperGroupController extends Controller
 
     public function show()
     {
-        $group = MallSwiperGroup::find(request()->mall_group)->with('swipers')->get();
+        $group = MallSwiperGroup::where('id',request()->mall_group)->with('swipers')->get();
         return response()->json(['data' => $group]);
     }
 
@@ -43,7 +43,7 @@ class MallSwiperGroupController extends Controller
         $data = request()->all();
         DB::beginTransaction();
         try {
-            MallSwiperGroup::where('id', request()->mall_group)->update($data);
+            MallSwiperGroup::where('id', request()->mall_groups)->update($data);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
@@ -54,7 +54,7 @@ class MallSwiperGroupController extends Controller
 
     public function destroy()
     {
-        $id = request()->mall_group;
+        $id = request()->mall_groups;
         DB::beginTransaction();
         try {
             MallSwiperGroup::where('id', $id)->delete();
@@ -77,8 +77,8 @@ class MallSwiperGroupController extends Controller
     {
         DB::beginTransaction();
         try {
-            MallSwiperGroup::where('id', request()->mall_group)->update(['display'=>1]);
-            MallSwiperGroup::where('id', '!=' , request()->mall_group)->update(['display'=>0]);
+            MallSwiperGroup::where('id', request()->group)->update(['display'=>1]);
+            MallSwiperGroup::where('id', '!=' , request()->group)->update(['display'=>0]);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
