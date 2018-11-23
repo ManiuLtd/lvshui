@@ -61,6 +61,12 @@ Route::group(['middleware' => ['cors']], function () {
 
     Route::group(['prefix'=>'share'],function(){
        Route::post('follow','Api\Fans\ShareController@share');
+       Route::post('wx/show','Api\Fans\ShareController@shareShow');
+       Route::group(['prefix'=>'over'],function (){
+         Route::post('show','Api\Fans\ShareController@showRegister');
+         Route::post('register','Api\Fans\ShareController@register');
+         Route::post('check-register','Api\Fans\ShareController@checkRegister');
+       });
        Route::apiResource('tasks','pi\Fans\ShareController');
     });
 
