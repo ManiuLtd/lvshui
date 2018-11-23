@@ -14,9 +14,9 @@
 Route::get('/', function () {
     return view('welcome');
 });
+Route::post('/login','Api\LoginController@login')->middleware(['cors']);
 
-
-Route::group(['middleware' => ['cors']], function () {
+Route::group(['middleware' => ['cors', 'token']], function () {
 
     Route::post('qiniu/upload', 'Controller@upload');  //上传图片
     Route::post('qiniu/delete', 'Controller@delete');   //删除图片
