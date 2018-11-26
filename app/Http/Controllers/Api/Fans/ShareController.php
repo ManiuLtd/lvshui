@@ -20,7 +20,8 @@ class ShareController extends Controller
 {
     public function index()
     {
-
+        $date=ShareTask::first();
+        return response()->json(['status' => 'error', 'data' =>$date]);
     }
 
     public function store()
@@ -97,42 +98,52 @@ class ShareController extends Controller
             return response()->json(['status' => 'success', 'msg' => '修改成功！']);
         }
 
-        return response()->json(['status' => 'error', 'msg' => '修改s失败！']);
+        return response()->json(['status' => 'error', 'msg' => '修改失败！']);
     }
 
-    public function shareShow()
+    public function beShareShow()
     {
         $share_id=request()->share_id;
         $beshare_id=request()->beshare_id;
         $task=ShareTask::first();
         if($task->status==0){
-            return response()->json(['status' => 'success', 'data' =>'活动未开始']);
+            $flag='noopen';
+            return response()->json(['status' => 'success', 'data' =>compact('flag')]);
+        }
+        //被分享者看到的页面，beshaer表示关注，beshaerover表示分享者的任务完成
+        $flag='beshaer';
+        $share_record=ShareRecords::where('share_id',$share_id)->where('beshare_id',$beshare_id)->get();
+        $share=ShareRecords::where('share_id',$share_id)->with('share:id,nickname,headimgurl')
+            ->with('beshaer:id,nickname,headimgurl')->get();
+        if($share_record->count()>0){
+            //已经帮助过
+            $flag='have';
+        }
+        if($share->count()==$task->task){
+            $flag='over';
+        }
+        return response()->json(['status' => 'success', 'data' =>compact('flag','share')]);
+    }
+
+    public function shareShow()
+    {
+        $share_id=request()->share_id;
+        $task=ShareTask::first();
+        if($task->status==0){
+            $flag='noopen';
+            return response()->json(['status' => 'success', 'data' =>compact('flag')]);
         }
         $share=ShareRecords::where('share_id',$share_id)->with('share:id,nickname,headimgurl')
             ->with('beshaer:id,nickname,headimgurl')->get();
-        $task=ShareTask::first();
+        //分享者看到的页面，shaer表示未完成分享任务显示我要分享按钮，record表示分享者的任务完成显填写个人资料,over任务彻底完成
+        $flag='share';
         $share_over='';
-        if($beshare_id){
-            //被分享者看到的页面，beshaer表示关注，beshaerover表示分享者的任务完成
-            $flag='beshaer';
-            $share_record=ShareRecords::where('share_id',$share_id)->where('beshare_id',$beshare_id)->get();
-            if($share_record->count()>0){
-                //已经帮助过
-                $flag='have';
-            }
-            if($share->count()==$task->task){
+        if($share->count()==$task->task){
+            //任务完成
+            $flag='record';
+            $share_over=ShareOver::find($share_id);
+            if($share_over){
                 $flag='over';
-            }
-        }else{
-            //分享者看到的页面，shaer表示未完成分享任务显示我要分享按钮，record表示分享者的任务完成显填写个人资料,over任务彻底完成
-            $flag='share';
-            if($share->count()==$task->task){
-                //任务完成
-                $flag='record';
-                $share_over=ShareOver::find($share_id);
-                if($share_over){
-                    $flag='over';
-                }
             }
         }
         return response()->json(['status' => 'success', 'data' =>compact('flag','share','share_over')]);
