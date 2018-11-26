@@ -71,6 +71,7 @@ Route::group(['middleware' => ['cors', 'token']], function () {
     });
 
     //商城
+    Route::get('mall-parameter', 'Api\Malls\MallNavController@getParameter');
     //分类
     Route::apiResource('mall-navs', 'Api\Malls\MallNavController');
     // 商品
@@ -82,7 +83,7 @@ Route::group(['middleware' => ['cors', 'token']], function () {
     Route::apiResource('mall-swipers', 'Api\Malls\MallSwiperController');
     // 公众号
     Route::group(['prefix' => 'mall'], function () {
-        Route::get('parameter', 'Api\Malls\MallNavController@getParameter');
+
         Route::get('members', 'Api\Malls\MallGoodController@getMemberGoods');
         Route::get('discounts', 'Api\Malls\MallGoodController@getDiscountGoods');
         Route::get('generals', 'Api\Malls\MallGoodController@getGeneralGoods');
