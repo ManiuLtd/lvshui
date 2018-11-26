@@ -27,6 +27,11 @@ class Parameter
     const ch_good = '商品';
     const ch_other = '其他';
 
+    const join = 'join';
+
+//    订单
+    const body_CO ='任意门网络';
+
 
 
 
