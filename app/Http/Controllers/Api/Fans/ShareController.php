@@ -60,7 +60,7 @@ class ShareController extends Controller
         $save=ShareRecords::create(['share_id'=>$share_id,'beshare_id'=>$beshare_id]);
         $share_count=ShareRecords::where('share_id',$share_id)->count();
         $task=ShareTask::first();
-        if($task->task==$share_count){
+        if($task->task_target==$share_count){
             //任务完成
 //            $time = Coupon::getTime($task->	reward);
 //            $save_coupon=CouponRecord::create(['fan_id'=>$share_id,'coupon_id'=>$task->	reward,'status'=>'0',
@@ -119,7 +119,7 @@ class ShareController extends Controller
             //已经帮助过
             $flag='have';
         }
-        if($share->count()==$task->task){
+        if($share->count()==$task->task_target	){
             $flag='over';
         }
         return response()->json(['status' => 'success', 'data' =>compact('flag','share')]);
@@ -138,7 +138,7 @@ class ShareController extends Controller
         //分享者看到的页面，shaer表示未完成分享任务显示我要分享按钮，record表示分享者的任务完成显填写个人资料,over任务彻底完成
         $flag='share';
         $share_over='';
-        if($share->count()==$task->task){
+        if($share->count()==$task->task_target	){
             //任务完成
             $flag='record';
             $share_over=ShareOver::find($share_id);
