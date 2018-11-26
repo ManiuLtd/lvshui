@@ -59,15 +59,15 @@ class ShareController extends Controller
         $beshare_id=request()->beshare_id;
         $save=ShareRecords::create(['share_id'=>$share_id,'beshare_id'=>$beshare_id]);
         $share_count=ShareRecords::where('share_id',$share_id)->count();
-        $task=ShareTask::where('task',$share_count)->first();
-        if($task){
+        $task=ShareTask::first();
+        if($task->task==$share_count){
             //任务完成
 //            $time = Coupon::getTime($task->	reward);
 //            $save_coupon=CouponRecord::create(['fan_id'=>$share_id,'coupon_id'=>$task->	reward,'status'=>'0',
 //                'start_time'=> $time['start'],'end_time'=>$time['end']]);
             return response()->json(['status' => 'success', 'msg' => '任务完成！']);
         }
-        return response()->json(['status' => 'error', 'msg' => '任务未完成！']);
+        return response()->json(['status' => 'success', 'msg' => '任务已完成！']);
     }
 
     public function showRegister()

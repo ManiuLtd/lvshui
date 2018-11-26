@@ -68,7 +68,7 @@ Route::group(['middleware' => ['cors', 'token']], function () {
          Route::post('register','Api\Fans\ShareController@register');
          Route::post('check-register','Api\Fans\ShareController@checkRegister');
        });
-       Route::apiResource('tasks','pi\Fans\ShareController');
+       Route::apiResource('tasks','Api\Fans\ShareController');
     });
 
     //商城
