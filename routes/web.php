@@ -62,6 +62,7 @@ Route::group(['middleware' => ['cors', 'token']], function () {
     Route::group(['prefix'=>'share'],function(){
        Route::post('follow','Api\Fans\ShareController@share');
        Route::post('wx/show','Api\Fans\ShareController@shareShow');
+        Route::post('wx/beshow','Api\Fans\ShareController@beShareShow');
        Route::group(['prefix'=>'over'],function (){
          Route::post('show','Api\Fans\ShareController@showRegister');
          Route::post('register','Api\Fans\ShareController@register');
@@ -71,6 +72,7 @@ Route::group(['middleware' => ['cors', 'token']], function () {
     });
 
     //商城
+    //参数档
     Route::get('mall-parameter', 'Api\Malls\MallNavController@getParameter');
     //分类
     Route::apiResource('mall-navs', 'Api\Malls\MallNavController');
@@ -83,7 +85,6 @@ Route::group(['middleware' => ['cors', 'token']], function () {
     Route::apiResource('mall-swipers', 'Api\Malls\MallSwiperController');
     // 公众号
     Route::group(['prefix' => 'mall'], function () {
-
         Route::get('members', 'Api\Malls\MallGoodController@getMemberGoods');
         Route::get('discounts', 'Api\Malls\MallGoodController@getDiscountGoods');
         Route::get('generals', 'Api\Malls\MallGoodController@getGeneralGoods');
