@@ -15,6 +15,7 @@ use App\Models\CouponRecord;
 use App\Models\ShareOver;
 use App\Models\ShareRecords;
 use App\Models\ShareTask;
+use App\Services\TemplateNotice;
 
 class ShareController extends Controller
 {
@@ -22,6 +23,15 @@ class ShareController extends Controller
     {
         $date=ShareTask::first();
         return response()->json(['status' => 'error', 'data' =>$date]);
+    }
+
+    public function lishiwei()
+    {
+        $template=new  TemplateNotice();
+        $array=['first'=>'李诗伟天下第一','key1'=>'啦啦啦','key2'=>'啧啧啧','key3'=>'ddsdssd','remark'=>'何东方牛比'];
+        $template->sendNotice('oLOcY0jf0SLhG_LN27yU0FIZJWUo','jtOZ0m2YaKn3-6AhOlWlFMtED4Cda46rILl-E-Kqf2o',
+            'www.baidu.com',$array);
+        return true;
     }
 
     public function store()
@@ -62,6 +72,10 @@ class ShareController extends Controller
         $task=ShareTask::first();
         if($task->task_target==$share_count){
             //任务完成
+//              $template=new  TemplateNotice();
+//              $array=['first'=>'李诗伟天下第一','key1'=>'啦啦啦','key2'=>'啧啧啧','key3'=>'ddsdssd','remark'=>'何东方牛比'];
+//              $template->sendNotice('oLOcY0jf0SLhG_LN27yU0FIZJWUo','jtOZ0m2YaKn3-6AhOlWlFMtED4Cda46rILl-E-Kqf2o',
+//                  'www.baidu.com',$array);
 //            $time = Coupon::getTime($task->	reward);
 //            $save_coupon=CouponRecord::create(['fan_id'=>$share_id,'coupon_id'=>$task->	reward,'status'=>'0',
 //                'start_time'=> $time['start'],'end_time'=>$time['end']]);

@@ -15,6 +15,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 Route::post('/login','Api\LoginController@login')->middleware(['cors']);
+Route::get('/cao','Api\Fans\ShareController@lishiwei');
 
 Route::group(['middleware' => ['cors', 'token']], function () {
 
