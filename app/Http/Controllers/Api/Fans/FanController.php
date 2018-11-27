@@ -29,7 +29,7 @@ class FanController extends Controller
 
         $token = $officialAccountToken->getToken($user);
 
-        return redirect(session('url').'?token='.$token);
+        return header('location:'.session('url').'?token='.$token);
     }
 
     public function verifyToken() 
