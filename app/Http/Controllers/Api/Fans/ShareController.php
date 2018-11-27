@@ -17,6 +17,7 @@ use App\Models\ShareOver;
 use App\Models\ShareRecords;
 use App\Models\ShareTask;
 use App\Services\TemplateNotice;
+use App\Services\Token;
 
 class ShareController extends Controller
 {
@@ -59,7 +60,7 @@ class ShareController extends Controller
     public function share()
     {
         $share_id=request()->share_id;
-        $beshare_id=request()->beshare_id;
+        $beshare_id=Token::getUid();
         $save=ShareRecords::create(['share_id'=>$share_id,'beshare_id'=>$beshare_id]);
         $share_count=ShareRecords::where('share_id',$share_id)->count();
         $task=ShareTask::first();
@@ -117,7 +118,7 @@ class ShareController extends Controller
     public function beShareShow()
     {
         $share_id=request()->share_id;
-        $beshare_id=request()->beshare_id;
+        $beshare_id=Token::getUid();
         $task=ShareTask::first();
         if($task->status==0){
             $flag='noopen';
@@ -140,7 +141,7 @@ class ShareController extends Controller
 
     public function shareShow()
     {
-        $share_id=request()->share_id;
+        $share_id=Token::getUid();
         $task=ShareTask::first();
         if($task->status==0){
             $flag='noopen';
