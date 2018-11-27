@@ -31,7 +31,8 @@ class FanController extends Controller
         
         $url = session('url').'?token='.$token;
 
-        return view('redirect', ['url' => $url]);
+        return redirect($url);
+        // return view('redirect', ['url' => $url]);
     }
 
     public function verifyToken() 
