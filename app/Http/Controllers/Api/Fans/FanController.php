@@ -13,6 +13,8 @@ class FanController extends Controller
     public function oauth(Request $request)
     {
         $app = Factory::officialAccount(config('wechat.official_account.default'));
+        dd($request->url);
+        
         session(['url' => $request->url]);
         return $app->oauth->redirect();
     }
@@ -30,7 +32,6 @@ class FanController extends Controller
         $token = $officialAccountToken->getToken($user);
         
         $url = session('url').'?token='.$token;
-        dd($url);
         return redirect($url);
         // return view('redirect', ['url' => $url]);
     }
