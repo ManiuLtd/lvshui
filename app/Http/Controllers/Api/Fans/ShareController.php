@@ -12,9 +12,11 @@ namespace App\Http\Controllers\Api\Fans;
 use App\Http\Controllers\Controller;
 use App\Models\Coupon;
 use App\Models\CouponRecord;
+use App\Models\Fan;
 use App\Models\ShareOver;
 use App\Models\ShareRecords;
 use App\Models\ShareTask;
+use App\Services\TemplateNotice;
 
 class ShareController extends Controller
 {
@@ -23,6 +25,7 @@ class ShareController extends Controller
         $date=ShareTask::first();
         return response()->json(['status' => 'error', 'data' =>$date]);
     }
+
 
     public function store()
     {
@@ -56,13 +59,23 @@ class ShareController extends Controller
     public function share()
     {
         $share_id=request()->share_id;
+        $fan=Fan::find($share_id);
         $beshare_id=request()->beshare_id;
         $save=ShareRecords::create(['share_id'=>$share_id,'beshare_id'=>$beshare_id]);
         $share_count=ShareRecords::where('share_id',$share_id)->count();
         $task=ShareTask::first();
         if($task->task_target==$share_count){
             //任务完成
-//            $time = Coupon::getTime($task->	reward);
+              $template=new  TemplateNotice();
+              $array=['first'=>'您已完成分享活动！',
+                  'key1'=>$task->name,
+                  'key2'=>$fan->nickname,
+                  'key3'=>'请前往活动页面填写联系方式'];
+              $template->sendNotice('oLOcY0jf0SLhG_LN27yU0FIZJWUo',
+              'jtOZ0m2YaKn3-6AhOlWlFMtED4Cda46rILl-E-Kqf2o',
+              'www.baidu.com',
+                  $array);
+            $time = Coupon::getTime($task->	reward);
 //            $save_coupon=CouponRecord::create(['fan_id'=>$share_id,'coupon_id'=>$task->	reward,'status'=>'0',
 //                'start_time'=> $time['start'],'end_time'=>$time['end']]);
             return response()->json(['status' => 'success', 'msg' => '任务完成！']);
