@@ -59,13 +59,13 @@ class ShareController extends Controller
     public function share()
     {
         $share_id=request()->share_id;
-        $fan=Fan::find($share_id);
         $beshare_id=request()->beshare_id;
         $save=ShareRecords::create(['share_id'=>$share_id,'beshare_id'=>$beshare_id]);
         $share_count=ShareRecords::where('share_id',$share_id)->count();
         $task=ShareTask::first();
         if($task->task_target==$share_count){
             //任务完成
+              $fan=Fan::find($share_id);
               $template=new  TemplateNotice();
               $array=['first'=>'您已完成分享活动！',
                   'key1'=>$task->name,
@@ -75,12 +75,12 @@ class ShareController extends Controller
               'jtOZ0m2YaKn3-6AhOlWlFMtED4Cda46rILl-E-Kqf2o',
               'www.baidu.com',
                   $array);
-            $time = Coupon::getTime($task->	reward);
+//            $time = Coupon::getTime($task->	reward);
 //            $save_coupon=CouponRecord::create(['fan_id'=>$share_id,'coupon_id'=>$task->	reward,'status'=>'0',
 //                'start_time'=> $time['start'],'end_time'=>$time['end']]);
             return response()->json(['status' => 'success', 'msg' => '任务完成！']);
         }
-        return response()->json(['status' => 'success', 'msg' => '任务已完成！']);
+        return response()->json(['status' => 'success', 'msg' => '已助力！']);
     }
 
     public function showRegister()
