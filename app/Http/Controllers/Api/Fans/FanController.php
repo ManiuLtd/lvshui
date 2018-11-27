@@ -28,12 +28,20 @@ class FanController extends Controller
         $officialAccountToken = new officialAccountToken();
 
         $token = $officialAccountToken->getToken($user);
+        
+        $url = session('url').'?token='.$token;
 
-        return redirect(session('url').'?token='.$token);
+        return redirect($url);
+        // return view('redirect', ['url' => $url]);
     }
 
     public function verifyToken() 
     {
         return response()->json(['isValid' => Token::verifyToken(request()->header('token'))]);
+    }
+
+    public function getUid()
+    {
+        return response()->json(['fan_id' => Token::getUid()]);
     }
 }
