@@ -21,6 +21,8 @@ Route::group(['middleware' => ['cors', 'token']], function () {
     Route::post('qiniu/upload', 'Controller@upload');  //上传图片
     Route::post('qiniu/delete', 'Controller@delete');   //删除图片
 
+    Route::post('wechat/verify', 'Api\Fans\FanController@verifyToken'); //验证Token
+
     Route::group(['prefix' => 'member'], function () {
         //会员卡
         Route::post('members/change-integral', 'Api\Members\MemberController@changeIntegral');
@@ -93,11 +95,13 @@ Route::group(['middleware' => ['cors', 'token']], function () {
     });
 });
 
-Route::get('oauth', 'Api\Fans\FanController@oauth');
-Route::get('oauth-callback', 'Api\Fans\FanController@oauthCallback');
-Route::get('pay', 'Api\Wechat\PayController@pay');
-Route::get('refund', 'Api\Wechat\PayController@refund');
-Route::get('pay-notify', 'Api\Wechat\PayController@notify');
+Route::group(['prefix'=>'wechat'], function () {
+    Route::get('oauth', 'Api\Fans\FanController@oauth');
+    Route::get('oauth-callback', 'Api\Fans\FanController@oauthCallback');
+    Route::get('pay', 'Api\Wechat\PayController@pay');
+    Route::get('refund', 'Api\Wechat\PayController@refund');
+    Route::get('pay-notify', 'Api\Wechat\PayController@notify');
+});
 
 Route::group(['middleware' => ['token']], function () {
     Route::get('wechat', function () {
