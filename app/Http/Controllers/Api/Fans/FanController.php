@@ -39,4 +39,9 @@ class FanController extends Controller
     {
         return response()->json(['isValid' => Token::verifyToken(request()->header('token'))]);
     }
+
+    public function getUid()
+    {
+        return response()->json(['fan_id' => Token::getUid()]);
+    }
 }
