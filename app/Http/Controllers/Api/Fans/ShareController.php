@@ -28,7 +28,7 @@ class ShareController extends Controller
     public function lishiwei()
     {
         $template=new  TemplateNotice();
-        $array=['first'=>'李诗伟天下第一','key1'=>'啦啦啦','key2'=>'啧啧啧','key3'=>'ddsdssd','remark'=>'何东方牛比'];
+        $array=['first'=>'李诗伟天下第一','keyword1'=>'啦啦啦','keyword2'=>'啧啧啧','keyword3'=>'ddsdssd','remark'=>'何东方牛比'];
         $template->sendNotice('oLOcY0jf0SLhG_LN27yU0FIZJWUo','jtOZ0m2YaKn3-6AhOlWlFMtED4Cda46rILl-E-Kqf2o',
             'www.baidu.com',$array);
         return true;
