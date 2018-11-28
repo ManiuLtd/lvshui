@@ -8,4 +8,10 @@ class Fan extends Model
     {
         return self::where('openid', $openid)->first();
     }
+
+    public function admin()
+    {
+        return $this->hasOne(Admin::class,
+            'fan_id', 'id');
+    }
 }
