@@ -129,7 +129,7 @@ class ShareController extends Controller
         $flag='beshaer';
         $share_record=ShareRecords::where('share_id',$share_id)->where('beshare_id',$beshare_id)->get();
         $share=ShareRecords::where('share_id',$share_id)->with('share:id,nickname,headimgurl')
-            ->with('beshaer:id,nickname,headimgurl')->get();
+            ->with('beshare:id,nickname,headimgurl')->get();
         if($share_record->count()>0){
             //已经帮助过
             $flag='have';
