@@ -39,7 +39,6 @@ class FanController extends Controller
         }
         
         return redirect($url);
-        // return view('redirect', ['url' => $url]);
     }
 
     public function verifyToken() 
