@@ -11,12 +11,13 @@ namespace App\Http\Controllers\Api\Fans;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use App\Models\Fan;
 
 class AdminController extends Controller
 {
     public function index()
     {
-        $data=Admin::with('fan')->get();
+        $data=Fan::with('admin')->get();
         return response()->json(['status' => 'success', 'data' =>$data]);
     }
 

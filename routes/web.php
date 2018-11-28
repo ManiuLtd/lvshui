@@ -27,6 +27,8 @@ Route::group(['middleware' => ['cors', 'token']], function () {
     Route::get('config','Api\Fans\FanController@getBasicConfig');
     Route::post('wechat/verify', 'Api\Fans\FanController@verifyToken'); //验证Token
 
+    Route::apiResource('admins','Api\Fans\AdminController');
+
     Route::group(['prefix' => 'member'], function () {
         //会员卡
         Route::post('members/change-integral', 'Api\Members\MemberController@changeIntegral');
