@@ -37,7 +37,6 @@ class FanController extends Controller
         } else {
             $url = $baseUrl.'?token='.$token;
         }
-        dd($url);
         
         return redirect($url);
         // return view('redirect', ['url' => $url]);
