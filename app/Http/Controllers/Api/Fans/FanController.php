@@ -33,9 +33,9 @@ class FanController extends Controller
         $baseUrl = session('url');
 
         if(strpos($baseUrl,'?') !== false) {
-            $url = $baseUrl.'?token='.$token;
-        } else {
             $url = $baseUrl.'&token='.$token;
+        } else {
+            $url = $baseUrl.'?token='.$token;
         }
         dd($url);
         
