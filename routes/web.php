@@ -24,7 +24,7 @@ Route::group(['middleware' => ['cors', 'token']], function () {
 
     Route::get('get-uid','Api\Fans\FanController@getUid');
     Route::get('user','Api\Fans\FanController@getUser');
-    Route::get('config','Api\Fans\FanController@getBasicConfig');
+    Route::get('config','Api\Fans\FanController@getConfig');
     Route::post('wechat/verify', 'Api\Fans\FanController@verifyToken'); //验证Token
 
     Route::group(['prefix' => 'member'], function () {
