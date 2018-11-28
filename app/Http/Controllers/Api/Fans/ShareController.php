@@ -72,7 +72,7 @@ class ShareController extends Controller
                   'key1'=>$task->name,
                   'key2'=>$fan->nickname,
                   'key3'=>'请前往活动页面填写联系方式'];
-              $template->sendNotice('oLOcY0jf0SLhG_LN27yU0FIZJWUo',
+              $template->sendNotice($fan->openid,
               'jtOZ0m2YaKn3-6AhOlWlFMtED4Cda46rILl-E-Kqf2o',
               'www.baidu.com',
                   $array);
@@ -98,6 +98,7 @@ class ShareController extends Controller
     public function register()
     {
         $data=request()->all();
+        $data['fan_id']=Token::getUid();
         if(ShareOver::create($data)) {
             return response()->json(['status' => 'success', 'msg' => '新增成功！']);
         }
