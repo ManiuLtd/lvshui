@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Fans;
 
+use App\Models\Fan;
 use App\Services\Token;
 use EasyWeChat\Factory;
 use Illuminate\Http\Request;
@@ -29,9 +30,15 @@ class FanController extends Controller
 
         $token = $officialAccountToken->getToken($user);
         
-        $url = session('url').'?token='.$token;
+        $baseUrl = session('url');
+
+        if(strpos($baseUrl,'?') !== false) {
+            $url = $baseUrl.'&token='.$token;
+        } else {
+            $url = $baseUrl.'?token='.$token;
+        }
+        
         return redirect($url);
-        // return view('redirect', ['url' => $url]);
     }
 
     public function verifyToken() 
@@ -42,5 +49,14 @@ class FanController extends Controller
     public function getUid()
     {
         return response()->json(['fan_id' => Token::getUid()]);
+    }
+
+    public function getBasicConfig() 
+    {
+        $app = Factory::officialAccount(config('wechat.official_account.default'));
+        $jssdk = $app->jssdk->buildConfig(array('updateAppMessageShareData', 'updateTimelineShareData'), true,false, false); 
+        $fan = Fan::find(Token::getUid());
+        return response()->json(['data' => $fan, 'jssdk' => $jssdk]);
+
     }
 }
