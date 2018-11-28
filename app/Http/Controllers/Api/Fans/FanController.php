@@ -51,12 +51,16 @@ class FanController extends Controller
         return response()->json(['fan_id' => Token::getUid()]);
     }
 
-    public function getBasicConfig() 
+    public function getConfig() 
     {
         $app = Factory::officialAccount(config('wechat.official_account.default'));
         $jssdk = $app->jssdk->buildConfig(array('updateAppMessageShareData', 'updateTimelineShareData'), true,false, false); 
-        $fan = Fan::find(Token::getUid());
-        return response()->json(['data' => $fan, 'jssdk' => $jssdk]);
+        return response()->json(['jssdk' => $jssdk]);
+    }
 
+    public function getUser()
+    {
+        $fan = Fan::find(Token::getUid());
+        return response()->json(['data' => $fan]);
     }
 }
