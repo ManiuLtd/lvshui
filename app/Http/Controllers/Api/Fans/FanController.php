@@ -60,7 +60,7 @@ class FanController extends Controller
 
     public function getUser()
     {
-        $fan = Fan::find(Token::getUid());
+        $fan = Fan::with('admin')->find(Token::getUid());
         return response()->json(['data' => $fan]);
     }
 }
