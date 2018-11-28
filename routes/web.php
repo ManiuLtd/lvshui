@@ -112,3 +112,4 @@ Route::group(['middleware' => ['token']], function () {
 
 
 
+Route::get('config','Api\Fans\FanController@getBasicConfig');
