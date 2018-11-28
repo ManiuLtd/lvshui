@@ -30,7 +30,13 @@ class FanController extends Controller
 
         $token = $officialAccountToken->getToken($user);
         
-        $url = session('url').'?token='.$token;
+        $baseUrl = session('url');
+
+        if(strpos($baseUrl,'?') !== false) {
+            $url = $baseUrl.'?token='.$token;
+        } else {
+            $url = $baseUrl.'&token='.$token;
+        }
         return redirect($url);
         // return view('redirect', ['url' => $url]);
     }
