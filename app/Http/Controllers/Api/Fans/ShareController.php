@@ -127,7 +127,7 @@ class ShareController extends Controller
             return response()->json(['status' => 'success', 'data' =>compact('flag')]);
         }
         //被分享者看到的页面，beshaer表示关注，beshaerover表示分享者的任务完成
-        $flag='beshaer';
+        $flag='beshare';
         $share_record=ShareRecords::where('share_id',$share_id)->where('beshare_id',$beshare_id)->get();
         $share=ShareRecords::where('share_id',$share_id)->with('share:id,nickname,headimgurl')
             ->with('beshare:id,nickname,headimgurl')->get();
