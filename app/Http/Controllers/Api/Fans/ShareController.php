@@ -147,6 +147,7 @@ class ShareController extends Controller
         $share_id=Token::getUid();
         $task=ShareTask::first();
         $task_target=$task->task_target;
+        $share_data=Fan::find($share_id);
         if($task->status==0){
             $flag='noopen';
             return response()->json(['status' => 'success', 'data' =>compact('flag')]);
@@ -164,6 +165,6 @@ class ShareController extends Controller
                 $flag='over';
             }
         }
-        return response()->json(['status' => 'success', 'data' =>compact('flag','share','share_over','task_target')]);
+        return response()->json(['status' => 'success', 'data' =>compact('flag','share','share_over','task_target','share_data')]);
     }
 }
