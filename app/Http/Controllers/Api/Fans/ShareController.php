@@ -129,7 +129,7 @@ class ShareController extends Controller
         $flag='beshaer';
         $share_record=ShareRecords::where('share_id',$share_id)->where('beshare_id',$beshare_id)->get();
         $share=ShareRecords::where('share_id',$share_id)->with('share:id,nickname,headimgurl')
-            ->with('beshaer:id,nickname,headimgurl')->get();
+            ->with('beshare:id,nickname,headimgurl')->get();
         if($share_record->count()>0){
             //已经帮助过
             $flag='have';
@@ -149,7 +149,7 @@ class ShareController extends Controller
             return response()->json(['status' => 'success', 'data' =>compact('flag')]);
         }
         $share=ShareRecords::where('share_id',$share_id)->with('share:id,nickname,headimgurl')
-            ->with('beshaer:id,nickname,headimgurl')->get();
+            ->with('beshare:id,nickname,headimgurl')->get();
         //分享者看到的页面，shaer表示未完成分享任务显示我要分享按钮，record表示分享者的任务完成显填写个人资料,over任务彻底完成
         $flag='share';
         $share_over='';

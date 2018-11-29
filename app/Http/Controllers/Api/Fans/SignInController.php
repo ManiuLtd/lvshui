@@ -55,7 +55,7 @@ class SignInController extends Controller
     {
         $fan_id=Token::getUid();
         $sign_data=Sign::where('fan_id',$fan_id)->with('fan:id,point')->first();
-        if($sign_data->count() > 0){
+        if($sign_data){
             $now=Carbon::parse()->toDateString();
             if($now==$sign_data->last_day){
                 $sign_data->signButtonFlag=false;
@@ -71,7 +71,7 @@ class SignInController extends Controller
         $data['fan_id']=Token::getUid();
         $data['last_day']=Carbon::now()->toDateString();
         $sign_data=Sign::where('fan_id',$data['fan_id'])->first();
-        if(count($sign_data)==0){
+        if(!$sign_data){
             Sign::create(['fan_id'=>$data['fan_id']]);
             $sign_data=Sign::where('fan_id',$data['fan_id'])->first();
         }
