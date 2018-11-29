@@ -115,6 +115,15 @@ Route::group(['middleware' => ['token']], function () {
     });
 });
 
+Route::get('wechat-server', function() {
+    
+    $app = EasyWeChat\Factory::officialAccount(config('wechat.official_account.default'));
+
+    $response = $app->server->serve();
+
+    return $response;
+});
+
 
 
 
