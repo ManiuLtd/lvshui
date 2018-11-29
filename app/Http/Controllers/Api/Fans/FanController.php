@@ -37,7 +37,7 @@ class FanController extends Controller
         } else {
             $url = $baseUrl.'?token='.$token;
         }
-        
+        session(['url' => $url]);
         return redirect($url);
     }
 
@@ -54,7 +54,8 @@ class FanController extends Controller
     public function getConfig() 
     {
         $app = Factory::officialAccount(config('wechat.official_account.default'));
-        $jssdk = $app->jssdk->buildConfig(array('updateAppMessageShareData', 'updateTimelineShareData'), true,false, false); 
+        $app->jssdk->setUrl(session('url'));
+        $jssdk = $app->jssdk->buildConfig(array('onMenuShareTimeline','onMenuShareAppMessage','updateAppMessageShareData', 'updateTimelineShareData'), false,false, false); 
         return response()->json(['jssdk' => $jssdk]);
     }
 
