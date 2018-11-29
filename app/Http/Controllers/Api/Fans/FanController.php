@@ -57,6 +57,7 @@ class FanController extends Controller
         $jssdk = $app->jssdk->buildConfig(array('updateAppMessageShareData', 'updateTimelineShareData'), true,false, false); 
         unset($jssdk['beta']);
         unset($jssdk['url']);
+        dd($jssdk);
         return response()->json(['jssdk' => $jssdk]);
     }
 
