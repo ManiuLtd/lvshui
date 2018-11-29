@@ -120,6 +120,7 @@ class ShareController extends Controller
     {
         $share_id=request()->share_id;
         $beshare_id=Token::getUid();
+        $share_data=Fan::find($share_id);
         $task=ShareTask::first();
         $task_target=$task->task_target;
         if($task->status==0){
@@ -127,7 +128,7 @@ class ShareController extends Controller
             return response()->json(['status' => 'success', 'data' =>compact('flag')]);
         }
         //被分享者看到的页面，beshaer表示关注，beshaerover表示分享者的任务完成
-        $flag='beshaer';
+        $flag='beshare';
         $share_record=ShareRecords::where('share_id',$share_id)->where('beshare_id',$beshare_id)->get();
         $share=ShareRecords::where('share_id',$share_id)->with('share:id,nickname,headimgurl')
             ->with('beshare:id,nickname,headimgurl')->get();
@@ -138,7 +139,7 @@ class ShareController extends Controller
         if($share->count()==$task->task_target	){
             $flag='over';
         }
-        return response()->json(['status' => 'success', 'data' =>compact('flag','share','task_target')]);
+        return response()->json(['status' => 'success', 'data' =>compact('flag','share','task_target','share_data')]);
     }
 
     public function shareShow()
@@ -146,6 +147,7 @@ class ShareController extends Controller
         $share_id=Token::getUid();
         $task=ShareTask::first();
         $task_target=$task->task_target;
+        $share_data=Fan::find($share_id);
         if($task->status==0){
             $flag='noopen';
             return response()->json(['status' => 'success', 'data' =>compact('flag')]);
@@ -163,6 +165,6 @@ class ShareController extends Controller
                 $flag='over';
             }
         }
-        return response()->json(['status' => 'success', 'data' =>compact('flag','share','share_over','task_target')]);
+        return response()->json(['status' => 'success', 'data' =>compact('flag','share','share_over','task_target','share_data')]);
     }
 }
