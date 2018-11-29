@@ -4,9 +4,9 @@ namespace App\Models;
 
 class Fan extends Model
 {
-    public static function getByOpenID($openid) 
+    public static function findUser($openid, $subscribe) 
     {
-        return self::where('openid', $openid)->first();
+        return self::where(['openid', $openid],['subscribe' => $subscribe])->first();
     }
 
     public function admin()
