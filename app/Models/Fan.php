@@ -6,7 +6,7 @@ class Fan extends Model
 {
     public static function findUser($openid, $subscribe) 
     {
-        return self::where(['openid', $openid],['subscribe' => $subscribe])->first();
+        return self::where(['openid' => $openid],['subscribe' => $subscribe])->first();
     }
 
     public function admin()
