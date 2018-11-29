@@ -26,12 +26,12 @@ class FanController extends Controller
         $user = $oauth->user()->getOriginal();
 
         $subscribe = $app->user->get($user['openid']);
-
+        dd($subscribe);
+        
         $user['subscribe'] = isset($subscribe) ? 1 : 0;
 
         $user['privilege'] = json_encode($user['privilege']);
 
-        dd($user);
         
         $officialAccountToken = new officialAccountToken();
 
