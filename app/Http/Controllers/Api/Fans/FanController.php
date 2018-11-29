@@ -27,7 +27,7 @@ class FanController extends Controller
 
         $subscribe = $app->user->get($user['openid']);
         $user['subscribe'] = $subscribe['subscribe'];
-        $user['subscribe_time'] = $subscribe['subscribe_time'] ? date('Y-m-d H:i:s', $subscribe['subscribe_time']) : null;
+        $user['subscribe_time'] = isset($subscribe['subscribe_time']) ? date('Y-m-d H:i:s', $subscribe['subscribe_time']) : null;
         $user['privilege'] = json_encode($user['privilege']);
 
         $officialAccountToken = new officialAccountToken();
