@@ -23,8 +23,11 @@ class FanController extends Controller
         $app = Factory::officialAccount(config('wechat.official_account.default'));
         $oauth = $app->oauth;
         // 获取 OAuth 授权结果用户信息
-        dd($oauth->user());
         $user = $oauth->user()->getOriginal();
+
+        $subscribe = $app->user->get($user['openid']);
+
+        $user['subscribe'] = isset($subscribe) ? 1 : 0;
 
         $user['privilege'] = json_encode($user['privilege']);
         
