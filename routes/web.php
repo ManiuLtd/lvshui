@@ -120,6 +120,7 @@ Route::get('wechat-server', function() {
     $app = EasyWeChat\Factory::officialAccount(config('wechat.official_account.default'));
 
     $app->server->push(function ($message) {
+        Log::info($message);
         switch ($message['MsgType']) {
             case 'event':
                 return '收到事件消息';
