@@ -30,7 +30,6 @@ class FanController extends Controller
         $user['subscribe_time'] = $subscribe['subscribe_time'];
         $user['privilege'] = json_encode($user['privilege']);
 
-        
         $officialAccountToken = new officialAccountToken();
 
         $token = $officialAccountToken->getToken($user);
