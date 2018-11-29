@@ -14,11 +14,12 @@ class officialAccountToken extends Token
         $openid = $data['openid'];
         $subscribe = $data['subscribe'];
         $unionid = $data['unionid'] ?? '';
-        $fans = Fan::findUser($openid, $subscribe);
+        $fans = Fan::getByOpenID($openid);
         if (!$fans)
         {
             $uid = $this->newUser($data);
         }else {
+            $fans->where('id', $fans->id)->update($data);
             $uid = $fans->id;
         }
         $cachedValue = $this->prepareCachedValue($data, $uid);
