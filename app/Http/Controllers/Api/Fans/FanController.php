@@ -55,7 +55,7 @@ class FanController extends Controller
         return response()->json(['fan_id' => Token::getUid()]);
     }
 
-    public function getConfig() 
+    public function getConfig(Request $request) 
     {
         $app = Factory::officialAccount(config('wechat.official_account.default'));
         $url = $request->header('url') ?? session('url');
