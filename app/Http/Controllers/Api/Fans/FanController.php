@@ -60,7 +60,7 @@ class FanController extends Controller
         $app = Factory::officialAccount(config('wechat.official_account.default'));
         $url = $request->url ?? session('url');
         $app->jssdk->setUrl($url);
-        $jssdk = $app->jssdk->buildConfig(array('onMenuShareTimeline','onMenuShareAppMessage','updateAppMessageShareData', 'updateTimelineShareData'), true,false, false); 
+        $jssdk = $app->jssdk->buildConfig(array('onMenuShareTimeline','onMenuShareAppMessage','updateAppMessageShareData', 'updateTimelineShareData'), false,false, false); 
         return response()->json(['jssdk' => $jssdk]);
     }
 
