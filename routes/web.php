@@ -102,13 +102,13 @@ Route::group(['middleware' => ['cors', 'token']], function () {
 
 Route::group(['prefix'=>'wechat'], function () {
     Route::any('server','Api\Wechat\OfficialAccountController@server');    
-    Route::get('oauth', 'Api\Wechat\OfficialAccountController@oauth');
-    Route::get('oauth-callback', 'Api\Wechat\OfficialAccountController@oauthCallback');
-    Route::get('config','Api\Wechat\OfficialAccountController@getConfig');        
-    Route::get('menu','Api\Wechat\OfficialAccountController@menu');        
-    Route::get('pay', 'Api\Wechat\PayController@pay');
-    Route::get('refund', 'Api\Wechat\PayController@refund');
-    Route::get('pay-notify', 'Api\Wechat\PayController@notify');
+    Route::any('oauth', 'Api\Wechat\OfficialAccountController@oauth');
+    Route::any('oauth-callback', 'Api\Wechat\OfficialAccountController@oauthCallback');
+    Route::any('config','Api\Wechat\OfficialAccountController@getConfig');        
+    Route::any('menu','Api\Wechat\OfficialAccountController@menu');        
+    Route::any('pay', 'Api\Wechat\PayController@pay');
+    Route::any('refund', 'Api\Wechat\PayController@refund');
+    Route::any('pay-notify', 'Api\Wechat\PayController@notify');
 });
 
 
@@ -119,10 +119,3 @@ Route::group(['middleware' => ['token']], function () {
     });
 });
 
-
-
-Route::get('log', function() {
-
-    return storage_path('logs/wechat.log');
-
-});
