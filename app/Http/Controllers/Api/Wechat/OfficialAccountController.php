@@ -70,6 +70,7 @@ class OfficialAccountController extends Controller
     public function menu() 
     {
         $app = Factory::officialAccount(config('wechat.official_account.default'));
-        $app->menu->delete();
+        $list = $app->menu->list();
+        dd($list);
     }
 }
