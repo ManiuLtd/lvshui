@@ -16,6 +16,7 @@ class EventMessageHandler implements EventHandlerInterface
         $fan = Fan::where('openid', $openid)->count();
 
         if($payload['Event'] == 'subscribe') {
+            \Log::info($payload);
             if($fan > 0) {
                 Fan::where('openid', $openid)->update(['subscribe' => 1, 'subscribe_time' => $createtime]);
             } else {
