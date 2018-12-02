@@ -105,6 +105,7 @@ Route::group(['prefix'=>'wechat'], function () {
     Route::get('oauth', 'Api\Wechat\OfficialAccountController@oauth');
     Route::get('oauth-callback', 'Api\Wechat\OfficialAccountController@oauthCallback');
     Route::get('config','Api\Wechat\OfficialAccountController@getConfig');        
+    Route::get('menu','Api\Wechat\OfficialAccountController@menu');        
     Route::get('pay', 'Api\Wechat\PayController@pay');
     Route::get('refund', 'Api\Wechat\PayController@refund');
     Route::get('pay-notify', 'Api\Wechat\PayController@notify');
