@@ -67,13 +67,13 @@ class OfficialAccountController extends Controller
     {
         $app = Factory::officialAccount(config('wechat.official_account.default'));
         // $list = $app->menu->current();
-        $menu = ["button" =>  [
+        $menu = [
                     [
                         "type" => "view",
                         "name" => "分享活动",
                         "url" => "https://zhlsqj.com/#/share"
                     ]
-                ]];
+                ];
         $list = $app->menu->create($menu);
         dd($list);
     }
