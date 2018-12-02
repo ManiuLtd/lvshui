@@ -6,8 +6,8 @@ use EasyWeChat\Kernel\Contracts\EventHandlerInterface;
 
 class EventMessageHandler implements EventHandlerInterface
 {
-    public function handle($payload) 
+    public function handle($payload = null) 
     {
-        // Log::info($payload);
+        Log::info($payload);
     }
 }
