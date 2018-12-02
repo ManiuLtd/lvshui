@@ -10,10 +10,7 @@ class EventMessageHandler implements EventHandlerInterface
     public function handle($payload = null) 
     {   
         $openid = $payload['FromUserName'];
-
-        \Log::info($payload);
         
-
         $createtime = date('Y-m-d H:i:s',$payload['CreateTime']);
 
         $fan = Fan::where('openid', $openid)->count();
