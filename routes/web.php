@@ -101,7 +101,7 @@ Route::group(['middleware' => ['cors', 'token']], function () {
 });
 
 Route::group(['prefix'=>'wechat'], function () {
-    Route::any('server','Api\Wechat\OfficialAccountController@server');    
+    Route::any('serverss','Api\Wechat\OfficialAccountController@server');    
     Route::any('oauth', 'Api\Wechat\OfficialAccountController@oauth');
     Route::any('oauth-callback', 'Api\Wechat\OfficialAccountController@oauthCallback');
     Route::any('config','Api\Wechat\OfficialAccountController@getConfig');        
