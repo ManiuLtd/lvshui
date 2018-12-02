@@ -30,6 +30,6 @@ class EventMessageHandler implements EventHandlerInterface
             Fan::where('openid', $openid)->update(['subscribe' => 0]);
         }
 
-        return 'SUCCESS';
+        return '欢迎关注，绿水清江';
     }
 }
