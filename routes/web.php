@@ -119,7 +119,7 @@ Route::any('wechat-server', function() {
 
     $app = EasyWeChat\Factory::officialAccount(config('wechat.official_account.default'));
 
-    $app->server->push(EventMessageHandler::class, \EasyWeChat\Kernel\Messages\Message::Event);
+    $app->server->push(EventMessageHandler::class, \EasyWeChat\Kernel\Messages\Message::EVENT);
 
     $response = $app->server->serve();
 
