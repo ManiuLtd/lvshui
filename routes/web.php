@@ -119,6 +119,12 @@ Route::get('wechat-server', function() {
 
     $app = EasyWeChat\Factory::officialAccount(config('wechat.official_account.default'));
 
+    $app->server->push(function ($message) {
+        // $message['FromUserName'] // 用户的 openid
+        // $message['MsgType'] // 消息类型：event, text....
+        return "您好！欢迎使用 EasyWeChat";
+    });
+
     $response = $app->server->serve();
 
     return $response;
