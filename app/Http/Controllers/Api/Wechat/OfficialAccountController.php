@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Wechat;
 
 use EasyWeChat\Factory;
 use App\Handler\EventMessageHandler;
+use App\Http\Controllers\Controller;
 use App\Services\OfficialAccountToken;
 use EasyWeChat\Kernel\Messages\Message;
 
