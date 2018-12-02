@@ -14,7 +14,7 @@ class OfficialAccountController extends Controller
 
     public function server() 
     {
-        $app = EasyWeChat\Factory::officialAccount(config('wechat.official_account.default'));
+        $app = Factory::officialAccount(config('wechat.official_account.default'));
 
         $app->server->push(EventMessageHandler::class, Message::EVENT);
     
