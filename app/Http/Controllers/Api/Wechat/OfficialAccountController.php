@@ -8,7 +8,7 @@ use App\Services\OfficialAccountToken;
 use EasyWeChat\Kernel\Messages\Message;
 
 
-class OffcialAccountController
+class OfficialAccountController
 {
 
     public function server() 
