@@ -2,6 +2,7 @@
 
 namespace App\Handler;
 
+use App\Models\Fan;
 use EasyWeChat\Kernel\Contracts\EventHandlerInterface;
 
 class EventMessageHandler implements EventHandlerInterface
