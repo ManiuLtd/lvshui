@@ -16,6 +16,7 @@ class OfficialAccountController extends Controller
 
     public function server() 
     {
+        \Log::info('傻逼微信');
         $app = Factory::officialAccount(config('wechat.official_account.default'));
 
         $app->server->push(TextMessageHandler::class, Message::TEXT);
