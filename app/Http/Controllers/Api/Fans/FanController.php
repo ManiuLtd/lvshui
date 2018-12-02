@@ -4,10 +4,7 @@ namespace App\Http\Controllers\Api\Fans;
 
 use App\Models\Fan;
 use App\Services\Token;
-use EasyWeChat\Factory;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Services\OfficialAccountToken;
 
 class FanController extends Controller
 {
