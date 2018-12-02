@@ -119,6 +119,10 @@ Route::get('wechat-server', function() {
 
     $app = EasyWeChat\Factory::officialAccount(config('wechat.official_account.default'));
 
+    $message = $app->server->getMessage();
+
+    Log::info($message);
+
     $response = $app->server->serve();
 
     return $response;
