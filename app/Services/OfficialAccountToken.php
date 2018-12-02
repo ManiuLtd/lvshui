@@ -12,7 +12,6 @@ class OfficialAccountToken extends Token
     public function getToken(array $data) : string
     {
         $openid = $data['openid'];
-        $subscribe = $data['subscribe'];
         $unionid = $data['unionid'] ?? '';
         $fans = Fan::getByOpenID($openid);
         if (!$fans)
