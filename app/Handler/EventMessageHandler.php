@@ -8,6 +8,6 @@ class EventMessageHandler implements EventHandlerInterface
 {
     public function handle($payload = null) 
     {
-        Log::info($payload);
+        \Log::info($payload);
     }
 }
