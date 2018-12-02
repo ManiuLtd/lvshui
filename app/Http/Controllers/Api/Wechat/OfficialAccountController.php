@@ -71,6 +71,8 @@ class OfficialAccountController extends Controller
     {
         $app = Factory::officialAccount(config('wechat.official_account.default'));
         $list = $app->menu->current();
+
+        $app->menu->create($list['selfmenu_info']);
         dd($list);
     }
 }
