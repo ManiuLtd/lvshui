@@ -29,5 +29,7 @@ class EventMessageHandler implements EventHandlerInterface
         if($payload['Event'] == 'unsubscribe') {
             Fan::where('openid', $openid)->update(['subscribe' => 0]);
         }
+
+        return 'SUCCESS';
     }
 }
