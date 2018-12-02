@@ -66,4 +66,10 @@ class OfficialAccountController extends Controller
         $jssdk = $app->jssdk->buildConfig(array('onMenuShareTimeline','onMenuShareAppMessage','updateAppMessageShareData', 'updateTimelineShareData'), false,false, false); 
         return response()->json(['jssdk' => $jssdk]);
     }
+
+    public function menu() 
+    {
+        $app = Factory::officialAccount(config('wechat.official_account.default'));        
+        return $list = $app->menu->list();
+    }
 }
