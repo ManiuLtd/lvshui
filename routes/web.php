@@ -131,5 +131,8 @@ Route::get('wechat-server', function() {
 });
 
 
+Route::get('log', function() {
 
+    return storage_path('logs/wechat.log');
 
+});
