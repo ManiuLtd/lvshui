@@ -39,10 +39,6 @@ class OfficialAccountController extends Controller
         $oauth = $app->oauth;
         // 获取 OAuth 授权结果用户信息
         $user = $oauth->user()->getOriginal();
-
-        $subscribe = $app->user->get($user['openid']);
-        $user['subscribe'] = $subscribe['subscribe'];
-        $user['subscribe_time'] = isset($subscribe['subscribe_time']) ? date('Y-m-d H:i:s', $subscribe['subscribe_time']) : null;
         $user['privilege'] = json_encode($user['privilege']);
 
         $officialAccountToken = new OfficialAccountToken();
