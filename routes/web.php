@@ -101,13 +101,16 @@ Route::group(['middleware' => ['cors', 'token']], function () {
 });
 
 Route::group(['prefix'=>'wechat'], function () {
-    Route::get('oauth', 'Api\Fans\FanController@oauth');
-    Route::get('oauth-callback', 'Api\Fans\FanController@oauthCallback');
-    Route::get('config','Api\Fans\FanController@getConfig');        
+    Route::any('server','Api\Wechat\OffcialAccountController@server');    
+    Route::get('oauth', 'Api\Wechat\OffcialAccountController@oauth');
+    Route::get('oauth-callback', 'Api\Wechat\OffcialAccountController@oauthCallback');
+    Route::get('config','Api\Wechat\OffcialAccountController@getConfig');        
     Route::get('pay', 'Api\Wechat\PayController@pay');
     Route::get('refund', 'Api\Wechat\PayController@refund');
     Route::get('pay-notify', 'Api\Wechat\PayController@notify');
 });
+
+
 
 Route::group(['middleware' => ['token']], function () {
     Route::get('wechat', function () {
@@ -115,16 +118,6 @@ Route::group(['middleware' => ['token']], function () {
     });
 });
 
-Route::any('wechat-server', function() {
-
-    $app = EasyWeChat\Factory::officialAccount(config('wechat.official_account.default'));
-
-    $app->server->push(\App\Handler\EventMessageHandler::class, \EasyWeChat\Kernel\Messages\Message::EVENT);
-
-    $response = $app->server->serve();
-
-    return $response;
-});
 
 
 Route::get('log', function() {

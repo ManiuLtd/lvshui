@@ -7,7 +7,7 @@ use App\Models\Fan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
-class officialAccountToken extends Token
+class OfficialAccountToken extends Token
 {
     public function getToken(array $data) : string
     {
