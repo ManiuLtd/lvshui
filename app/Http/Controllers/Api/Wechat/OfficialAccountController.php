@@ -17,6 +17,7 @@ class OfficialAccountController extends Controller
     {
         $app = Factory::officialAccount(config('wechat.official_account.default'));
 
+        $app->server->push(TextMessageHandler::class, Message::TEXT);
         $app->server->push(EventMessageHandler::class, Message::EVENT);
     
         $response = $app->server->serve();
