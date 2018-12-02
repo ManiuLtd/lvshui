@@ -11,7 +11,7 @@ class EventMessageHandler implements EventHandlerInterface
     {   
         $openid = $payload['FromUserName'];
 
-        $createtime = $payload['CreateTime'];
+        $createtime = date('Y-m-d H:i:s',$payload['CreateTime']);
 
         $fan = Fan::where('openid', $openid)->count();
 
