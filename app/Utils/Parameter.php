@@ -15,9 +15,11 @@ class Parameter
     const member = 'member';
     const discount = 'discount';
     const general = 'general';
+    const group = 'group';
     const ch_member = '会员专享';
     const ch_discount='优惠活动';
     const ch_general ='一般';
+    const ch_group ='团购';
 
 //    轮播图
     const active ='active';
@@ -30,6 +32,7 @@ class Parameter
     const join = 'join';
 
 //    订单
+    const mall = 'mall';
     const body_CO ='任意门网络';
 
 
