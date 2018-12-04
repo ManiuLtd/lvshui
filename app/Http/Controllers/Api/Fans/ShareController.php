@@ -98,7 +98,7 @@ class ShareController extends Controller
     public function register()
     {
         $data=request()->all();
-        $data['fan_id']='4';
+        $data['fan_id']=Token::getUid();
         if(ShareOver::create($data)) {
             return response()->json(['status' => 'success', 'msg' => '新增成功！']);
         }
