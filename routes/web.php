@@ -24,7 +24,6 @@ Route::group(['middleware' => ['cors', 'token']], function () {
 
     Route::get('get-uid','Api\Fans\FanController@getUid');
     Route::get('user','Api\Fans\FanController@getUser');
-    Route::get('config','Api\Fans\FanController@getConfig');
     Route::post('wechat/verify', 'Api\Fans\FanController@verifyToken'); //验证Token
 
     Route::apiResource('admins','Api\Fans\AdminController');
@@ -102,28 +101,21 @@ Route::group(['middleware' => ['cors', 'token']], function () {
 });
 
 Route::group(['prefix'=>'wechat'], function () {
-    Route::get('oauth', 'Api\Fans\FanController@oauth');
-    Route::get('oauth-callback', 'Api\Fans\FanController@oauthCallback');
-    Route::get('pay', 'Api\Wechat\PayController@pay');
-    Route::get('refund', 'Api\Wechat\PayController@refund');
-    Route::get('pay-notify', 'Api\Wechat\PayController@notify');
+    Route::any('server','Api\Wechat\OfficialAccountController@server');    
+    Route::any('oauth', 'Api\Wechat\OfficialAccountController@oauth');
+    Route::any('oauth-callback', 'Api\Wechat\OfficialAccountController@oauthCallback');
+    Route::any('config','Api\Wechat\OfficialAccountController@getConfig');        
+    Route::any('menu','Api\Wechat\OfficialAccountController@menu');        
+    Route::any('pay', 'Api\Wechat\PayController@pay');
+    Route::any('refund', 'Api\Wechat\PayController@refund');
+    Route::any('pay-notify', 'Api\Wechat\PayController@notify');
 });
+
+
 
 Route::group(['middleware' => ['token']], function () {
     Route::get('wechat', function () {
         return 'wechat';
     });
 });
-
-Route::get('wechat-server', function() {
-
-    $app = EasyWeChat\Factory::officialAccount(config('wechat.official_account.default'));
-
-    $response = $app->server->serve();
-
-    return $response;
-});
-
-
-
 

@@ -7,12 +7,11 @@ use App\Models\Fan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
-class officialAccountToken extends Token
+class OfficialAccountToken extends Token
 {
     public function getToken(array $data) : string
     {
         $openid = $data['openid'];
-        $subscribe = $data['subscribe'];
         $unionid = $data['unionid'] ?? '';
         $fans = Fan::getByOpenID($openid);
         if (!$fans)
@@ -26,7 +25,6 @@ class officialAccountToken extends Token
         $token = $this->saveToCache($cachedValue);
         return $token;
     }
-
 
     private function prepareCachedValue(array $data, int $uid) : array
     {

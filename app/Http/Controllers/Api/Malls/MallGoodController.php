@@ -28,7 +28,7 @@ class MallGoodController extends Controller
 
     public function store()
     {
-        $rGoods = request(['name', 'type', 'content', 'total', 'limit', 'price', 'discount', 'monthly_sales', 'is_up', 'sratr_date', 'end_date','nav_id']);
+        $rGoods = request(['name', 'type', 'content', 'total', 'limit', 'price', 'discount', 'monthly_sales', 'is_up', 'sratr_date', 'end_date','nav_id','stock']);
         $rImgs = request('imgs');
 
         DB::beginTransaction();
@@ -48,7 +48,7 @@ class MallGoodController extends Controller
 
     public function update()
     {
-        $rGoods = request(['name', 'content', 'total', 'limit', 'price', 'discount', 'monthly_sales', 'is_up', 'sratr_date', 'end_date','nav_id']);
+        $rGoods = request(['name', 'content', 'type','total', 'limit', 'price', 'discount', 'monthly_sales', 'is_up', 'sratr_date', 'end_date','nav_id','stock']);
         $rImgs = request('imgs');
         $id = request()->mall_good;
 
