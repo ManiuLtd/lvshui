@@ -127,8 +127,9 @@ class OrderController extends Controller
 
         foreach ($rGoods as $rGood) {
             var_dump($rGood);
-//            $good = $goods->where('id', $rGood['id'])->first();
-//            $price = $good->price;
+            $good = $goods->where('id', $rGood['id'])->first();
+            $price = $good->price;
+            var_dump($price);
 //
 //            if ($good->type == Parameter::member && $member == null) {
 //                $good->error =1; //用户非会员 存在会员商品
