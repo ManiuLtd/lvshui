@@ -69,9 +69,9 @@ class ShareController extends Controller
               $fan=Fan::find($share_id);
               $template=new  TemplateNotice();
               $array=['first'=>'您已完成分享活动！',
-                  'key1'=>$task->name,
-                  'key2'=>$fan->nickname,
-                  'key3'=>'请前往活动页面填写联系方式'];
+                  'keyword1'=>$task->name,
+                  'keyword2'=>$fan->nickname,
+                  'keyword3'=>'请前往活动页面填写联系方式'];
               $template->sendNotice($fan->openid,
               '4ONQnoPrBNAxK09cE4mk1z8Lz0B1CX9SdWSmwrnWLxo',
               'zhlsqj.com/#/share',
