@@ -139,7 +139,11 @@ class OrderController extends Controller
             }
 
             if($rGood['num'] >$good->stock){
-                $good->error = 3; //商品已售馨
+                $good->error = 3; //商品大于库存
+            }
+
+            if($good->stock == 0 ){
+                $good->error = 4; //商品已售罄
             }
 
 
