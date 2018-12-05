@@ -116,7 +116,7 @@ class OrderController extends Controller
     public function cartVerify()
     {
         $rGoods = request('goods');
-        return $rGoods[0]->id;
+        return $rGoods[0]['id'];
         $fan_id = Token::getUid();
 
         $member = Member::find($fan_id); //会员
