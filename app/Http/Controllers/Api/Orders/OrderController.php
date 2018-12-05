@@ -126,47 +126,48 @@ class OrderController extends Controller
         $goods = MallGood::whereIn('id', $rIDs)->with('imgs')->get();
 
         foreach ($rGoods as $rGood) {
-            $good = $goods->where('id', $rGood['id'])->first();
-            $price = $good->price;
-
-            if ($good->type == Parameter::member && $member == null) {
-                $good->error =1; //用户非会员 存在会员商品
-            }else{
-                $good->error =0; //无错误
-            }
-
-            if($good->limit!=0 && $rGood['num']>$good){
-                $good->error =2; //商品数量超出商品上限
-            }
-
-            if($rGood['num'] >$good->stock){
-                $good->error = 3; //商品大于库存
-            }
-
-            if($good->stock == 0 ){
-                $good->error = 4; //商品已售罄
-            }
-
-
-            if($good->type ==Parameter::general){
-                if($member != null){
-                    $memberSet = MemberSetting::first();
-                    $offer_status = $memberSet->offer_status;
-                    $offers = json_decode($memberSet->offer);
-                    if ($offer_status == 2) {
-//                  折扣
-                        $discount = $offers[0]->discount;
-                        $good->endPrice = sprintf("%.2f", $price * $discount);
-                    }
-                }else{
-                    $good->endPrice = $price;
-                }
-            }else{
-                $good->endPrice = $good->discount;
-            }
-            $data[] = $good;
+            var_dump($rGood);
+//            $good = $goods->where('id', $rGood['id'])->first();
+//            $price = $good->price;
+//
+//            if ($good->type == Parameter::member && $member == null) {
+//                $good->error =1; //用户非会员 存在会员商品
+//            }else{
+//                $good->error =0; //无错误
+//            }
+//
+//            if($good->limit!=0 && $rGood['num']>$good){
+//                $good->error =2; //商品数量超出商品上限
+//            }
+//
+//            if($rGood['num'] >$good->stock){
+//                $good->error = 3; //商品大于库存
+//            }
+//
+//            if($good->stock == 0 ){
+//                $good->error = 4; //商品已售罄
+//            }
+//
+//
+//            if($good->type ==Parameter::general){
+//                if($member != null){
+//                    $memberSet = MemberSetting::first();
+//                    $offer_status = $memberSet->offer_status;
+//                    $offers = json_decode($memberSet->offer);
+//                    if ($offer_status == 2) {
+////                  折扣
+//                        $discount = $offers[0]->discount;
+//                        $good->endPrice = sprintf("%.2f", $price * $discount);
+//                    }
+//                }else{
+//                    $good->endPrice = $price;
+//                }
+//            }else{
+//                $good->endPrice = $good->discount;
+//            }
+//            $data[] = $good;
         }
-        return response()->json(['data' => $data]);
+//        return response()->json(['data' => $data]);
 
     }
 
