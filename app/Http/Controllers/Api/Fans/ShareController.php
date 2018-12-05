@@ -70,10 +70,10 @@ class ShareController extends Controller
               $template=new  TemplateNotice();
               $array=['first'=>'您已完成分享活动！',
                   'key1'=>$task->name,
-                  'key2'=>$fan->nickname,
-                  'key3'=>'请前往活动页面填写联系方式'];
+                  'key2'=>'免费',
+                  'remark'=>'请前往活动页面填写联系方式'];
               $template->sendNotice($fan->openid,
-              'jtOZ0m2YaKn3-6AhOlWlFMtED4Cda46rILl-E-Kqf2o',
+              'wZ1NDfm7fkOawzYGrx8IZnA7RPO1JFC-f7FeQwqbePo',
               'zhlsqj.com/#/share',
                   $array);
 //            $time = Coupon::getTime($task->	reward);
