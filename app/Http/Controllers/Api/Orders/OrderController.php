@@ -123,7 +123,7 @@ class OrderController extends Controller
         foreach ($rGoods as $rGood){
             array_push($rIDs, $rGood['id']);
         }
-        $goods = MallGood::whereIn('id', $rIDs)->get();
+        $goods = MallGood::whereIn('id', $rIDs)->with('imgs')->get();
         foreach ($rGoods as $rGood) {
             $good = $goods->where('id', $rGood['id'])->first();
             $price = $good->price;
