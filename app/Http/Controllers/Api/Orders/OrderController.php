@@ -124,6 +124,8 @@ class OrderController extends Controller
             array_push($rIDs, $rGood['id']);
         }
         $goods = MallGood::whereIn('id', $rIDs)->with('imgs')->get();
+
+        return $goods;
         foreach ($rGoods as $rGood) {
             $good = $goods->where('id', $rGood['id'])->first();
             $price = $good->price;
