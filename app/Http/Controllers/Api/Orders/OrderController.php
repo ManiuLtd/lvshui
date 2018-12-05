@@ -120,7 +120,7 @@ class OrderController extends Controller
         $member = Member::find($fan_id); //会员
         $rIDs = []; // id集合
         $data = []; //
-        foreach ($rGoods as $rGood){
+        foreach ($rGoods as $rGood) {
             array_push($rIDs, $rGood['id']);
         }
         $goods = MallGood::whereIn('id', $rIDs)->with('imgs')->get();
@@ -130,48 +130,44 @@ class OrderController extends Controller
             $price = $good->price;
 
             if ($good->type == Parameter::member && $member == null) {
-                $good->error =1; //用户非会员 存在会员商品
-            }else{
-                $good->error =0; //无错误
+                $good->error = 1; //用户非会员 存在会员商品
+            } else {
+                $good->error = 0; //无错误
             }
 
-            if($good->limit!=0 && $rGood['num']>$good){
-                $good->error =2; //商品数量超出商品上限
+            if ($good->limit != 0 && $rGood['num'] > $good->limit) {
+                $good->error = 2; //商品数量超出商品上限
             }
 
-            if($rGood['num'] >$good->stock){
+            if ($rGood['num'] > $good->stock) {
                 $good->error = 3; //商品大于库存
             }
 
-            if($good->stock == 0 ){
+            if ($good->stock == 0) {
                 $good->error = 4; //商品已售罄
             }
-            var_dump($good);
 
-//
-//            if($good->type ==Parameter::general){
-//                if($member != null){
-//                    $memberSet = MemberSetting::first();
-//                    $offer_status = $memberSet->offer_status;
-//                    $offers = json_decode($memberSet->offer);
-//                    if ($offer_status == 2) {
-////                  折扣
-//                        $discount = $offers[0]->discount;
-//                        $good->endPrice = sprintf("%.2f", $price * $discount);
-//                    }
-//                }else{
-//                    $good->endPrice = $price;
-//                }
-//            }else{
-//                $good->endPrice = $good->discount;
-//            }
-//            $data[] = $good;
+            if ($good->type == Parameter::general) {
+                if ($member != null) {
+                    $memberSet = MemberSetting::first();
+                    $offer_status = $memberSet->offer_status;
+                    $offers = json_decode($memberSet->offer);
+                    if ($offer_status == 2) {
+//                  折扣
+                        $discount = $offers[0]->discount;
+                        $good->endPrice = sprintf("%.2f", $price * $discount);
+                    }
+                } else {
+                    $good->endPrice = $price;
+                }
+            } else {
+                $good->endPrice = $good->discount;
+            }
+            $data[] = $good;
         }
-//        return response()->json(['data' => $data]);
+        return response()->json(['data' => $data]);
 
     }
-
-
 
 
     public function orderMall($ps, array $rGoods)
@@ -180,7 +176,7 @@ class OrderController extends Controller
         $fan_id = Token::getUid();
         $body = Parameter::body_CO . '-商城商品';
         $orderSetting = OrderSetting::orderBy('created_at', 'desc')->first(); //订单截止日
-        $genealPrice =0; //商品总价
+        $genealPrice = 0; //商品总价
         $price = 0; //总价
         $discount_type = 0; //普通商品优惠
         $pDiscount = 0;//普通商品
@@ -207,8 +203,8 @@ class OrderController extends Controller
             if ($good->type == Parameter::general) {
                 $gPrice = $good->price;
                 $num = $rGood['num'];
-                $genealPrice = $genealPrice +($gPrice * $num);
-            }else{
+                $genealPrice = $genealPrice + ($gPrice * $num);
+            } else {
                 //除一般商品外价钱总和
                 $gPrice = $good->price;
                 $num = $rGood['num'];
@@ -216,7 +212,7 @@ class OrderController extends Controller
             }
         }
 //            会员处理 会员 满减
-        if ($member && $genealPrice>0) {
+        if ($member && $genealPrice > 0) {
             $memberSet = MemberSetting::first();
             $offer_status = $memberSet->offer_status;
             $offers = json_decode($memberSet->offer);
@@ -244,8 +240,8 @@ class OrderController extends Controller
                 $genealPrice = sprintf("%.2f", $genealPrice * $discount);
             }
         }
-        if($genealPrice>0 ){
-            $price = $price +$genealPrice;
+        if ($genealPrice > 0) {
+            $price = $price + $genealPrice;
         }
 //            订单号
         $date = Carbon::now()->format('Ymdhi');
