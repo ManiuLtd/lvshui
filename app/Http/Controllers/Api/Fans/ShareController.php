@@ -74,7 +74,7 @@ class ShareController extends Controller
                   'key3'=>'请前往活动页面填写联系方式'];
               $template->sendNotice($fan->openid,
               'jtOZ0m2YaKn3-6AhOlWlFMtED4Cda46rILl-E-Kqf2o',
-              'www.baidu.com',
+              'zhlsqj.com/#/share',
                   $array);
 //            $time = Coupon::getTime($task->	reward);
 //            $save_coupon=CouponRecord::create(['fan_id'=>$share_id,'coupon_id'=>$task->	reward,'status'=>'0',
