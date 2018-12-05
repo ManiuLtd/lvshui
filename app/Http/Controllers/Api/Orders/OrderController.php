@@ -124,7 +124,6 @@ class OrderController extends Controller
         foreach ($rGoods as $rGood){
             array_push($rIDs, $rGood['id']);
         }
-        return $rIDs;
         $goods = MallGood::whereIn('id', $rIDs)->with('imgs')->get();
         foreach ($rGoods as $rGood) {
             $good = $goods->where('id', $rGood['id'])->first();
@@ -167,7 +166,8 @@ class OrderController extends Controller
             }
             $data[] = $good;
         }
-        return $data;
+        response()->json($data);
+
     }
 
 
