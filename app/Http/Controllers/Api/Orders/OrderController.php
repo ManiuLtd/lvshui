@@ -156,6 +156,8 @@ class OrderController extends Controller
 //                  折扣
                         $discount = $offers[0]->discount;
                         $good->endPrice = sprintf("%.2f", $price * $discount);
+                    }else{
+                        $good->endPrice = $price;
                     }
                 } else {
                     $good->endPrice = $price;
