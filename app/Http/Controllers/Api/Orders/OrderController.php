@@ -116,7 +116,6 @@ class OrderController extends Controller
     public function cartVerify()
     {
         $rGoods = request('goods');
-        return $rGoods[0]['id'];
         $fan_id = Token::getUid();
 
         $member = Member::find($fan_id); //会员
@@ -125,6 +124,7 @@ class OrderController extends Controller
         foreach ($rGoods as $rGood){
             array_push($rIDs, $rGood['id']);
         }
+        return $rIDs;
         $goods = MallGood::whereIn('id', $rIDs)->with('imgs')->get();
         foreach ($rGoods as $rGood) {
             $good = $goods->where('id', $rGood['id'])->first();
