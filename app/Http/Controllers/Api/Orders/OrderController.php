@@ -117,6 +117,7 @@ class OrderController extends Controller
     {
         $rGoods = request('goods');
         $fan_id = Token::getUid();
+
         $member = Member::find($fan_id); //会员
         $rIDs = []; // id集合
         $data = []; //
