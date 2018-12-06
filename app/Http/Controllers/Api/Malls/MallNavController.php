@@ -24,7 +24,9 @@ class MallNavController extends Controller
     public function show()
     {
         $id = request()->mall_nav;
-        $mallGood = MallNav::where('id',$id)->with('goods')->get();
+        $mallGood = MallNav::where('id',$id)->with(['goods'=>function($query){
+            $query->with('imgs');
+        }])->get();
         return response()->json(['data' => $mallGood]);
     }
 
@@ -96,15 +98,6 @@ class MallNavController extends Controller
             }
         }
         return $array;
-    }
-
-    public function getTopNavs()
-    {
-
-    }
-    public function getSubNavs()
-    {
-
     }
 
 
