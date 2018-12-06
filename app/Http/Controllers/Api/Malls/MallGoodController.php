@@ -28,7 +28,7 @@ class MallGoodController extends Controller
 
     public function store()
     {
-        $rGoods = request(['name', 'type', 'content', 'total', 'limit', 'price', 'discount', 'monthly_sales', 'is_up', 'sratr_date', 'end_date','nav_id','stock']);
+        $rGoods = request(['name', 'type', 'content', 'total', 'limit', 'price', 'discount', 'monthly_sales', 'is_up', 'sratr_date', 'end_date','nav_id','stock','group_num']);
         $rImgs = request('imgs');
 
         DB::beginTransaction();
@@ -48,7 +48,7 @@ class MallGoodController extends Controller
 
     public function update()
     {
-        $rGoods = request(['name', 'content', 'type','total', 'limit', 'price', 'discount', 'monthly_sales', 'is_up', 'sratr_date', 'end_date','nav_id','stock']);
+        $rGoods = request(['name', 'content', 'type','total', 'limit', 'price', 'discount', 'monthly_sales', 'is_up', 'sratr_date', 'end_date','nav_id','stock','group_num']);
         $rImgs = request('imgs');
         $id = request()->mall_good;
 
@@ -107,20 +107,27 @@ class MallGoodController extends Controller
 
     public function getMemberGoods()
     {
-        $mallGoods = MallGood::where('type',Parameter::member)->with('navs')->with('imgs')->orderBy('created_at','desc')->paginate(20);
+        $mallGoods = MallGood::where([['type',Parameter::member],['is_up',1]])->with('navs')->with('imgs')->orderBy('created_at','desc')->paginate(20);
         return response()->json(['data' => $mallGoods]);
     }
 
     public function getDiscountGoods()
     {
-        $mallGoods = MallGood::where('type',Parameter::discount)->with('navs')->with('imgs')->orderBy('created_at','desc')->paginate(20);
+        $mallGoods = MallGood::where(['type',Parameter::discount,['is_up',1]])->with('navs')->with('imgs')->orderBy('created_at','desc')->paginate(20);
         return response()->json(['data' => $mallGoods]);
     }
 
     public function getGeneralGoods()
     {
-        $mallGoods = MallGood::where('type',Parameter::general)->with('navs')->with('imgs')->orderBy('created_at','desc')->paginate(20);
+        $mallGoods = MallGood::where(['type',Parameter::general,['is_up',1]])->with('navs')->with('imgs')->orderBy('created_at','desc')->paginate(20);
         return response()->json(['data' => $mallGoods]);
     }
+
+    public function getGroupGoods()
+    {
+        $mallGoods = MallGood::where(['type',Parameter::group,['is_up',1]])->with('navs')->with('imgs')->orderBy('created_at','desc')->paginate(20);
+        return response()->json(['data' => $mallGoods]);
+    }
+
 
 }
