@@ -99,18 +99,27 @@ Route::group(['middleware' => ['cors', 'token']], function () {
         Route::get('hots', 'Api\Malls\MallGoodController@getMallHots');
         Route::get('swipers', 'Api\Malls\MallSwiperGroupController@getSwipers');
         Route::post('cart','Api\Orders\OrderController@cartVerify');
+//        获取用户订单
         Route::get('orders','Api\Orders\OrderController@getFanOrder');
-        Route::get('settings','Api\Orders\OrderController@getOrderSetting');
-
+//        积分设置
+        Route::apiResource('settings', 'Api\Malls\MallSettingController');
     });
 
     Route::group(['prefix' => 'order'], function () {
+//        保存订单
         Route::apiResource('orders', 'Api\Orders\OrderController');
+//        订单截止日
         Route::apiResource('settings','Api\Orders\OrderSettingController');
+//        获取所有商城订单
         Route::get('malls','Api\Orders\OrderController@getMallOrder');
+//        获取所有活动订单
         Route::get('actives','Api\Orders\OrderController@getAcitveOrder');
+//        获取所有开通会员订单
         Route::get('joins','Api\Orders\OrderController@getJoinOrder');
+//        获取所有退款订单
         Route::get('refunds','Api\Orders\OrderController@getRefundOrder');
+//        获取最新订单截止日
+        Route::get('settings','Api\Orders\OrderController@getOrderSetting');
     });
 });
 
