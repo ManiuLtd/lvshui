@@ -30,7 +30,7 @@ class OrderController extends Controller
         $orders = Order::where('type', Parameter::mall)->orderBy('created_at', 'desc')
             ->with(['goods' => function ($query) {
                 $query->with('imgs');
-            }])->paginate(20);
+            }])->with('setting')->paginate(20);
         return response()->json(['data' => $orders]);
     }
 
@@ -65,7 +65,7 @@ class OrderController extends Controller
         $orders = Order::where('fan_id',$fan_id)->orderBy('created_at', 'desc')
             ->with(['goods' => function ($query) {
                 $query->with('imgs');
-            }])->paginate(20);
+            }])->with('setting')->paginate(20);
         return response()->json(['data' => $orders]);
     }
 

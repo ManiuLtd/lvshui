@@ -44,5 +44,10 @@ class OrderSettingController extends Controller
         }
         return response()->json(['status' => 'success', 'msg' => '修改成功！']);
     }
+    public function getOrderSetting()
+    {
+        $orderSetting = OrderSetting::orderBy('created_at', 'desc')->first();
+        return response()->json(['data' => $orderSetting]);
+    }
 
 }

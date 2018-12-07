@@ -99,7 +99,9 @@ Route::group(['middleware' => ['cors', 'token']], function () {
         Route::get('hots', 'Api\Malls\MallGoodController@getMallHots');
         Route::get('swipers', 'Api\Malls\MallSwiperGroupController@getSwipers');
         Route::post('cart','Api\Orders\OrderController@cartVerify');
-        Route::post('orders','');
+        Route::get('orders','Api\Orders\OrderController@getFanOrder');
+        Route::get('settings','Api\Orders\OrderController@getOrderSetting');
+
     });
 
     Route::group(['prefix' => 'order'], function () {
