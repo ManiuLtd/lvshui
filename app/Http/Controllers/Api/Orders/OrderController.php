@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Orders;
 use App\Models\Activity;
 use App\Models\JoinSetting;
 use App\Models\MallGood;
+use App\models\MallGoodGroup;
 use App\Models\MallSetting;
 use App\Models\Member;
 use App\Models\MemberSetting;
@@ -23,24 +24,13 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class OrderController extends Controller
 {
-//    获取一般商品订单
-    public function getGeneralOrder()
+//    获取商城订单
+    public function getMallOrder()
     {
-        $orders = Order::where('type', Parameter::general)->orderBy('created_at', 'desc')->with('goods')->paginate(20);
-        return response()->json(['data' => $orders]);
-    }
-
-//    获取优惠活动商品订单
-    public function getDiscountOrder()
-    {
-        $orders = Order::where('type', Parameter::discount)->orderBy('created_at', 'desc')->with('goods')->paginate(20);
-        return response()->json(['data' => $orders]);
-    }
-
-//    获取会员专享商品订单
-    public function getMemberOrder()
-    {
-        $orders = Order::where('type', Parameter::member)->orderBy('created_at', 'desc')->with('goods')->paginate(20);
+        $orders = Order::where('type', Parameter::mall)->orderBy('created_at', 'desc')
+            ->with(['goods' => function ($query) {
+                $query->with('imgs');
+            }])->paginate(20);
         return response()->json(['data' => $orders]);
     }
 
@@ -51,7 +41,7 @@ class OrderController extends Controller
         return response()->json(['data' => $orders]);
     }
 
-//   获取活动订单
+//   获取会员订单
     public function getJoinOrder()
     {
         $orders = Order::where('type', Parameter::join)->orderBy('created_at', 'desc')->with('join')->paginate(20);
@@ -68,51 +58,18 @@ class OrderController extends Controller
         return response()->json(['$mall' => $mall, 'join' => $join, 'active' => $active]);
     }
 
-//   订单保存：订单依照类型生成
-//    public function store()
-//    {
-//        $data = request()->all();
-//        $result = 0;
-//        switch ($data['type'])
-//        {
-//            case Parameter::general:
-//                $result = $this->orderGeneral($data['ps'],$data['goods']);
-//                break;
-//            case Parameter::discount:
-//                $result = $this->orderDiscount(Parameter::discount,$data['ps'],$data['good_id'],$data['num']);
-//                break;
-//            case Parameter::member:
-//                $result = $this->orderDiscount(Parameter::discount,$data['ps'],$data['good_id'],$data['num']);
-//                break;
-//            case Parameter::active:
-//                $result = $this->orderActive($data['ps'],$data['active_id']);
-//                break;
-//            case Parameter::join:
-//                $result = $this->orderJoin($data['ps'],$data['join_id']);
-//                break;
-//        }
-//        return $result ;
-//    }
-
-
-    public function store()
+//    获取用户所有订单
+    public function getFanOrder()
     {
-        $data = request()->all();
-        $result = 0;
-        switch ($data['type']) {
-            case Parameter::mall:
-                $result = $this->orderMall($data['ps'], $data['goods']);
-                break;
-            case Parameter::active:
-                $result = $this->orderActive($data['ps'], $data['active_id']);
-                break;
-            case Parameter::join:
-                $result = $this->orderJoin($data['ps'], $data['join_id']);
-                break;
-        }
-        return $result;
+        $fan_id = Token::getUid();
+        $orders = Order::where('fan_id',$fan_id)->orderBy('created_at', 'desc')
+            ->with(['goods' => function ($query) {
+                $query->with('imgs');
+            }])->paginate(20);
+        return response()->json(['data' => $orders]);
     }
 
+//  购物车验证
     public function cartVerify()
     {
         $rGoods = request('goods');
@@ -147,6 +104,10 @@ class OrderController extends Controller
                 $good->error = 4; //商品已售罄
             }
 
+            if ($good->is_up == 0) {
+                $good->error = 5; //商品已下架
+            }
+
             if ($good->type == Parameter::general) {
                 if ($member != null) {
                     $memberSet = MemberSetting::first();
@@ -156,7 +117,7 @@ class OrderController extends Controller
 //                  折扣
                         $discount = $offers[0]->discount;
                         $good->endPrice = sprintf("%.2f", $price * $discount);
-                    }else{
+                    } else {
                         $good->endPrice = $price;
                     }
                 } else {
@@ -171,6 +132,23 @@ class OrderController extends Controller
 
     }
 
+    public function store()
+    {
+        $data = request()->all();
+        $result = 0;
+        switch ($data['type']) {
+            case Parameter::mall:
+                $result = $this->orderMall($data['ps'], $data['goods']);
+                break;
+            case Parameter::active:
+                $result = $this->orderActive($data['active_id']);
+                break;
+            case Parameter::join:
+                $result = $this->orderJoin($data['join_id']);
+                break;
+        }
+        return $result;
+    }
 
     public function orderMall($ps, array $rGoods)
     {
@@ -178,91 +156,176 @@ class OrderController extends Controller
         $fan_id = Token::getUid();
         $body = Parameter::body_CO . '-商城商品';
         $orderSetting = OrderSetting::orderBy('created_at', 'desc')->first(); //订单截止日
-        $genealPrice = 0; //商品总价
+        $genealPrice = 0; //一般类型商品总价
         $price = 0; //总价
-        $discount_type = 0; //普通商品优惠
+        $discount_type = 0; //一般类型商品优惠
         $pDiscount = 0;//普通商品
-        $rgIDs = [];
+        $rgIDs = []; //商品id集合
         $member = Member::find($fan_id); //会员
-        $genealGoods = []; //一般商品
+        $is_error = 0;
 
+        //提取商品id
         foreach ($rGoods as $rGood) {
             array_push($rgIDs, $rGood['id']);
+        }
+        //会员情况
+        if ($member) {
+            $memberSet = MemberSetting::first();
+            $offer_status = $memberSet->offer_status;
+            $offers = json_decode($memberSet->offer);
         }
 
         $goods = MallGood::whereIn('id', $rgIDs)->get();
 
         foreach ($rGoods as $rGood) {
             $good = $goods->where('id', $rGood['id'])->first();
-            if ($good->is_up == 0) {
-                return response()->json(['state' => 'error', 'message' => '存在已下架商品']);
-            }
-
+            $gDiscount = $good->discount;
+            $gPrice = $good->price;
+            $num = $rGood['num'];
+            //验证
             if ($good->type == Parameter::member && $member == null) {
-                return response()->json(['state' => 'error', 'message' => '存在会员专享商品']);
+                $good->error = 1; //用户非会员 存在会员商品
+                $is_error = 1;
+
+            } else {
+                $good->error = 0; //无错误
             }
 
-            if ($good->type == Parameter::general) {
-                $gPrice = $good->price;
-                $num = $rGood['num'];
-                $genealPrice = $genealPrice + ($gPrice * $num);
-            } else {
-                //除一般商品外价钱总和
-                $gPrice = $good->price;
-                $num = $rGood['num'];
-                $price = $price + ($gPrice * $num);
+            if ($good->limit != 0 && $num > $good->limit) {
+                $good->error = 2; //商品数量超出商品上限
+                $is_error = 1;
             }
-        }
-//            会员处理 会员 满减
-        if ($member && $genealPrice > 0) {
-            $memberSet = MemberSetting::first();
-            $offer_status = $memberSet->offer_status;
-            $offers = json_decode($memberSet->offer);
-            if ($offer_status == 1) {
-//                  满减 从小到大
-                $count = count($offers);
-                for ($i = 0; $i < $count; $i++) {
-                    if ($i + 1 < $count) {
-                        if ($genealPrice >= $offers[$i]->condition && $genealPrice < $offers[$i + 1]->condition) {
-                            $discount = $offers[$i]->discount;
-                            break;
-                        }
+
+            if ($num > $good->stock) {
+                $good->error = 3; //商品大于库存
+                $is_error = 1;
+            }
+
+            if ($good->stock == 0) {
+                $good->error = 4; //商品已售罄
+                $is_error = 1;
+            }
+
+            if ($good->is_up == 0) {
+                $good->error = 5; //商品已下架
+                $is_error = 1;
+            }
+
+            if ($good->type == Parameter::group) {
+                $groups = MallGoodGroup::where([
+                    ['fan_id', $fan_id], ['good_id', $good->id], ['is_effect', 1]
+                ])->get();
+                if (count($groups) > o) {
+                    $good->error = 6; //已参与该团购
+                    $is_error = 1;
+                }
+            }
+            if ($good->type != Parameter::general) {
+                $price = $price + ($gDiscount * $num);
+            } else {
+                if ($member) {
+                    //折扣
+                    if ($offer_status == 2) {
+                        $discount = $offers[0]->discount;
+                        $discount_type = 2;
+                        $pDiscount = $pDiscount + $gPrice - sprintf("%.2f", $gPrice * $discount);
+                        $price = $price + sprintf("%.2f", $gPrice * $discount);
                     } else {
-                        $discount = $offers[$i]->discount;
+                        $genealPrice = $genealPrice + $gPrice;
                     }
                 }
-                $genealPrice = $genealPrice - $discount;
-                $discount_type = 1;
-                $pDiscount = $discount;
-            } else if ($offer_status == 2) {
-//                  折扣
-                $discount = $offers[0]->discount;
-                $discount_type = 2;
-                $pDiscount = $genealPrice - sprintf("%.2f", $genealPrice * $discount);
-                $genealPrice = sprintf("%.2f", $genealPrice * $discount);
             }
-        }
-        if ($genealPrice > 0) {
-            $price = $price + $genealPrice;
-        }
-//            订单号
-        $date = Carbon::now()->format('Ymdhi');
-        $oNum = sprintf("%04d", Order::where('order_no', 'like', $date . '%')->count() + 1);
-        $order_no = $date . $oNum;
 
-        DB::beginTransaction();
-        try {
-            $order = Order::create(['type' => $type, 'fan_id' => $fan_id, 'price' => $price, 'ps' => $ps, 'order_no' => $order_no, 'body' => $body, 'end_id' => $orderSetting->id, 'discount_type' => $discount_type, 'discount' => $pDiscount]);
-            foreach ($rGoods as $rGood) {
-                $good = $goods->where('id', $rGood['id'])->first();
-                OrderGood::create(['type' => $type, 'order_id' => $order->id, 'good_id' => $rGood['id'], 'num' => $rGood['num'], 'price' => $good->price, 'discount' => $good->discount]);
+            if ($is_error == 1) {
+                return response()->json(['status' => 'error', 'data' => $goods]);
             }
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['status' => 'error', 'msg' => '新增失败' . $e]);
+
+            if ($member) {
+                // 满减 从小到大
+                if ($offer_status == 1) {
+                    $discount = 0;
+                    $count = count($offers);
+                    for ($i = 0; $i < $count; $i++) {
+                        if ($i + 1 < $count) {
+                            if ($genealPrice >= $offers[$i]->condition && $genealPrice < $offers[$i + 1]->condition) {
+                                $discount = $offers[$i]->discount;
+                                break;
+                            }
+                        } else {
+                            $discount = $offers[$i]->discount;
+                        }
+                    }
+                    $genealPrice = $genealPrice - $discount;
+                    $discount_type = 1;
+                    $pDiscount = $discount;
+                }
+            }
+            $price = $price + $genealPrice;
+//            订单号
+            $date = Carbon::now()->format('Ymdhi');
+            $oNum = sprintf("%04d", Order::where('order_no', 'like', $date . '%')->count() + 1);
+            $order_no = $date . $oNum;
+
+            DB::beginTransaction();
+            try {
+                $order = Order::create(['type' => $type, 'fan_id' => $fan_id, 'price' => $price, 'ps' => $ps, 'order_no' => $order_no, 'body' => $body, 'end_id' => $orderSetting->id, 'discount_type' => $discount_type, 'discount' => $pDiscount]);
+                foreach ($rGoods as $rGood) {
+                    $good = $goods->where('id', $rGood['id'])->first();
+                    OrderGood::create(['type' => $type, 'order_id' => $order->id, 'good_id' => $rGood['id'], 'num' => $rGood['num'], 'price' => $good->price, 'discount' => $good->discount]);
+                    MallGood::where('id', $rGood['id'])->update(['stock' => $goods->stock - $rGood['num']]);
+                }
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return response()->json(['status' => 'error', 'msg' => '新增失败' . $e]);
+            }
+            return response()->json(['status' => 'success', 'msg' => '新增成功！']);
+
+//            if ($good->type == Parameter::general) {
+//                $gPrice = $good->price;
+//                $num = $rGood['num'];
+//                $genealPrice = $genealPrice + ($gPrice * $num);
+//            } else {
+//                //除一般商品外价钱总和
+//                $gPrice = $good->price;
+//                $num = $rGood['num'];
+//                $price = $price + ($gPrice * $num);
+//            }
         }
-        return response()->json(['status' => 'success', 'msg' => '新增成功！']);
+
+//            会员处理 会员 满减
+//        if ($member && $genealPrice > 0) {
+//            $memberSet = MemberSetting::first();
+//            $offer_status = $memberSet->offer_status;
+//            $offers = json_decode($memberSet->offer);
+//            if ($offer_status == 1) {
+////                  满减 从小到大
+//                $count = count($offers);
+//                for ($i = 0; $i < $count; $i++) {
+//                    if ($i + 1 < $count) {
+//                        if ($genealPrice >= $offers[$i]->condition && $genealPrice < $offers[$i + 1]->condition) {
+//                            $discount = $offers[$i]->discount;
+//                            break;
+//                        }
+//                    } else {
+//                        $discount = $offers[$i]->discount;
+//                    }
+//                }
+//                $genealPrice = $genealPrice - $discount;
+//                $discount_type = 1;
+//                $pDiscount = $discount;
+//            } else if ($offer_status == 2) {
+////                  折扣
+//                $discount = $offers[0]->discount;
+//                $discount_type = 2;
+//                $pDiscount = $genealPrice - sprintf("%.2f", $genealPrice * $discount);
+//                $genealPrice = sprintf("%.2f", $genealPrice * $discount);
+//            }
+//        }
+
+//        if ($genealPrice > 0) {
+//            $price = $price + $genealPrice;
+//        }
     }
 
 
@@ -377,7 +440,7 @@ class OrderController extends Controller
         return response()->json(['status' => 'success', 'msg' => '新增成功！']);
     }
 
-    public function orderActive($ps, $active_id)
+    public function orderActive($active_id)
     {
         $type = Parameter::active;
         $fan_id = Token::getUid();
@@ -395,7 +458,7 @@ class OrderController extends Controller
 
         DB::beginTransaction();
         try {
-            $order = Order::create(['type' => $type, 'fan_id' => $fan_id, 'price' => $price, 'ps' => $ps, 'order_no' => $order_no, 'body' => $body]);
+            $order = Order::create(['type' => $type, 'fan_id' => $fan_id, 'price' => $price, 'order_no' => $order_no, 'body' => $body]);
 
             OrderGood::create(['type' => $type, 'order_id' => $order->id, 'good_id' => $active_id, 'num' => 1, 'price' => $price]);
 
@@ -407,7 +470,7 @@ class OrderController extends Controller
         return response()->json(['status' => 'success', 'msg' => '新增成功！']);
     }
 
-    public function orderJoin($ps, $join_id)
+    public function orderJoin($join_id)
     {
         $type = Parameter::join;
         $fan_id = Token::getUid();
@@ -421,7 +484,7 @@ class OrderController extends Controller
 
         DB::beginTransaction();
         try {
-            $order = Order::create(['type' => $type, 'fan_id' => $fan_id, 'price' => $price, 'ps' => $ps, 'order_no' => $order_no, 'body' => $body]);
+            $order = Order::create(['type' => $type, 'fan_id' => $fan_id, 'price' => $price, 'order_no' => $order_no, 'body' => $body]);
 
             OrderGood::create(['type' => $type, 'order_id' => $order->id, 'good_id' => $join_id, 'num' => 1, 'price' => $price]);
 
