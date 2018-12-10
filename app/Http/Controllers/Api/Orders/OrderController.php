@@ -82,7 +82,7 @@ class OrderController extends Controller
             ->with('orderGoods')
             ->with('setting')->get();
         if($order[0]->pay_state==1 && $order[0]->use_state==0){
-            $order[0]->code = QrCode::size(200)->generate($order[0]->use_no);
+            $order[0]->code = QrCode::format('png')->size(200)->generate($order[0]->use_no);
         }else{
             $order[0]->code='';
         }
