@@ -266,22 +266,26 @@ class OrderController extends Controller
             $oNum = sprintf("%04d", Order::where('order_no', 'like', $date . '%')->count() + 1);
             $order_no = $date . $oNum;
 
-            return $goods;
-
-            DB::beginTransaction();
-            try {
-                $order = Order::create(['type' => $type, 'fan_id' => $fan_id, 'price' => $price, 'ps' => $ps, 'order_no' => $order_no, 'body' => $body, 'end_id' => $orderSetting->id, 'discount_type' => $discount_type, 'discount' => $pDiscount]);
-                foreach ($rGoods as $rGood) {
-                    $good = $goods->where('id', $rGood['id'])->first();
-                    OrderGood::create(['type' => $type, 'order_id' => $order->id, 'good_id' => $rGood['id'], 'num' => $rGood['num'], 'price' => $good->price, 'discount' => $good->discount]);
-                    MallGood::where('id', $rGood['id'])->update(['stock' => $goods->stock - $rGood['num']]);
-                }
-                DB::commit();
-            } catch (\Exception $e) {
-                DB::rollBack();
-                return response()->json(['status' => 'error', 'msg' => '新增失败' . $e]);
+            $order = Order::create(['type' => $type, 'fan_id' => $fan_id, 'price' => $price, 'ps' => $ps, 'order_no' => $order_no, 'body' => $body, 'end_id' => $orderSetting->id, 'discount_type' => $discount_type, 'discount' => $pDiscount]);
+            foreach ($rGoods as $rGood) {
+                $good = $goods->where('id', $rGood['id'])->first();
+                OrderGood::create(['type' => $type, 'order_id' => $order->id, 'good_id' => $rGood['id'], 'num' => $rGood['num'], 'price' => $good->price, 'discount' => $good->discount]);
+                MallGood::where('id', $rGood['id'])->update(['stock' => $goods->stock - $rGood['num']]);
             }
-            return response()->json(['status' => 'success', 'msg' => '新增成功！']);
+//            DB::beginTransaction();
+//            try {
+//                $order = Order::create(['type' => $type, 'fan_id' => $fan_id, 'price' => $price, 'ps' => $ps, 'order_no' => $order_no, 'body' => $body, 'end_id' => $orderSetting->id, 'discount_type' => $discount_type, 'discount' => $pDiscount]);
+//                foreach ($rGoods as $rGood) {
+//                    $good = $goods->where('id', $rGood['id'])->first();
+//                    OrderGood::create(['type' => $type, 'order_id' => $order->id, 'good_id' => $rGood['id'], 'num' => $rGood['num'], 'price' => $good->price, 'discount' => $good->discount]);
+//                    MallGood::where('id', $rGood['id'])->update(['stock' => $goods->stock - $rGood['num']]);
+//                }
+//                DB::commit();
+//            } catch (\Exception $e) {
+//                DB::rollBack();
+//                return response()->json(['status' => 'error', 'msg' => '新增失败' . $e]);
+//            }
+//            return response()->json(['status' => 'success', 'msg' => '新增成功！']);
 
 //            if ($good->type == Parameter::general) {
 //                $gPrice = $good->price;
