@@ -237,7 +237,7 @@ class OrderController extends Controller
             }
         }
         if ($is_error == 1) {
-            return response()->json(['status' => 'error', 'data' => $goods]);
+            return response()->json(['status' => '0', 'data' => $goods]);
         }
 
         if ($member) {
@@ -279,7 +279,7 @@ class OrderController extends Controller
             DB::rollBack();
             return response()->json(['status' => 'error', 'msg' => '新增失败' . $e]);
         }
-        return response()->json(['status' => 'success', 'msg' => '新增成功！']);
+        return response()->json(['status' => '1', 'msg' => '新增成功！']);
 
 //            if ($good->type == Parameter::general) {
 //                $gPrice = $good->price;
