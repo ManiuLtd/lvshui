@@ -67,7 +67,7 @@ class OrderController extends Controller
                 $query->with('imgs');
             }])
             ->with('orderGoods')
-            ->with('setting')->paginate(20);
+            ->with('setting')->get();
         return response()->json(['data' => $orders]);
     }
 
