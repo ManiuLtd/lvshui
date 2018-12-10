@@ -65,8 +65,24 @@ class OrderController extends Controller
         $orders = Order::where('fan_id', $fan_id)->orderBy('created_at', 'desc')
             ->with(['goods' => function ($query) {
                 $query->with('imgs');
-            }])->with('setting')->paginate(20);
+            }])
+            ->with('orderGoods')
+            ->with('setting')->paginate(20);
         return response()->json(['data' => $orders]);
+    }
+
+//      获取单笔订单
+    public function show()
+    {
+        $id = request()->order;
+        $order = Order::where('id', $id)
+            ->with(['goods' => function ($query) {
+                $query->with('imgs');
+            }])
+            ->with('orderGoods')
+            ->with('setting')->paginate(20);
+        return response()->json(['data' => $orders]);
+
     }
 
 //  购物车验证
@@ -237,7 +253,7 @@ class OrderController extends Controller
             }
         }
         if ($is_error == 1) {
-            return response()->json(['status' => '0', 'data' => $goods]);
+            return response()->json(['status' => 0, 'data' => $goods]);
         }
 
         if ($member) {
@@ -275,11 +291,12 @@ class OrderController extends Controller
                 MallGood::where('id', $rGood['id'])->update(['stock' => $good->stock - $rGood['num']]);
             }
             DB::commit();
+            return response()->json(['status' => 1, 'msg' => '新增成功！','id'=>$order->id]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['status' => 'error', 'msg' => '新增失败' . $e]);
         }
-        return response()->json(['status' => '1', 'msg' => '新增成功！']);
+
 
 //            if ($good->type == Parameter::general) {
 //                $gPrice = $good->price;
