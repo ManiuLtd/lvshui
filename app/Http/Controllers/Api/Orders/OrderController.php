@@ -272,7 +272,7 @@ class OrderController extends Controller
             foreach ($rGoods as $rGood) {
                 $good = $goods->where('id', $rGood['id'])->first();
                 OrderGood::create(['type' => $type, 'order_id' => $order->id, 'good_id' => $rGood['id'], 'num' => $rGood['num'], 'price' => $good->price, 'discount' => $good->discount]);
-                MallGood::where('id', $rGood['id'])->update(['stock' => $goods->stock - $rGood['num']]);
+                MallGood::where('id', $rGood['id'])->update(['stock' => $good->stock - $rGood['num']]);
             }
             DB::commit();
         } catch (\Exception $e) {
