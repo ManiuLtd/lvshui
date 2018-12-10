@@ -99,6 +99,7 @@ Route::group(['middleware' => ['cors', 'token']], function () {
         Route::get('hots', 'Api\Malls\MallGoodController@getMallHots');
         Route::get('swipers', 'Api\Malls\MallSwiperGroupController@getSwipers');
         Route::post('cart','Api\Orders\OrderController@cartVerify');
+        Route::get('nav/{nav_id}', 'Api\Malls\MallSettingController');
 //        获取用户订单
         Route::get('orders','Api\Orders\OrderController@getFanOrder');
 //        积分设置
