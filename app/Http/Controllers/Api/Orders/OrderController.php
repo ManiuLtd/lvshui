@@ -81,7 +81,7 @@ class OrderController extends Controller
             }])
             ->with('orderGoods')
             ->with('setting')->paginate(20);
-        return response()->json(['data' => $orders]);
+        return response()->json(['data' => $order]);
 
     }
 
