@@ -177,6 +177,7 @@ class OrderController extends Controller
 
         $goods = MallGood::whereIn('id', $rgIDs)->get();
 
+        return $goods;
         foreach ($rGoods as $rGood) {
             $good = $goods->where('id', $rGood['id'])->first();
             $gDiscount = $good->discount;
