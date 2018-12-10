@@ -108,4 +108,14 @@ class MallNavController extends Controller
         return response()->json(['good' => $good,'swiper'=>$swiper]);
     }
 
+    public function getNavWithGood()
+    {
+        $id = request()->nav_id;
+        $mallGood = MallNav::where('id',$id)->with(['goods'=>function($query){
+            $query->with('imgs')->where('is_up',1);
+        }])->get();
+        return response()->json(['data' => $mallGood]);
+
+    }
+
 }
