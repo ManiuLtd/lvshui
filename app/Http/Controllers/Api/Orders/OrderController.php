@@ -62,7 +62,7 @@ class OrderController extends Controller
     public function getFanOrder()
     {
         $fan_id = Token::getUid();
-        $orders = Order::where('fan_id',$fan_id)->orderBy('created_at', 'desc')
+        $orders = Order::where('fan_id', $fan_id)->orderBy('created_at', 'desc')
             ->with(['goods' => function ($query) {
                 $query->with('imgs');
             }])->with('setting')->paginate(20);
@@ -222,7 +222,6 @@ class OrderController extends Controller
             }
             if ($good->type != Parameter::general) {
                 $price = $price + ($gDiscount * $num);
-                return $price;
             } else {
                 if ($member) {
                     //折扣
@@ -236,51 +235,51 @@ class OrderController extends Controller
                     }
                 }
             }
+        }
+        if ($is_error == 1) {
+            return response()->json(['status' => 'error', 'data' => $goods]);
+        }
 
-            if ($is_error == 1) {
-                return response()->json(['status' => 'error', 'data' => $goods]);
-            }
-
-            if ($member) {
-                // 满减 从小到大
-                if ($offer_status == 1) {
-                    $discount = 0;
-                    $count = count($offers);
-                    for ($i = 0; $i < $count; $i++) {
-                        if ($i + 1 < $count) {
-                            if ($genealPrice >= $offers[$i]->condition && $genealPrice < $offers[$i + 1]->condition) {
-                                $discount = $offers[$i]->discount;
-                                break;
-                            }
-                        } else {
+        if ($member) {
+            // 满减 从小到大
+            if ($offer_status == 1) {
+                $discount = 0;
+                $count = count($offers);
+                for ($i = 0; $i < $count; $i++) {
+                    if ($i + 1 < $count) {
+                        if ($genealPrice >= $offers[$i]->condition && $genealPrice < $offers[$i + 1]->condition) {
                             $discount = $offers[$i]->discount;
+                            break;
                         }
+                    } else {
+                        $discount = $offers[$i]->discount;
                     }
-                    $genealPrice = $genealPrice - $discount;
-                    $discount_type = 1;
-                    $pDiscount = $discount;
                 }
+                $genealPrice = $genealPrice - $discount;
+                $discount_type = 1;
+                $pDiscount = $discount;
             }
-            $price = $price + $genealPrice;
+        }
+        $price = $price + $genealPrice;
 //            订单号
-            $date = Carbon::now()->format('Ymdhi');
-            $oNum = sprintf("%04d", Order::where('order_no', 'like', $date . '%')->count() + 1);
-            $order_no = $date . $oNum;
+        $date = Carbon::now()->format('Ymdhi');
+        $oNum = sprintf("%04d", Order::where('order_no', 'like', $date . '%')->count() + 1);
+        $order_no = $date . $oNum;
 
-            DB::beginTransaction();
-            try {
-                $order = Order::create(['type' => $type, 'fan_id' => $fan_id, 'price' => $price, 'ps' => $ps, 'order_no' => $order_no, 'body' => $body, 'end_id' => $orderSetting->id, 'discount_type' => $discount_type, 'discount' => $pDiscount]);
-                foreach ($rGoods as $rGood) {
-                    $good = $goods->where('id', $rGood['id'])->first();
-                    OrderGood::create(['type' => $type, 'order_id' => $order->id, 'good_id' => $rGood['id'], 'num' => $rGood['num'], 'price' => $good->price, 'discount' => $good->discount]);
-                    MallGood::where('id', $rGood['id'])->update(['stock' => $goods->stock - $rGood['num']]);
-                }
-                DB::commit();
-            } catch (\Exception $e) {
-                DB::rollBack();
-                return response()->json(['status' => 'error', 'msg' => '新增失败' . $e]);
+        DB::beginTransaction();
+        try {
+            $order = Order::create(['type' => $type, 'fan_id' => $fan_id, 'price' => $price, 'ps' => $ps, 'order_no' => $order_no, 'body' => $body, 'end_id' => $orderSetting->id, 'discount_type' => $discount_type, 'discount' => $pDiscount]);
+            foreach ($rGoods as $rGood) {
+                $good = $goods->where('id', $rGood['id'])->first();
+                OrderGood::create(['type' => $type, 'order_id' => $order->id, 'good_id' => $rGood['id'], 'num' => $rGood['num'], 'price' => $good->price, 'discount' => $good->discount]);
+                MallGood::where('id', $rGood['id'])->update(['stock' => $goods->stock - $rGood['num']]);
             }
-            return response()->json(['status' => 'success', 'msg' => '新增成功！']);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => 'error', 'msg' => '新增失败' . $e]);
+        }
+        return response()->json(['status' => 'success', 'msg' => '新增成功！']);
 
 //            if ($good->type == Parameter::general) {
 //                $gPrice = $good->price;
@@ -292,7 +291,6 @@ class OrderController extends Controller
 //                $num = $rGood['num'];
 //                $price = $price + ($gPrice * $num);
 //            }
-        }
 
 //            会员处理 会员 满减
 //        if ($member && $genealPrice > 0) {
