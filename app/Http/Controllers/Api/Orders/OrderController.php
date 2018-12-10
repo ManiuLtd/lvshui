@@ -177,7 +177,6 @@ class OrderController extends Controller
 
         $goods = MallGood::whereIn('id', $rgIDs)->get();
 
-        return $goods;
         foreach ($rGoods as $rGood) {
             $good = $goods->where('id', $rGood['id'])->first();
             $gDiscount = $good->discount;
@@ -266,6 +265,8 @@ class OrderController extends Controller
             $date = Carbon::now()->format('Ymdhi');
             $oNum = sprintf("%04d", Order::where('order_no', 'like', $date . '%')->count() + 1);
             $order_no = $date . $oNum;
+
+            return $goods;
 
             DB::beginTransaction();
             try {
