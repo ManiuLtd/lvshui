@@ -81,6 +81,7 @@ class OrderController extends Controller
             }])
             ->with('orderGoods')
             ->with('setting')->get();
+        return $order;
         if($order['pay_state']==1 && $order['use_state']==0){
             $order['code'] = QrCode::size(200)->generate($order['use_no']);
         }
