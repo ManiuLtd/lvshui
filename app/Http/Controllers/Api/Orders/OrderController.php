@@ -81,9 +81,10 @@ class OrderController extends Controller
             }])
             ->with('orderGoods')
             ->with('setting')->get();
-        return $order;
-        if($order['pay_state']==1 && $order['use_state']==0){
-            $order['code'] = QrCode::size(200)->generate($order['use_no']);
+        if($order[0]->pay_state==1 && $order[0]->use_state==0){
+            $order[0]->code = QrCode::size(200)->generate($order[0]->use_no);
+        }else{
+            $order[0]->code='';
         }
         return response()->json(['data' => $order]);
 
