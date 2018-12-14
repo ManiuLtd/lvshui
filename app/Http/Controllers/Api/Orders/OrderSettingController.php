@@ -11,32 +11,22 @@ class OrderSettingController extends Controller
     //
     public function index()
     {
-        $orderSetting = OrderSetting::orderBy('created_at', 'desc')->paginate(20);
+        $orderSetting = OrderSetting::all();
         return response()->json(['data' => $orderSetting]);
-    }
-
-    public function store()
-    {
-        $end_date = request('end_date');
-        DB::beginTransaction();
-        try {
-
-            OrderSetting::create(['end_date' => $end_date]);
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['status' => 'error', 'msg' => '新增失败' . $e]);
-        }
-        return response()->json(['status' => 'success', 'msg' => '新增成功！']);
     }
 
     public function update()
     {
-        $id = request()->order;
-        $end_date = request('end_date');
+        $list = request(['type', 'date']);
         DB::beginTransaction();
         try {
-            OrderSetting::where('id',$id)->update(['end_date' => $end_date]);
+            if ($list['type'] == 'day') {
+                OrderSetting::where('type', 'day')->updat(['switch' => 1, 'day' => 'date']);
+                OrderSetting::where('type', 'date')->updat(['switch' => 0]);
+            }else if ($list['type'] == 'date') {
+                OrderSetting::where('type', 'day')->updat(['switch' => 0]);
+                OrderSetting::where('type', 'date')->updat(['switch' => 1, 'date' => 'date']);
+            }
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
@@ -44,9 +34,10 @@ class OrderSettingController extends Controller
         }
         return response()->json(['status' => 'success', 'msg' => '修改成功！']);
     }
+
     public function getOrderSetting()
     {
-        $orderSetting = OrderSetting::orderBy('created_at', 'desc')->first();
+        $orderSetting = OrderSetting::where('switch',1)->first();
         return response()->json(['data' => $orderSetting]);
     }
 
