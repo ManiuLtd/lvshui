@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Malls;
 use App\Models\MallSetting;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 
 class MallSettingController extends Controller
 {
