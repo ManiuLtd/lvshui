@@ -124,7 +124,7 @@ Route::group(['middleware' => ['cors', 'token']], function () {
 //        获取所有退款订单
         Route::get('refunds', 'Api\Orders\OrderController@getRefundOrder');
 //        获取最新订单截止日
-        Route::get('settings/new', 'Api\Orders\OrderController@getOrderSetting');
+        Route::get('settings/new', 'Api\Orders\OrderSettingController@getOrderSetting');
 //        订单截止日
         Route::apiResource('settings', 'Api\Orders\OrderSettingController');
 //        使用
