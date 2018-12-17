@@ -101,15 +101,16 @@ class MallGoodController extends Controller
 
     public function change()
     {
-        $list = request(['is_up', 'up_id']);
+        $is_up = request('is_up');
         $good_id = request()->good;
+        $good = MallGood::where('id',$good_id)->first();
         DB::beginTransaction();
         try {
-            MallGoodUp::where('id', $list['id'])->update(['is_up' => 0]);
-            if($list['is_up'] == 0 ){
+            MallGoodUp::where('id', $good->up_id)->update(['is_up' => 0]);
+            if($is_up == 0 ){
                 MallGood::where('id',$good_id)->update(['is_up'=>0]);
             }
-            if ($list['is_up'] == 1) {
+            if ($is_up == 1) {
                 $up = MallGoodUp::create(['is_up' => 1]);
                 MallGood::where('id',$good_id)->update(['up_id'=>$up->id,'is_up'=>1]);
             }
