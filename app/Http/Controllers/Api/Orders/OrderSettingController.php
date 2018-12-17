@@ -16,7 +16,7 @@ class OrderSettingController extends Controller
         return response()->json(['data' => $orderSetting]);
     }
 
-    public function update()
+    public function store()
     {
         $list = request(['type', 'date']);
         DB::beginTransaction();
