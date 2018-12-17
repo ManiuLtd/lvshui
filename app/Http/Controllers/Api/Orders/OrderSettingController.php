@@ -22,11 +22,11 @@ class OrderSettingController extends Controller
         DB::beginTransaction();
         try {
             if ($list['type'] == 'day') {
-                OrderSetting::where('type', 'day')->updat(['switch' => 1, 'day' => 'date']);
-                OrderSetting::where('type', 'date')->updat(['switch' => 0]);
+                OrderSetting::where('type', 'day')->update(['switch' => 1, 'day' => 'date']);
+                OrderSetting::where('type', 'date')->update(['switch' => 0]);
             }else if ($list['type'] == 'date') {
-                OrderSetting::where('type', 'day')->updat(['switch' => 0]);
-                OrderSetting::where('type', 'date')->updat(['switch' => 1, 'date' => 'date']);
+                OrderSetting::where('type', 'day')->update(['switch' => 0]);
+                OrderSetting::where('type', 'date')->update(['switch' => 1, 'date' => 'date']);
             }
             DB::commit();
         } catch (\Exception $e) {
