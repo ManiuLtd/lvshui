@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Orders;
 use App\Models\OrderSetting;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 
 class OrderSettingController extends Controller
 {
