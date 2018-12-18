@@ -40,14 +40,26 @@ class OrderController extends Controller
                 ->paginate(20);
             return response()->json(['data' => $orders]);
         }else if($pay_state ==1){
-            $orders = Order::where([['type', Parameter::mall],['pay_state',1],['use_state',$use_state]])
-                ->orderBy('created_at', 'desc')
-                ->with(['goods' => function ($query) {
-                    $query->with('imgs');
-                }])
-                ->with('setting')
-                ->paginate(20);
-            return response()->json(['data' => $orders]);
+            if($use_state){
+                $orders = Order::where([['type', Parameter::mall],['pay_state',1],['use_state',$use_state]])
+                    ->orderBy('created_at', 'desc')
+                    ->with(['goods' => function ($query) {
+                        $query->with('imgs');
+                    }])
+                    ->with('setting')
+                    ->paginate(20);
+                return response()->json(['data' => $orders]);
+            }else{
+                $orders = Order::where([['type', Parameter::mall],['pay_state',1]])
+                    ->orderBy('created_at', 'desc')
+                    ->with(['goods' => function ($query) {
+                        $query->with('imgs');
+                    }])
+                    ->with('setting')
+                    ->paginate(20);
+                return response()->json(['data' => $orders]);
+            }
+
         }
     }
 
