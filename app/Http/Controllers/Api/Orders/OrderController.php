@@ -28,14 +28,27 @@ class OrderController extends Controller
 //    获取商城订单
     public function getMallOrder()
     {
-        $orders = Order::where('type', Parameter::mall)
-            ->orderBy('created_at', 'desc')
-            ->with(['goods' => function ($query) {
-                $query->with('imgs');
-            }])
-            ->with('setting')
-            ->paginate(20);
-        return response()->json(['data' => $orders]);
+        $pay_state = request('pay_state');
+        $use_state = request('use_state');
+        if($pay_state == 0 ){
+            $orders = Order::where([['type', Parameter::mall],['pay_state',0]])
+                ->orderBy('created_at', 'desc')
+                ->with(['goods' => function ($query) {
+                    $query->with('imgs');
+                }])
+                ->with('setting')
+                ->paginate(20);
+            return response()->json(['data' => $orders]);
+        }else if($pay_state ==1){
+            $orders = Order::where([['type', Parameter::mall],['pay_state',1],['use_state',$use_state]])
+                ->orderBy('created_at', 'desc')
+                ->with(['goods' => function ($query) {
+                    $query->with('imgs');
+                }])
+                ->with('setting')
+                ->paginate(20);
+            return response()->json(['data' => $orders]);
+        }
     }
 
 //   获取活动订单
@@ -306,7 +319,7 @@ class OrderController extends Controller
                 $good = $goods->where('id', $rGood['id'])->first();
                 OrderGood::create([
                     'type' => $good->type, 'order_id' => $order->id, 'good_id' => $rGood['id'], 'num' => $rGood['num'],
-                    'price' => $good->price, 'discount' => $good->discount, 'fan_id' => $fan_id,'up_id'=>$good->up_id
+                    'price' => $good->price, 'discount' => $good->discount, 'fan_id' => $fan_id, 'up_id' => $good->up_id
                 ]);
                 MallGood::where('id', $rGood['id'])->update(['stock' => $good->stock - $rGood['num']]);
             }
