@@ -17,8 +17,12 @@ class MallNav extends Model
     public function allChildrenNavs(){
         return $this->childNav()->with('allChildrenNavs');
     }
+//    public function goods()
+//    {
+//        return $this->hasManyThrough(MallGood::class,MallGoodMallNav::class,'nav_id','id','id','good_id');
+//    }
     public function goods()
     {
-        return $this->hasManyThrough(MallGood::class,MallGoodMallNav::class,'nav_id','id','id','good_id');
+        return $this->hasMany(MallGood::class,'nav_id','id');
     }
 }

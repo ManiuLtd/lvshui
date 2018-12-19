@@ -25,4 +25,13 @@ class Order extends Model
         return $this->hasManyThrough(JoinSetting::class,OrderGood::class,'order_id','id','id','good_id');
     }
 
+    public function setting()
+    {
+        return $this->hasOne(OrderSetting::class,'id','end_id');
+    }
+    public function orderGoods()
+    {
+        return $this->hasMany(OrderGood::class,'order_id','id');
+    }
+
 }

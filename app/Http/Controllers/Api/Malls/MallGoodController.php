@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Malls;
 
 use App\Models\MallGood;
 use App\Models\MallGoodMallNav;
+use App\Models\MallGoodUp;
 use App\Models\MallImage;
 use App\Models\MallNav;
 use App\Utils\Parameter;
@@ -13,24 +14,23 @@ use Illuminate\Support\Facades\DB;
 
 class MallGoodController extends Controller
 {
-    //
+
     public function index()
     {
-        $mallGoods = MallGood::with('navs')->with('imgs')->paginate(20);
+        $mallGoods = MallGood::with('navs')->with('imgs')->with('up')->paginate(20);
         return response()->json(['data' => $mallGoods]);
     }
 
     public function show()
     {
-        $mallGood = MallGood::where('id', request()->mall_good)->with('navs')->with('imgs')->get();
+        $mallGood = MallGood::where('id', request()->mall_good)->with('navs')->with('imgs')->with('up')->get();
         return response()->json(['data' => $mallGood]);
     }
 
     public function store()
     {
-        $rGoods = request(['name', 'type', 'content', 'total', 'limit', 'price', 'discount', 'monthly_sales', 'is_up', 'sratr_date', 'end_date','nav_id','stock']);
+        $rGoods = request(['name', 'type', 'content', 'total', 'limit', 'price', 'discount', 'monthly_sales', 'sratr_date', 'end_date', 'nav_id', 'stock', 'group_num']);
         $rImgs = request('imgs');
-
         DB::beginTransaction();
         try {
             $mallGood = MallGood::create($rGoods);
@@ -48,10 +48,9 @@ class MallGoodController extends Controller
 
     public function update()
     {
-        $rGoods = request(['name', 'content', 'type','total', 'limit', 'price', 'discount', 'monthly_sales', 'is_up', 'sratr_date', 'end_date','nav_id','stock']);
+        $rGoods = request(['name', 'content', 'type', 'total', 'limit', 'price', 'discount', 'monthly_sales', 'is_up', 'sratr_date', 'end_date', 'nav_id', 'stock', 'group_num']);
         $rImgs = request('imgs');
         $id = request()->mall_good;
-
         DB::beginTransaction();
         try {
             MallGood::where('id', $id)->update($rGoods);
@@ -69,58 +68,57 @@ class MallGoodController extends Controller
         return response()->json(['status' => 'success', 'msg' => '修改成功！']);
     }
 
-    public function change()
-    {
-        $is_up =request('is_up');
-        DB::beginTransaction();
-        try {
-            MallGood::where('id', request()->good)->update(['is_up'=>$is_up]);
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['status' => 'error', 'msg' => '修改失败' . $e]);
-        }
-        return response()->json(['status' => 'success', 'msg' => '修改成功！']);
-    }
-//    public function destroy()
-//    {
-//        $id = request()->mall_good;
-////        需加入订单判断
-//        DB::beginTransaction();
-//        try {
-//            MallGood::whereIn('id', $id)->delete();
-//            MallGoodMallNav::where('good_id',$id)->delete();
-//            DB::commit();
-//        } catch (\Exception $e) {
-//            DB::rollBack();
-//            return response()->json(['status' => 'error', 'msg' => $e]);
-//        }
-//        return response()->json(['status' => 'success', 'msg' => '删除成功！']);
-//    }
-
     public function getMallHots()
     {
-        $memGoods = MallGood::where('type',Parameter::member)->with('navs')->with('imgs')->orderBy('created_at','desc')->limit(4)->get();
-        $disGoods = MallGood::where('type',Parameter::discount)->with('navs')->with('imgs')->orderBy('created_at','desc')->limit(4)->get();
-        return response()->json(['member' => $memGoods,'discount'=> $disGoods]);
+        $memGoods = MallGood::where('type', Parameter::member)->with('navs')->with('imgs')->orderBy('created_at', 'desc')->limit(4)->get();
+        $disGoods = MallGood::where('type', Parameter::discount)->with('navs')->with('imgs')->orderBy('created_at', 'desc')->limit(4)->get();
+        return response()->json(['member' => $memGoods, 'discount' => $disGoods]);
     }
 
     public function getMemberGoods()
     {
-        $mallGoods = MallGood::where('type',Parameter::member)->with('navs')->with('imgs')->orderBy('created_at','desc')->paginate(20);
+        $mallGoods = MallGood::where([['type', Parameter::member], ['is_up', 1]])->with('navs')->with('imgs')->orderBy('created_at', 'desc')->paginate(20);
         return response()->json(['data' => $mallGoods]);
     }
 
     public function getDiscountGoods()
     {
-        $mallGoods = MallGood::where('type',Parameter::discount)->with('navs')->with('imgs')->orderBy('created_at','desc')->paginate(20);
+        $mallGoods = MallGood::where([['type', Parameter::discount], ['is_up', 1]])->with('navs')->with('imgs')->orderBy('created_at', 'desc')->paginate(20);
         return response()->json(['data' => $mallGoods]);
     }
 
     public function getGeneralGoods()
     {
-        $mallGoods = MallGood::where('type',Parameter::general)->with('navs')->with('imgs')->orderBy('created_at','desc')->paginate(20);
+        $mallGoods = MallGood::where([['type', Parameter::general], ['is_up', 1]])->with('navs')->with('imgs')->orderBy('created_at', 'desc')->paginate(20);
         return response()->json(['data' => $mallGoods]);
+    }
+
+    public function getGroupGoods()
+    {
+        $mallGoods = MallGood::where([['type', Parameter::group], ['is_up', 1]])->with('navs')->with('imgs')->orderBy('created_at', 'desc')->paginate(20);
+        return response()->json(['data' => $mallGoods]);
+    }
+
+    public function change()
+    {
+        $is_up = request('is_up');
+        $good_id = request()->good;
+        $good = MallGood::where('id',$good_id)->first();
+        DB::beginTransaction();
+        try {
+            MallGoodUp::where('id', $good->up_id)->update(['is_up' => 0]);
+            if($is_up == 0 ){
+                MallGood::where('id',$good_id)->update(['is_up'=>0]);
+            }
+            if ($is_up == 1) {
+                $up = MallGoodUp::create(['is_up' => 1]);
+                MallGood::where('id',$good_id)->update(['up_id'=>$up->id,'is_up'=>1]);
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => 'error', 'msg' => '修改失败' . $e]);
+        }
     }
 
 }

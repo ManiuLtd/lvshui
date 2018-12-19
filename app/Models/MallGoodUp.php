@@ -4,10 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class OrderGood extends Model
+class MallGoodUp extends Model
 {
     //
-    protected $table = 'order_goods';
+    protected $table = 'mall_good_ups';
     protected $guarded=[];
-
 }

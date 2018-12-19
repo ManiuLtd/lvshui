@@ -20,4 +20,8 @@ class MallGood extends Model
     {
         return $this->hasMany(MallImage::class,'good_id','id');
     }
+    public function up()
+    {
+        return $this->hasOne(MallGoodUp::class,'id','up_id');
+    }
 }

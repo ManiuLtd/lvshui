@@ -14,7 +14,7 @@
 Route::get('/', function () {
     return view('welcome');
 });
-Route::post('/login','Api\LoginController@login')->middleware(['cors']);
+Route::post('/login', 'Api\LoginController@login')->middleware(['cors']);
 
 Route::group(['middleware' => ['cors', 'token']], function () {
 
@@ -22,11 +22,11 @@ Route::group(['middleware' => ['cors', 'token']], function () {
     Route::post('qiniu/delete', 'Controller@delete');   //删除图片
 
 
-    Route::get('get-uid','Api\Fans\FanController@getUid');
-    Route::get('user','Api\Fans\FanController@getUser');
+    Route::get('get-uid', 'Api\Fans\FanController@getUid');
+    Route::get('user', 'Api\Fans\FanController@getUser');
     Route::post('wechat/verify', 'Api\Fans\FanController@verifyToken'); //验证Token
 
-    Route::apiResource('admins','Api\Fans\AdminController');
+    Route::apiResource('admins', 'Api\Fans\AdminController');
 
     Route::group(['prefix' => 'member'], function () {
         //会员卡
@@ -58,24 +58,24 @@ Route::group(['middleware' => ['cors', 'token']], function () {
     });
     Route::group(['prefix' => 'activity'], function () {
         //个性定制
-        Route::post('diys/sign/{diy}','Api\Activities\DiyAcitvityController@sign');
+        Route::post('diys/sign/{diy}', 'Api\Activities\DiyAcitvityController@sign');
         Route::apiResource('diys', 'Api\Activities\DiyAcitvityController');
         //活动
-        Route::get('activitys/wx','Api\Activities\ActivitySignController@index');
-        Route::post('activitys/wx/{activity}','Api\Activities\ActivitySignController@show');
+        Route::get('activitys/wx', 'Api\Activities\ActivitySignController@index');
+        Route::post('activitys/wx/{activity}', 'Api\Activities\ActivitySignController@show');
         Route::apiResource('activitys', 'Api\Activities\ActivityController');
     });
 
-    Route::group(['prefix'=>'share'],function(){
-       Route::post('follow','Api\Fans\ShareController@share');
-       Route::post('wx/show','Api\Fans\ShareController@shareShow');
-        Route::post('wx/beshow','Api\Fans\ShareController@beShareShow');
-       Route::group(['prefix'=>'over'],function (){
-         Route::post('show','Api\Fans\ShareController@showRegister');
-         Route::post('register','Api\Fans\ShareController@register');
-         Route::post('check-register','Api\Fans\ShareController@checkRegister');
-       });
-       Route::apiResource('tasks','Api\Fans\ShareController');
+    Route::group(['prefix' => 'share'], function () {
+        Route::post('follow', 'Api\Fans\ShareController@share');
+        Route::post('wx/show', 'Api\Fans\ShareController@shareShow');
+        Route::post('wx/beshow', 'Api\Fans\ShareController@beShareShow');
+        Route::group(['prefix' => 'over'], function () {
+            Route::post('show', 'Api\Fans\ShareController@showRegister');
+            Route::post('register', 'Api\Fans\ShareController@register');
+            Route::post('check-register', 'Api\Fans\ShareController@checkRegister');
+        });
+        Route::apiResource('tasks', 'Api\Fans\ShareController');
     });
 
     //商城
@@ -84,10 +84,10 @@ Route::group(['middleware' => ['cors', 'token']], function () {
     //分类
     Route::apiResource('mall-navs', 'Api\Malls\MallNavController');
     // 商品
-    Route::post('mall-goods/{good}/change','Api\Malls\MallGoodController@change');
+    Route::post('mall-goods/{good}/change', 'Api\Malls\MallGoodController@change');
     Route::apiResource('mall-goods', 'Api\Malls\MallGoodController');
     // 轮播图
-    Route::put('mall-groups/{group}/change','Api\Malls\MallSwiperGroupController@change');
+    Route::put('mall-groups/{group}/change', 'Api\Malls\MallSwiperGroupController@change');
     Route::apiResource('mall-groups', 'Api\Malls\MallSwiperGroupController');
     Route::apiResource('mall-swipers', 'Api\Malls\MallSwiperController');
     // 公众号
@@ -95,23 +95,53 @@ Route::group(['middleware' => ['cors', 'token']], function () {
         Route::get('members', 'Api\Malls\MallGoodController@getMemberGoods');
         Route::get('discounts', 'Api\Malls\MallGoodController@getDiscountGoods');
         Route::get('generals', 'Api\Malls\MallGoodController@getGeneralGoods');
+        Route::get('groups', 'Api\Malls\MallGoodController@getGroupGoods');
         Route::get('hots', 'Api\Malls\MallGoodController@getMallHots');
         Route::get('swipers', 'Api\Malls\MallSwiperGroupController@getSwipers');
-        Route::post('cart','Api\Orders\OrderController@cartVerify');
+        Route::post('cart', 'Api\Orders\OrderController@cartVerify');
+        Route::get('nav/{nav_id}', 'Api\Malls\MallNavController@getNavWithGood');
+//        获取用户订单
+        Route::get('orders', 'Api\Orders\OrderController@getFanOrder');
+//        积分设置
+        Route::apiResource('settings', 'Api\Malls\MallSettingController');
+//        团购
+        Route::post('group/opens','Api\Malls\MallGoodGroupController@store');
+        Route::post('group/adds','Api\Malls\MallGoodGroupController@add');
+        Route::post('group/open/sucess','Api\Malls\MallGoodGroupController@storeSucess');
+        Route::post('group/add/sucess','Api\Malls\MallGoodGroupController@addSucess');
+
+    });
+
+    Route::group(['prefix' => 'order'], function () {
+//        保存订单
+        Route::apiResource('orders', 'Api\Orders\OrderController');
+//        获取所有商城订单
+        Route::get('malls', 'Api\Orders\OrderController@getMallOrder');
+//        获取所有活动订单
+        Route::get('actives', 'Api\Orders\OrderController@getAcitveOrder');
+//        获取所有开通会员订单
+        Route::get('joins', 'Api\Orders\OrderController@getJoinOrder');
+//        获取所有退款订单
+        Route::get('refunds', 'Api\Orders\OrderController@getRefundOrder');
+//        获取最新订单截止日
+        Route::get('settings/new', 'Api\Orders\OrderSettingController@getOrderSetting');
+//        订单截止日
+        Route::apiResource('settings', 'Api\Orders\OrderSettingController');
+//        使用
+        Route::post('uses', 'Api\Orders\OrderController@use');
     });
 });
 
-Route::group(['prefix'=>'wechat'], function () {
-    Route::any('server','Api\Wechat\OfficialAccountController@server');    
+Route::group(['prefix' => 'wechat'], function () {
+    Route::any('server', 'Api\Wechat\OfficialAccountController@server');
     Route::any('oauth', 'Api\Wechat\OfficialAccountController@oauth');
     Route::any('oauth-callback', 'Api\Wechat\OfficialAccountController@oauthCallback');
-    Route::any('config','Api\Wechat\OfficialAccountController@getConfig');        
-    Route::any('menu','Api\Wechat\OfficialAccountController@menu');        
+    Route::any('config', 'Api\Wechat\OfficialAccountController@getConfig');
+    Route::any('menu', 'Api\Wechat\OfficialAccountController@menu');
     Route::any('pay', 'Api\Wechat\PayController@pay');
     Route::any('refund', 'Api\Wechat\PayController@refund');
     Route::any('pay-notify', 'Api\Wechat\PayController@notify');
 });
-
 
 
 Route::group(['middleware' => ['token']], function () {
