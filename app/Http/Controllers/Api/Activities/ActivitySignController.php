@@ -10,6 +10,7 @@ namespace App\Http\Controllers\Api\Activities;
 
 use App\Http\Controllers\Controller;
 use App\Models\Activity;
+use App\Models\Fan;
 use Carbon\Carbon;
 
 class ActivitySignController extends Controller
@@ -27,7 +28,12 @@ class ActivitySignController extends Controller
              $query->where('fan_id',$fan_id)->get();
          }])->withCount('fans')->find(request()->activity);
          $today=Carbon::parse()->toDateString();
+         $fan_id=Token::getUid();
+         $fan=Fan::find($fan_id);
          $sign_buttn=true;
+//         if ($activity->privilege){
+//             $sign_buttn='资格不足';
+//         }
          if(count($activity->fans)){
              $sign_buttn='你已报名';
          }
