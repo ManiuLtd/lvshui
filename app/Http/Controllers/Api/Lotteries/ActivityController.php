@@ -56,6 +56,9 @@ class ActivityController extends Controller
         $fan_id=Token::getUid();
         $activity_id=request()->activity;
         $activity=LotteryActivity::find($activity_id);
+        if ($activity->status==0){
+            return response()->json(["status"=>"success","data"=>'活动未开']);
+        }
         $fan_data=FanLottery::firstOrCreate(['fan_id'=>$fan_id,'activity_id'=>$activity_id]
             ,['number'=>'1']);
         return response()->json(["status"=>"success","data"=>compact('fan_data','activity')]);

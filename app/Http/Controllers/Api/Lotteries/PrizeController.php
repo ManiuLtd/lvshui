@@ -15,6 +15,7 @@ use App\Models\CouponRecord;
 use App\Models\FanLottery;
 use App\Models\LotteryHistory;
 use App\Models\LotteryPrize;
+use App\Services\Token;
 
 class PrizeController extends Controller
 {
@@ -27,6 +28,7 @@ class PrizeController extends Controller
     public function store()
     {
         $data=request()->all();
+        $data['lottery_number']=null;
         if($data['number']!=0){
             $data['lottery_number']=$data['number'];
         }
@@ -40,6 +42,7 @@ class PrizeController extends Controller
     public function update()
     {
         $data = request()->all();
+        $data['lottery_number']=null;
         if($data['number']!=0){
             $data['lottery_number']=$data['number'];
         }
@@ -60,7 +63,8 @@ class PrizeController extends Controller
     }
 
     public function getPrizes($activity_id){
-        $prizes=LotteryPrize::where('activity_id',$activity_id)->value(['id','probably']);
+        $prizes=LotteryPrize::where('activity_id',$activity_id)
+            ->select('id', 'probably')->get();
         if(count($prizes)==0){
             return $prizes;
         }
@@ -81,19 +85,21 @@ class PrizeController extends Controller
         $fan_id=Token::getUid();
         $activity_id=request()->activity_id;
         $prizes=$this->getPrizes($activity_id);
-        $chance_number=request('chance_number');//可抽奖次数
+        $fan_lottery_data=FanLottery::whereFan_id($fan_id)->whereActivity_id($activity_id)->first();
+        $chance_number=$fan_lottery_data->number;//可抽奖次数
         foreach ($prizes as $key => $val) {
             $arr[$val['id']] = $val['probably'];
         }
-        $rid = $this->get_rand($arr); //根据概率获取奖项id
+        $rid = $this->getRand($arr); //根据概率获取奖项id
         if($rid!='no'){
             //处理奖品溢出
             $un_prize=LotteryPrize::find($rid);
-            if($un_prize->number!=0){
-                $lottery_number=$un_prize->lottery_number+1;
-                if($lottery_number>$un_prize->number){
+            $lottery_number=$un_prize->lottery_number-1;
+            if ($un_prize->number!=0){
+                if($lottery_number<0){
                     $rid='no';
                 }
+                LotteryPrize::whereId($rid)->update(['lottery_number'=>$lottery_number]);
             }
         }
         //奖品放入卡包，记录
