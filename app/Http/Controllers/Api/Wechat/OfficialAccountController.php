@@ -77,4 +77,15 @@ class OfficialAccountController extends Controller
         $list = $app->menu->create($menu);
         dd($list);
     }
+
+
+    public function getMaterialList() {
+        $page = request('type') ?? 'image';
+        $count = 20;
+        $page = request('page');
+        $offset = ($page - 1) * $count;
+        $app = Factory::officialAccount(config('wechat.official_account.default'));        
+        $material = $app->material->list($type, $offset, $count);
+        return response()->json(['data' => $material]);
+    }
 }
