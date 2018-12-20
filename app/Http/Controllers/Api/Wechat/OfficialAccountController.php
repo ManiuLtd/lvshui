@@ -80,7 +80,7 @@ class OfficialAccountController extends Controller
 
 
     public function getMaterialList() {
-        $page = request('type') ?? 'image';
+        $type = request('type') ?? 'image';
         $count = 20;
         $page = request('page');
         $offset = ($page - 1) * $count;
