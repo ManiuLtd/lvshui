@@ -86,7 +86,6 @@ class OfficialAccountController extends Controller
         return $res;
     }
 
-
     public function getMaterialList() {
         $type = request('type') ?? 'image';
         $count = 20;
