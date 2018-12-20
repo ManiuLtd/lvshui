@@ -87,7 +87,7 @@ class OfficialAccountController extends Controller
     }
 
     public function getMaterialList() {
-        $type = request('type') ?? 'image';
+        $type = request('type') ?? 'news';
         $count = 20;
         $page = request('page') ?? 1;
         $offset = ($page - 1) * $count;
