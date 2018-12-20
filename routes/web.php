@@ -30,7 +30,9 @@ Route::group(['middleware' => ['cors', 'token']], function () {
 
     Route::group(['prefix' => 'member'], function () {
         //会员卡
+        Route::get('/members/{member}/group/{group_id}', 'Api\Members\MemberController@group');
         Route::post('members/change-integral', 'Api\Members\MemberController@changeIntegral');
+        Route::post('/members/change-money', 'Api\Members\MemberController@changeMoney');
         Route::post('members/join', 'Api\Members\MemberController@join');
         Route::get('members/{member}/select-tag', 'Api\Members\MemberController@selectTag');
         Route::post('members/add-tag', 'Api\Members\MemberController@addTag');
@@ -42,6 +44,10 @@ Route::group(['middleware' => ['cors', 'token']], function () {
         Route::apiResource('join/settings', 'Api\Members\JoinSettingController');
         //会员标签
         Route::apiResource('tags', 'Api\Members\TagController');
+        //会员等级
+        Route::get('/groups/{group_id}/default', 'Api\Members\GroupController@default');
+        Route::apiResource('/groups', 'Api\Members\GroupController');
+
     });
 
     Route::group(['prefix' => 'coupon'], function () {
@@ -137,16 +143,22 @@ Route::group(['middleware' => ['cors', 'token']], function () {
 //        使用
         Route::post('uses', 'Api\Orders\OrderController@use');
     });
+
+    Route::group(['prefix' => 'wechat'], function () {
+        Route::any('server', 'Api\Wechat\OfficialAccountController@server');
+        Route::any('config', 'Api\Wechat\OfficialAccountController@getConfig');
+        Route::any('menu/create', 'Api\Wechat\OfficialAccountController@menuCreate');
+        Route::any('menu/list', 'Api\Wechat\OfficialAccountController@menuList');
+        Route::any('menu/delete', 'Api\Wechat\OfficialAccountController@menuDelete');
+        Route::any('material/list','Api\Wechat\OfficialAccountController@getMaterialList');    
+        Route::any('pay', 'Api\Wechat\PayController@pay');
+        Route::any('refund', 'Api\Wechat\PayController@refund');
+    });
 });
 
 Route::group(['prefix' => 'wechat'], function () {
-    Route::any('server', 'Api\Wechat\OfficialAccountController@server');
     Route::any('oauth', 'Api\Wechat\OfficialAccountController@oauth');
     Route::any('oauth-callback', 'Api\Wechat\OfficialAccountController@oauthCallback');
-    Route::any('config', 'Api\Wechat\OfficialAccountController@getConfig');
-    Route::any('menu', 'Api\Wechat\OfficialAccountController@menu');
-    Route::any('pay', 'Api\Wechat\PayController@pay');
-    Route::any('refund', 'Api\Wechat\PayController@refund');
     Route::any('pay-notify', 'Api\Wechat\PayController@notify');
 });
 
