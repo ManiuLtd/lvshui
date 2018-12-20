@@ -63,19 +63,27 @@ class OfficialAccountController extends Controller
         return response()->json(['jssdk' => $jssdk]);
     }
 
-    public function menu() 
+    public function menuCreate() 
     {
         $app = Factory::officialAccount(config('wechat.official_account.default'));
-        // $list = $app->menu->current();
-        $menu = [
-                    [
-                        "type" => "view",
-                        "name" => "分享活动",
-                        "url" => "https://zhlsqj.com/#/share"
-                    ]
-                ];
-        $list = $app->menu->create($menu);
-        dd($list);
+        $menu = request('menu');
+        $res = $app->menu->create($menu);
+        return $res;
+    }
+
+    public function menuList()
+    {
+        $app = Factory::officialAccount(config('wechat.official_account.default'));
+        $list = $app->menu->list();
+        return response()->json(['data' => $list]);
+    }
+
+    public function menuDelete()
+    {
+        $app = Factory::officialAccount(config('wechat.official_account.default'));
+        $menuId = request('menuId');
+        $res = $app->menu->delete($menuId);
+        return $res;
     }
 
 
