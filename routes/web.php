@@ -84,6 +84,13 @@ Route::group(['middleware' => ['cors', 'token']], function () {
         Route::apiResource('tasks', 'Api\Fans\ShareController');
     });
 
+    Route::group(['prefix'=>'lottery'],function (){
+       Route::get('fan/activity/{activity}','Api\Lotteries\ActivityController@wxShow');
+       Route::post('result','Api\Lotteries\PrizeController@result');
+       Route::apiResource('activitys','Api\Lotteries\ActivityController');
+       Route::apiResource('prizes','Api\Lotteries\PrizeController');
+    });
+
     //商城
     //参数档
     Route::get('mall-parameter', 'Api\Malls\MallNavController@getParameter');
