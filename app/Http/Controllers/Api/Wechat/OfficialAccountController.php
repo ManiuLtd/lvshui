@@ -86,7 +86,8 @@ class OfficialAccountController extends Controller
         return $res;
     }
 
-    public function getMaterialList() {
+    public function getMaterialList() 
+    {
         $type = request('type') ?? 'news';
         $count = 20;
         $page = request('page') ?? 1;
