@@ -12,6 +12,7 @@ namespace App\Http\Controllers\Api\Lotteries;
 use App\Http\Controllers\Controller;
 use App\Models\FanLottery;
 use App\Models\LotteryActivity;
+use App\Models\LotteryPrize;
 use App\Services\Token;
 
 class ActivityController extends Controller
@@ -56,8 +57,12 @@ class ActivityController extends Controller
         $fan_id=Token::getUid();
         $activity_id=request()->activity;
         $activity=LotteryActivity::find($activity_id);
+        $prize=LotteryPrize::where('activity_id',$activity_id)->with('coupon')->get();
+        if ($activity->status==0){
+            return response()->json(["status"=>"success","data"=>'活动未开']);
+        }
         $fan_data=FanLottery::firstOrCreate(['fan_id'=>$fan_id,'activity_id'=>$activity_id]
             ,['number'=>'1']);
-        return response()->json(["status"=>"success","data"=>compact('fan_data','activity')]);
+        return response()->json(["status"=>"success","data"=>compact('fan_data','activity','prize')]);
     }
 }

@@ -13,5 +13,9 @@ class LotteryPrize extends Model
 {
     protected $table = 'lottery_prizes';
 
+    public function coupon()
+    {
+        return $this->hasOne(Coupon::class,'id','coupon_id');
+    }
 
 }
