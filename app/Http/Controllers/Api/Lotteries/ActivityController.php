@@ -68,4 +68,17 @@ class ActivityController extends Controller
             ,['number'=>'1']);
         return response()->json(["status"=>"success","data"=>compact('fan_data','activity','prizes','turn_image')]);
     }
+
+    public function addFanLottery()
+    {
+        $fan_id=request()->fan_id;
+        $number=request()->number;
+        $activity_id=request()->activity_id;
+        $save=FanLottery::updateOrCreate(['fan_id'=>$fan_id,'activity_id'=>$activity_id],
+                                          ['number'=>$number]);
+        if($save) {
+            return response()->json(['status' => 'success', 'msg' => '更新成功！']);
+        }
+        return response()->json(['status' => 'error', 'msg' => '更新失败！']);
+    }
 }
