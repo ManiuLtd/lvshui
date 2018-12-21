@@ -55,7 +55,7 @@ Route::group(['middleware' => ['cors', 'token']], function () {
         Route::get('records/get-user-coupons', 'Api\Coupons\RecordController@get_user_coupons');
         Route::apiResource('records', 'Api\Coupons\RecordController');
         //优惠券
-        Route::apiResource('coupons', 'Api\Coupons\ConponController');
+        Route::apiResource('coupons', 'Api\Coupons\CouponController');
     });
     Route::group(['prefix' => 'sign'], function () {
         Route::get('get-sign', 'Api\Fans\SignInController@get_sign');
