@@ -64,13 +64,16 @@ class PrizeController extends Controller
 
     public function getPrizes($activity_id){
         $prizes=LotteryPrize::where('activity_id',$activity_id)
-            ->select('id', 'probably')->get();
+            ->select('id', 'probably','lottery_number')->get();
         if(count($prizes)==0){
             return $prizes;
         }
         $noProbably=100;
         foreach ($prizes as $prize){
             $noProbably=$noProbably-$prize['probably'];
+            if($prize->lottery_number=='0'){
+                $prize->probably=0;
+            }
         }
         $prizes=$prizes->toArray();
         if($noProbably!='0'){
@@ -106,11 +109,13 @@ class PrizeController extends Controller
         $result_prize=LotteryPrize::find($rid);
         if($result_prize){
             $coupon=Coupon::find($result_prize->coupon_id);
-            $time=Coupon::getTime($result_prize->coupon_id);
-            $save_coupon=CouponRecord::create(['fan_id'=>$fan_id,'coupon_id'=>$result_prize->coupon_id,'status'=>'0',
-                'start_time'=> $time['start'],'end_time'=>$time['end']]);
-            $save_history=LotteryHistory::create(['fan_id'=>$fan_id,
-                'activity_id'=>$activity_id,'coupon_id'=>$result_prize->coupon_id,'coupon_name'=>$coupon->name]);
+            if($coupon){
+                $time=Coupon::getTime($result_prize->coupon_id);
+                $save_coupon=CouponRecord::create(['fan_id'=>$fan_id,'coupon_id'=>$result_prize->coupon_id,'status'=>'0',
+                    'start_time'=> $time['start'],'end_time'=>$time['end']]);
+                $save_history=LotteryHistory::create(['fan_id'=>$fan_id,
+                    'activity_id'=>$activity_id,'coupon_id'=>$result_prize->coupon_id,'coupon_name'=>$coupon->name]);
+            }
         }else{
             $result_prize='noprize';
         }

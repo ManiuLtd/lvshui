@@ -59,8 +59,10 @@ class ActivityController extends Controller
         $activity=LotteryActivity::find($activity_id);
         $prizes=LotteryPrize::where('activity_id',$activity_id)->with('coupon')->get();
         $turn=$prizes->count()+1;
-        $turn_image='https://'.request()->server('HTTP_HOST').
-            '/img/lotteries/n'.$turn.'.png';
+        if (!$activity->turn_img){
+            $turn_image='https://'.request()->server('HTTP_HOST').
+                '/img/lotteries/n'.$turn.'.png';
+        }
         if ($activity->status==0){
             return response()->json(["status"=>"success","data"=>'活动未开']);
         }
