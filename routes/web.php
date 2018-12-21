@@ -55,7 +55,7 @@ Route::group(['middleware' => ['cors', 'token']], function () {
         Route::get('records/get-user-coupons', 'Api\Coupons\RecordController@get_user_coupons');
         Route::apiResource('records', 'Api\Coupons\RecordController');
         //优惠券
-        Route::apiResource('coupons', 'Api\Coupons\ConponController');
+        Route::apiResource('coupons', 'Api\Coupons\CouponController');
     });
     Route::group(['prefix' => 'sign'], function () {
         Route::get('get-sign', 'Api\Fans\SignInController@get_sign');
@@ -85,9 +85,11 @@ Route::group(['middleware' => ['cors', 'token']], function () {
     });
 
     Route::group(['prefix'=>'lottery'],function (){
+       Route::post('fan/add','Api\Lotteries\ActivityController@addFanLottery');
        Route::get('fan/activity/{activity}','Api\Lotteries\ActivityController@wxShow');
        Route::post('result','Api\Lotteries\PrizeController@result');
        Route::apiResource('activitys','Api\Lotteries\ActivityController');
+       Route::get('prizes/{activity}','Api\Lotteries\PrizeController@index');
        Route::apiResource('prizes','Api\Lotteries\PrizeController');
     });
 

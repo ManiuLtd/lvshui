@@ -21,8 +21,8 @@ class PrizeController extends Controller
 {
     public function index()
     {
-        $date=LotteryPrize::first();
-        return response()->json(['status' => 'error', 'data' =>$date]);
+        $date=LotteryPrize::where('activity_id',request()->activity)->get();
+        return response()->json(['status' => 'success', 'data' =>$date]);
     }
 
     public function store()

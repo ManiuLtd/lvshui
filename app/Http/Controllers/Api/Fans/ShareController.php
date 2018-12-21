@@ -24,7 +24,7 @@ class ShareController extends Controller
     public function index()
     {
         $date=ShareTask::first();
-        return response()->json(['status' => 'error', 'data' =>$date]);
+        return response()->json(['status' => 'success', 'data' =>$date]);
     }
 
 

@@ -20,7 +20,7 @@ class ActivityController extends Controller
     public function index()
     {
         $date=LotteryActivity::first();
-        return response()->json(['status' => 'error', 'data' =>$date]);
+        return response()->json(['status' => 'success', 'data' =>$date]);
     }
 
     public function store()
@@ -57,12 +57,28 @@ class ActivityController extends Controller
         $fan_id=Token::getUid();
         $activity_id=request()->activity;
         $activity=LotteryActivity::find($activity_id);
-        $prize=LotteryPrize::where('activity_id',$activity_id)->with('coupon')->get();
+        $prizes=LotteryPrize::where('activity_id',$activity_id)->with('coupon')->get();
+        $turn=$prizes->count()+1;
+        $turn_image='https://'.request()->server('HTTP_HOST').
+            '/img/lotteries/n'.$turn.'.png';
         if ($activity->status==0){
             return response()->json(["status"=>"success","data"=>'活动未开']);
         }
         $fan_data=FanLottery::firstOrCreate(['fan_id'=>$fan_id,'activity_id'=>$activity_id]
             ,['number'=>'1']);
-        return response()->json(["status"=>"success","data"=>compact('fan_data','activity','prize')]);
+        return response()->json(["status"=>"success","data"=>compact('fan_data','activity','prizes','turn_image')]);
+    }
+
+    public function addFanLottery()
+    {
+        $fan_id=request()->fan_id;
+        $number=request()->number;
+        $activity_id=request()->activity_id;
+        $save=FanLottery::updateOrCreate(['fan_id'=>$fan_id,'activity_id'=>$activity_id],
+                                          ['number'=>$number]);
+        if($save) {
+            return response()->json(['status' => 'success', 'msg' => '更新成功！']);
+        }
+        return response()->json(['status' => 'error', 'msg' => '更新失败！']);
     }
 }
