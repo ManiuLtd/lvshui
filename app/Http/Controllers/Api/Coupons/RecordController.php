@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Api\Conpons;
+namespace App\Http\Controllers\Api\Coupons;
 
 use App\Models\Coupon;
 use App\Services\Token;
 use App\Models\CouponRecord;
 use Illuminate\Http\Request;
-use App\Api\Controllers\Controller;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Requests\Coupons\RecordRequest;
+use App\Http\Requests\RecordRequest;
 
 class RecordController extends Controller
 {
