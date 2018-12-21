@@ -88,6 +88,7 @@ Route::group(['middleware' => ['cors', 'token']], function () {
        Route::get('fan/activity/{activity}','Api\Lotteries\ActivityController@wxShow');
        Route::post('result','Api\Lotteries\PrizeController@result');
        Route::apiResource('activitys','Api\Lotteries\ActivityController');
+       Route::get('prizes/{activity}','Api\Lotteries\PrizeController@index');
        Route::apiResource('prizes','Api\Lotteries\PrizeController');
     });
 
