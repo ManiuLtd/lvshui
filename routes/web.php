@@ -145,7 +145,6 @@ Route::group(['middleware' => ['cors', 'token']], function () {
     });
 
     Route::group(['prefix' => 'wechat'], function () {
-        Route::any('server', 'Api\Wechat\OfficialAccountController@server');
         Route::any('config', 'Api\Wechat\OfficialAccountController@getConfig');
         Route::any('menu/create', 'Api\Wechat\OfficialAccountController@menuCreate');
         Route::any('menu/list', 'Api\Wechat\OfficialAccountController@menuList');
@@ -157,6 +156,7 @@ Route::group(['middleware' => ['cors', 'token']], function () {
 });
 
 Route::group(['prefix' => 'wechat'], function () {
+    Route::any('server', 'Api\Wechat\OfficialAccountController@server');    
     Route::any('oauth', 'Api\Wechat\OfficialAccountController@oauth');
     Route::any('oauth-callback', 'Api\Wechat\OfficialAccountController@oauthCallback');
     Route::any('pay-notify', 'Api\Wechat\PayController@notify');
