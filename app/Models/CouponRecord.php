@@ -28,6 +28,21 @@ class CouponRecord extends Model
         return $this->belongsTo(\App\Models\Commons\Fan::class);
     }
 
+    //发放优惠券给用户
+    public function grantCoupon(int $coupon_id, int $uid)
+    {
+        $data = [];     
+        $time = Coupon::getTime($coupon_id);
+        $data['start_time'] = $time['start'];
+        $data['end_time'] = $time['end'];
+        $data['uid'] = $uid;
+        if(CouponRecord::create($data)) {
+            return true;
+        } 
+
+        return false;
+    }
+
     //获取用户可用的优惠券
     public static function getUserHasCoupons(int $uid)
     {
