@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 
 class GroupController extends Controller
 {
-    public function inxdex() 
+    public function index() 
     {
         $groups = MemberGroup::getGroup();
         return response()->json(['status' => 'success', 'data' => $groups]);   
