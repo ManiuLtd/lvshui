@@ -62,6 +62,13 @@ class PrizeController extends Controller
         return response()->json(['status' => 'error', 'msg' => '删除失败！']);
     }
 
+    public function history()
+    {
+        $fan_id=Token::getUid();
+        $data=LotteryHistory::where('fan_id',$fan_id)->with('coupon')->paginate(20);
+        return response()->json(["status"=>"success","data"=>$data]);
+    }
+
     public function getPrizes($activity_id){
         $prizes=LotteryPrize::where('activity_id',$activity_id)
             ->select('id', 'probably','lottery_number')->get();
