@@ -90,6 +90,9 @@ class PrizeController extends Controller
         $prizes=$this->getPrizes($activity_id);
         $fan_lottery_data=FanLottery::whereFan_id($fan_id)->whereActivity_id($activity_id)->first();
         $chance_number=$fan_lottery_data->number;//可抽奖次数
+        if($chance_number<=0){
+            return response()->json(["status"=>"success","data"=>'nonumber']);
+        }
         foreach ($prizes as $key => $val) {
             $arr[$val['id']] = $val['probably'];
         }
@@ -106,7 +109,7 @@ class PrizeController extends Controller
             }
         }
         //奖品放入卡包，记录
-        $result_prize=LotteryPrize::find($rid);
+        $result_prize=LotteryPrize::with('coupon')->find($rid);
         if($result_prize){
             $coupon=Coupon::find($result_prize->coupon_id);
             if($coupon){
