@@ -27,6 +27,6 @@ class EventMessageHandler implements EventHandlerInterface
             Fan::where('openid', $openid)->update(['subscribe' => 0]);
         }
 
-        return '欢迎关注，绿水清江';
+        return config('wechat.retMsg');
     }
 }
