@@ -65,7 +65,7 @@ class PrizeController extends Controller
     public function history()
     {
         $fan_id=Token::getUid();
-        $data=LotteryHistory::where('fan_id',$fan_id)->with('coupon')->paginate(20);
+        $data=LotteryHistory::where('fan_id',$fan_id)->with('coupon')->get();
         return response()->json(["status"=>"success","data"=>$data]);
     }
 
