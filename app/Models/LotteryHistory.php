@@ -13,5 +13,8 @@ class LotteryHistory extends Model
 {
     protected $table = 'lottery_histories';
 
-
+    public function coupon()
+    {
+        return $this->hasOne(Coupon::class,'id','coupon_id');
+    }
 }

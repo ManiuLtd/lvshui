@@ -85,6 +85,7 @@ Route::group(['middleware' => ['cors', 'token']], function () {
     });
 
     Route::group(['prefix'=>'lottery'],function (){
+       Route::get('fan/history','Api\Lotteries\PrizeController@history');
        Route::post('fan/add','Api\Lotteries\ActivityController@addFanLottery');
        Route::get('fan/activity/{activity}','Api\Lotteries\ActivityController@wxShow');
        Route::post('result','Api\Lotteries\PrizeController@result');
