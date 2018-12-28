@@ -57,7 +57,7 @@ class ActivityController extends Controller
         $fan_id=Token::getUid();
         $activity_id=request()->activity;
         $activity=LotteryActivity::find($activity_id);
-        $prizes=LotteryPrize::where('activity_id',$activity_id)->with('coupon')->get();
+        $prizes=LotteryPrize::where('activity_id',$activity_id)->orderBy('orderby_lev', 'asc')->with('coupon')->get();
         $turn=$prizes->count()+1;
         if (!$activity->turn_img){
             $turn_image='https://'.request()->server('HTTP_HOST').
