@@ -53,6 +53,8 @@ Route::group(['middleware' => ['cors', 'token']], function () {
     Route::group(['prefix' => 'coupon'], function () {
         //优惠券记录
         Route::get('records/get-user-coupons', 'Api\Coupons\RecordController@get_user_coupons');
+        Route::apiResource('records/verification', 'Api\Coupons\RecordController@verification');
+        Route::apiResource('records/confirm', 'Api\Coupons\RecordController@confirmVerification');
         Route::apiResource('records', 'Api\Coupons\RecordController');
         //优惠券
         Route::apiResource('coupons', 'Api\Coupons\CouponController');

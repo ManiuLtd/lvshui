@@ -36,7 +36,7 @@ class RecordController extends Controller
 
     public function show()
     {
-        $record = CouponRecord::find(request()->record);
+        $record = CouponRecord::with(['coupon'])->find(request()->record);
         $status = $record ? 'success' : 'error';
         return response()->json(['status' => $status, 'data' => $record]);   
     }
@@ -68,6 +68,24 @@ class RecordController extends Controller
         $use = CouponRecord::getUserHasCoupons(Token::getUid());
         $used = CouponRecord::getUserCouponsByUsed(Token::getUid());
         return response()->json(['status' => 'success', 'use' => $use, 'used' => $used]);    
+    }
+
+    public function verification()
+    {
+        $record = CouponRecord::with(['coupon'])->find(request()->record_id);
+        $fan = Fan::find(request()->fan_id);
+        return response()->json(['status' => 'success', 'record' => $record, 'fan' => $fan]);   
+    }
+
+    public function confirmVerification()
+    {
+        //TODO 判断是否是管理员进行核销
+        $admin = Admin::where('fan_id',Token::getUid())->first();
+        if(!isset($admin)) {
+            return response()->json(['status' => 'error', 'msg' => '你不是管理员，无操作权限']);   
+        }
+        $ret = CouponRecord::use(request()->record_id);
+        return response()->json(['status' => $ret]);   
     }
 
 }
