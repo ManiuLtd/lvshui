@@ -14,4 +14,9 @@ class Fan extends Model
         return $this->hasOne(Admin::class,
             'fan_id', 'id');
     }
+
+    public function couponRecords() 
+    {
+        return $this->hasMany(CouponRecord::class);
+    }
 }
