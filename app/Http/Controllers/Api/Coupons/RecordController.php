@@ -73,7 +73,7 @@ class RecordController extends Controller
     public function verification()
     {
         $record = CouponRecord::with(['coupon','fan'])->find(request()->record_id);
-        return response()->json(['status' => 'success', 'record' => $record, 'fan' => $fan]);   
+        return response()->json(['status' => 'success', 'record' => $record]);   
     }
 
     public function confirmVerification()
