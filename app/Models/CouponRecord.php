@@ -25,7 +25,7 @@ class CouponRecord extends Model
 
     public function fan() 
     {
-        return $this->belongsTo(\App\Models\Commons\Fan::class);
+        return $this->belongsTo(Fan::class);
     }
 
     //发放优惠券给用户
