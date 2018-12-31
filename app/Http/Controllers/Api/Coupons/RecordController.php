@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Api\Coupons;
 
+use App\Models\Admin;
 use App\Models\Coupon;
 use App\Services\Token;
 use App\Models\CouponRecord;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\RecordRequest;
+use Illuminate\Support\Facades\Validator;
 
 class RecordController extends Controller
 {
