@@ -65,13 +65,13 @@ class PrizeController extends Controller
     public function history()
     {
         $fan_id=Token::getUid();
-        $data=LotteryHistory::where('fan_id',$fan_id)->with('coupon')->paginate(20);
+        $data=LotteryHistory::where('fan_id',$fan_id)->with('coupon')->get();
         return response()->json(["status"=>"success","data"=>$data]);
     }
 
     public function getPrizes($activity_id){
         $prizes=LotteryPrize::where('activity_id',$activity_id)
-            ->select('id', 'probably','lottery_number')->get();
+            ->select('id', 'probably','lottery_number','orderby_lev')->orderBy('orderby_lev', 'asc')->get();
         if(count($prizes)==0){
             return $prizes;
         }
