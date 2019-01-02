@@ -90,7 +90,7 @@ class RecordController extends Controller
     {
         //TODO 判断是否是管理员进行核销
         $admin = Admin::where('fan_id',Token::getUid())->first();
-        if(!isset($admin) || \Auth::id()) {
+        if(!isset($admin) || \Auth::guard('users')->id()) {
             return response()->json(['status' => 'error', 'msg' => '你不是管理员，无操作权限']);   
         }
         $ret = CouponRecord::use(request()->record_id);
