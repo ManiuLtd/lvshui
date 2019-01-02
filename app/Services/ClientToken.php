@@ -18,6 +18,7 @@ class ClientToken extends Token
         }
         else{
             $values = [
+                // 'scope' => $app->role->identity,
                 'uid' => $app->id
             ];
             $token = $this->saveToCache($values);
