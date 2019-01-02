@@ -18,7 +18,7 @@ class RecordController extends Controller
     {
         $fan_id = request()->fan_id ?? 0;
         $coupon_id = request()->coupon_id ?? 0;
-        $status = request()->status ?? 0;
+        $status = request()->status;
         $records = CouponRecord::orderBy('created_at','desc')->when($fan_id > 0, function($query) use ($fan_id) {
             return $query->where('fan_id', $fan_id);
         })->when($coupon_id > 0, function($query) use ($coupon_id) {
