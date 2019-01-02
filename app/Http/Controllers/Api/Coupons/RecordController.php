@@ -23,8 +23,6 @@ class RecordController extends Controller
             return $query->where('fan_id', $fan_id);
         })->when($coupon_id > 0, function($query) use ($coupon_id) {
             return $query->where('coupon_id', $coupon_id);
-        })->when($status < 2, function($query) use ($status) {
-            return $query->where('status', $status);
         })->paginate(config('common.pagesize')); 
         $records->load('fan','coupon');  
         return response()->json(['status' => 'success', 'data' => $records]);   
