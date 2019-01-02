@@ -21,10 +21,11 @@ Route::group(['middleware' => ['cors', 'token']], function () {
     Route::post('qiniu/upload', 'Controller@upload');  //上传图片
     Route::post('qiniu/delete', 'Controller@delete');   //删除图片
 
-
+    Route::get('fans', 'Api\Fans\FanController@fans');  //获取用户
     Route::get('get-uid', 'Api\Fans\FanController@getUid');
     Route::get('user', 'Api\Fans\FanController@getUser');
     Route::post('wechat/verify', 'Api\Fans\FanController@verifyToken'); //验证Token
+
 
     Route::apiResource('admins', 'Api\Fans\AdminController');
 
