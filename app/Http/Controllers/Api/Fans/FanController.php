@@ -14,7 +14,7 @@ class FanController extends Controller
         $fans = Fan::when($status > -1, function($query) use ($status) {
             return $query->where('subscribe', $status);
         })->paginate(30);
-        return response()->json(['status' => 'success','data' => $fans, 'today' => $today]);
+        return response()->json(['status' => 'success','data' => $fans]);
     }
 
     public function verifyToken() 
