@@ -71,7 +71,7 @@ class PrizeController extends Controller
 
     public function getPrizes($activity_id){
         $prizes=LotteryPrize::where('activity_id',$activity_id)
-            ->select('id', 'probably','lottery_number','orderby_lev')->orderBy('orderby_lev', 'asc')->get();
+            ->select('id', 'probably','lottery_number')->get();
         if(count($prizes)==0){
             return $prizes;
         }
