@@ -43,7 +43,7 @@ class orderCommand extends Command
     public function handle()
     {
         //订单支付超时-状态设为取消订单
-        $orders = Order::where('pay_state',0)->with('goods')->get();
+        $orders = Order::where('pay_state',0)->with('orderGoods')->get();
         $now = Carbon::now();
         $news = [] ;
         foreach ($orders as $order){
@@ -59,13 +59,11 @@ class orderCommand extends Command
        DB::beginTransaction();
         try {
             foreach ($news as $new) {
-                $goods = $new->goods;
+                $goods = $new->orderGoods;
                 Order::where('id', $new->id)->update(['pay_state' => -1]);
                 foreach ($goods as $good) {
-                    $record = MallGood::find($good->id);
-                    MallGood::where('id', $good->good_id)->update(['stock'=> $record->stock + $good->num]);
+                    MallGood::where('id', $good->good_id)->increment('stock', $good->num);
                 }
-
             }
             DB::commit();
             \Log::info('成功');
