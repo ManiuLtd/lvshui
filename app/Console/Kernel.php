@@ -2,6 +2,9 @@
 
 namespace App\Console;
 
+use App\Console\Commands\goodCommand;
+use App\Console\Commands\orderCommand;
+use App\Console\Commands\useCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -14,6 +17,9 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         //
+        goodCommand::class,
+        orderCommand::class,
+        useCommand::class,
     ];
 
     /**
@@ -24,8 +30,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        $schedule->command('good:date')->dailyAt('00:00');
+        $schedule->command('order:date')->everyMinute();
+        $schedule->command('use:date')->dailyAt('00:00');
     }
 
     /**
