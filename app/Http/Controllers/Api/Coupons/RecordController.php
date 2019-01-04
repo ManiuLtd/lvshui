@@ -1,21 +1,31 @@
 <?php
 
-namespace App\Http\Controllers\Api\Conpons;
+namespace App\Http\Controllers\Api\Coupons;
 
+use App\Models\Admin;
 use App\Models\Coupon;
 use App\Services\Token;
 use App\Models\CouponRecord;
 use Illuminate\Http\Request;
-use App\Api\Controllers\Controller;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\RecordRequest;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Requests\Coupons\RecordRequest;
 
 class RecordController extends Controller
 {
     
     public function index() 
     {
-        $records = CouponRecord::orderBy('created_at','desc')->paginate(config('common.pagesize')); 
+        $fan_id = request()->fan_id ?? 0;
+        $coupon_id = request()->coupon_id ?? 0;
+        $status = request()->status ?? -2;
+        $records = CouponRecord::orderBy('created_at','desc')->when($fan_id > 0, function($query) use ($fan_id) {
+            return $query->where('fan_id', $fan_id);
+        })->when($coupon_id > 0, function($query) use ($coupon_id) {
+            return $query->where('coupon_id', $coupon_id);
+        })->when($status > -2, function($query) use ($status) {
+            return $query->where('status', $status);
+        })->paginate(config('common.pagesize')); 
         $records->load('fan','coupon');  
         return response()->json(['status' => 'success', 'data' => $records]);   
     }
@@ -36,7 +46,7 @@ class RecordController extends Controller
 
     public function show()
     {
-        $record = CouponRecord::find(request()->record);
+        $record = CouponRecord::with(['coupon'])->find(request()->record);
         $status = $record ? 'success' : 'error';
         return response()->json(['status' => $status, 'data' => $record]);   
     }
@@ -69,5 +79,30 @@ class RecordController extends Controller
         $used = CouponRecord::getUserCouponsByUsed(Token::getUid());
         return response()->json(['status' => 'success', 'use' => $use, 'used' => $used]);    
     }
+
+    public function verification()
+    {
+        $record = CouponRecord::with(['coupon','fan'])->find(request()->record_id);
+        return response()->json(['status' => 'success', 'record' => $record]);   
+    }
+
+    public function confirmVerification()
+    {
+        //TODO 判断是否是管理员进行核销
+        $flag = false;
+        $admin = Admin::where('fan_id',Token::getUid())->first();
+        if(isset($admin)) {
+            $flag = true;
+        } else {
+            $flag = \Auth::guard('users')->id() > 0 ? true : false;
+        }
+        
+        if(!$flag) {
+            return response()->json(['status' => 'error', 'msg' => '你不是管理员，无操作权限']);   
+        }
+        $ret = CouponRecord::use(request()->record_id);
+        return response()->json(['status' => $ret]);   
+    }
+
 
 }

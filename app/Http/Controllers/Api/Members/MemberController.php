@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Members;
 
 use App\Models\Member;
 use App\Models\MemberTag;
+use App\Models\MemberGroup;
 use Illuminate\Http\Request;
 use App\Models\MemberTagLink;
 use App\Http\Controllers\Controller;
@@ -73,12 +74,20 @@ class MemberController extends Controller
         return response()->json(['status' => 'error', 'msg' => '删除失败！']);     
     }
 
+    public function group() {
+        if(Member::where('id', request()->member)->update(['group_id' => request()->group_id])) {
+            return response()->json(['status' => 'success', 'msg' => '更新成功！']);                             
+        }
+        return response()->json(['status' => 'error', 'msg' => '更新失败！']);                            
+    }
+
     //加入会员
     public function join(MemberRequest $request) 
     {
         $data = request()->all();   
         $data['fan_id'] = request('fan_id') ?? Token::getUid();
         $data['card_id'] = time().rand(1,9);
+        $data['group_id'] = MemberGroup::default();
         if(Member::create($data)) {
             return response()->json(['status' => 'success', 'msg' => '领取成功！']);                             
         }
@@ -94,13 +103,13 @@ class MemberController extends Controller
         return response()->json(['status' => 'success', 'msg' => '更新成功！']);  
     }
 
-    // public function changeMoney()
-    // {
-    //     $member_id = request('member_id');
-    //     $value = request('value');        
-    //     Member::changeMoney($member_id, $value);
-    //     return response()->json(['status' => 'success', 'msg' => '更新成功！']);  
-    // }
+    public function changeMoney()
+    {
+        $member_id = request('member_id');
+        $value = request('value');        
+        Member::changeMoney($member_id, $value);
+        return response()->json(['status' => 'success', 'msg' => '更新成功！']);  
+    }
 
     public function selectTag()
     {

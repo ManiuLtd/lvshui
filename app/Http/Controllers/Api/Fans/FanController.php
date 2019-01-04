@@ -9,6 +9,13 @@ use App\Http\Controllers\Controller;
 class FanController extends Controller
 {
 
+    public function fans() {
+        $status = request('status');
+        $fans = Fan::when($status > -1, function($query) use ($status) {
+            return $query->where('subscribe', $status);
+        })->paginate(30);
+        return response()->json(['status' => 'success','data' => $fans]);
+    }
 
     public function verifyToken() 
     {
