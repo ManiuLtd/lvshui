@@ -70,9 +70,10 @@ class MallGoodController extends Controller
 
     public function getMallHots()
     {
-        $memGoods = MallGood::where('type', Parameter::member)->with('navs')->with('imgs')->orderBy('created_at', 'desc')->limit(4)->get();
-        $disGoods = MallGood::where('type', Parameter::discount)->with('navs')->with('imgs')->orderBy('created_at', 'desc')->limit(4)->get();
-        return response()->json(['member' => $memGoods, 'discount' => $disGoods]);
+        $memGoods = MallGood::where([['type', Parameter::member],['is_up', 1]])->with('navs')->with('imgs')->orderBy('created_at', 'desc')->limit(4)->get();
+        $disGoods = MallGood::where([['type', Parameter::discount],['is_up', 1]])->with('navs')->with('imgs')->orderBy('created_at', 'desc')->limit(4)->get();
+        $gGoods = MallGood::where([['type', Parameter::group],['is_up', 1]])->with('navs')->with('imgs')->orderBy('created_at', 'desc')->limit(4)->get();
+        return response()->json(['member' => $memGoods, 'discount' => $disGoods,'group'=>$gGoods]);
     }
 
     public function getMemberGoods()
@@ -111,7 +112,7 @@ class MallGoodController extends Controller
                 MallGood::where('id',$good_id)->update(['is_up'=>0]);
             }
             if ($is_up == 1) {
-                $up = MallGoodUp::create(['is_up' => 1]);
+                $up = MallGoodUp::create(['is_up' => 1,'good_id'=>$good_id]);
                 MallGood::where('id',$good_id)->update(['up_id'=>$up->id,'is_up'=>1]);
             }
             DB::commit();

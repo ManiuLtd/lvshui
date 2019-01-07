@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Orders;
 
 use App\Models\Activity;
+use App\Models\Fan;
 use App\Models\JoinSetting;
 use App\Models\MallGood;
 use App\models\MallGoodGroup;
@@ -22,7 +23,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use PhpParser\Node\Param;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
-
+//退货、退款
 class OrderController extends Controller
 {
 //    获取商城订单
@@ -86,7 +87,7 @@ class OrderController extends Controller
         return response()->json(['all' => $order, '$mall' => $mall, 'active' => $active]);
     }
 
-//    获取用户所有订单
+//   获取用户所有订单
     public function getFanOrder()
     {
         $fan_id = Token::getUid();
@@ -101,7 +102,7 @@ class OrderController extends Controller
         return response()->json(['data' => $orders]);
     }
 
-//      获取单笔订单
+//   获取单笔订单
     public function show()
     {
         $id = request()->order;
@@ -112,13 +113,13 @@ class OrderController extends Controller
             ->with('orderGoods')
             ->with('setting')
             ->get();
-        if ($order['pay_state'] == 1 && $order['use_state'] == 0) {
-            if (Storage::exists('qrcodes/' . $id . '.png')) {
-                $order['qrcode'] = asset('storage/qrcodes/' . $id . '.png');
-            }
-        } else {
-            $order['qrcode'] = '';
-        }
+//        if ($order['pay_state'] == 1 && $order['use_state'] == 0) {
+//            if (Storage::exists('qrcodes/' . $id . '.png')) {
+//                $order['qrcode'] = asset('storage/qrcodes/' . $id . '.png');
+//            }
+//        } else {
+//            $order['qrcode'] = '';
+//        }
         return response()->json(['data' => $order]);
     }
 
@@ -189,6 +190,7 @@ class OrderController extends Controller
         return response()->json(['data' => $data]);
     }
 
+//  依类型订单保存
     public function store()
     {
         $data = request()->all();
@@ -207,6 +209,7 @@ class OrderController extends Controller
         return $result;
     }
 
+//  商城订单
     public function orderMall($ps, array $rGoods)
     {
         $type = Parameter::mall;
@@ -368,12 +371,12 @@ class OrderController extends Controller
             $order->end_date = $orderSettings->date();
         } else {
             $day = $orderSettings->day();
-            $order->end_date = Carbon::now()->addDays($day);
+            $order->end_date = Carbon::tomorrow(Carbon::now()->addDays($day));
         }
         DB::beginTransaction();
         try {
             Order::where('id', $order_id)->update($order);
-            QrCode::format('png')->size(200)->generate($use_no, public_path('storage/qrcodes/' . $order_id . '.png'));
+//            QrCode::format('png')->size(200)->generate($use_no, public_path('storage/qrcodes/' . $order_id . '.png'));
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
@@ -381,7 +384,7 @@ class OrderController extends Controller
         }
         return response()->json(['status' => 'success', 'msg' => '修改成功！']);
     }
-
+//  支付成功
     public function pay()
     {
         $list = request(['id', 'paytime', 'trans_no']);
@@ -410,12 +413,14 @@ class OrderController extends Controller
             $order->end_date = $orderSettings->date();
         } else {
             $day = $orderSettings->day();
-            $order->end_date = Carbon::now()->addDays($day);
+            $order->end_date = Carbon::tomorrow(Carbon::now()->addDays($day));
         }
         DB::beginTransaction();
         try {
             Order::where('id', $list['id'])->update($order->toArray());
-            QrCode::format('png')->size(200)->generate($use_no, public_path('storage/qrcodes/' . $list['id'] . '.png'));
+            //Fans表 积分处理
+            Fan::where('id',Token::getUid())->increment('point',$integral);
+//            QrCode::format('png')->size(200)->generate($use_no, public_path('storage/qrcodes/' . $list['id'] . '.png'));
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
@@ -424,6 +429,7 @@ class OrderController extends Controller
         return response()->json(['status' => 'success', 'msg' => '修改成功！']);
     }
 
+//  二维码使用
     public function use()
     {
         $today = Carbon::today();
@@ -466,6 +472,7 @@ class OrderController extends Controller
         }
     }
 
+//  生成php随机数
     public function randomkeys($length)
     {
         $pattern = '1234567890abcdefghijklmnopqrstuvwxyz 
@@ -531,5 +538,63 @@ class OrderController extends Controller
         }
         return response()->json(['status' => 'success', 'msg' => '新增成功！']);
     }
+
+//    取消订单
+    public function cancle()
+    {
+        $id = request()->order;
+        Order::where('id',$id)->update(['pay_state'=>-1]);
+    }
+
+//    申请退款
+    public function applyRefund()
+    {
+        $id = request()->order;
+        $order = Order::where('id',$id)->with('orderGoods')->first();
+        $oGoods = $order->orderGoods;
+        $fan_id = Token::getUid();
+        foreach ($oGoods as $oGood){
+            if($oGood->type == Parameter::group){
+                MallGoodGroup::where([['fan_id',$fan_id],['good_id',$oGood->good_id],['is_effect',1]])->update(['is_effect'=>0]);
+            }else{
+                break;
+            }
+        }
+        Order::where([['id',$id],['use_state','==',0]])->update(['use_state'=>-1]);
+    }
+
+//    拒绝退款
+    public function declineRefund()
+    {
+        $id = request()->order;
+        Order::where('id',$id)->update(['use_state'=>-3]);
+    }
+
+//    退款成功
+    public function refund()
+    {
+        $list = request(['id', 'refund_time']);
+        $order = Order::where('id',$list['id'])->with('orderGoods')->first();
+        $oGoods = $order->orderGoods;
+        $fan_id = Token::getUid();
+        DB::beginTransaction();
+        try {
+            Order::where('id', $list['id'])->update(['use_state'=>-2]);
+            //Fans表 积分处理
+            Fan::where('id',Token::getUid())->decrement('point',$order->integral);
+            //商品数量
+            foreach ($oGoods as $oGood){
+                MallGood::where([['id',$oGood->good_id],['up_id',$oGood->up_id]])->increment('stock', $oGood->num);
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => 'error', 'msg' => '修改失败' . $e]);
+        }
+        return response()->json(['status' => 'success', 'msg' => '修改成功！']);
+    }
+
+
+
 
 }
