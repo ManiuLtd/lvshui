@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Malls;
 
 use App\Models\MallGood;
+use App\models\MallGoodGroup;
 use App\Models\MallGoodMallNav;
 use App\Models\MallGoodUp;
 use App\Models\MallImage;
@@ -70,10 +71,11 @@ class MallGoodController extends Controller
 
     public function getMallHots()
     {
-        $memGoods = MallGood::where([['type', Parameter::member],['is_up', 1]])->with('navs')->with('imgs')->orderBy('created_at', 'desc')->limit(4)->get();
-        $disGoods = MallGood::where([['type', Parameter::discount],['is_up', 1]])->with('navs')->with('imgs')->orderBy('created_at', 'desc')->limit(4)->get();
-        $gGoods = MallGood::where([['type', Parameter::group],['is_up', 1]])->with('navs')->with('imgs')->orderBy('created_at', 'desc')->limit(4)->get();
-        return response()->json(['member' => $memGoods, 'discount' => $disGoods,'group'=>$gGoods]);
+        $memGoods = MallGood::where([['type', Parameter::member],['is_up', 1]])->with('navs')->with('imgs')->orderBy('monthly_sales', 'desc')->limit(4)->get();
+        $disGoods = MallGood::where([['type', Parameter::discount],['is_up', 1]])->with('navs')->with('imgs')->orderBy('monthly_sales', 'desc')->limit(4)->get();
+        $groupGoods = MallGood::where([['type', Parameter::group],['is_up', 1]])->with('navs')->with('imgs')->orderBy('monthly_sales', 'desc')->limit(4)->get();
+        $generalGoods = MallGood::where([['type', Parameter::general],['is_up', 1]])->with('navs')->with('imgs')->orderBy('monthly_sales', 'desc')->limit(4)->get();
+        return response()->json(['member' => $memGoods, 'discount' => $disGoods,'group'=>$groupGoods,'general'=>$generalGoods]);
     }
 
     public function getMemberGoods()
@@ -94,7 +96,7 @@ class MallGoodController extends Controller
         return response()->json(['data' => $mallGoods]);
     }
 
-    public function getGroupGoods()
+     public function getGroupGoods()
     {
         $mallGoods = MallGood::where([['type', Parameter::group], ['is_up', 1]])->with('navs')->with('imgs')->orderBy('created_at', 'desc')->paginate(20);
         return response()->json(['data' => $mallGoods]);

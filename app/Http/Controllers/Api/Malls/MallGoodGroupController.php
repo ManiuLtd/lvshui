@@ -319,9 +319,9 @@ class MallGoodGroupController extends Controller
         $order_id = request('order_id');
         $group = MallGoodGroup::where('order_id', $order_id)->with('childGroups')->first();
         if ($group->head_id != 0) {
-
+            $group = MallGoodGroup::where('id',$group->head_id)->with('childGroups')->first();
         }
-
+        return response()->json(['data' => $group]);
 //        更改状态
 
     }
