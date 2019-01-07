@@ -41,13 +41,6 @@ class MallSwiperController extends Controller
     public function update()
     {
         $re = request(['url', 'url_id', 'remake', 'display', 'image', 'group', 'type']);
-        if ($re['type'] == Parameter::active) {
-            $re['url'] = route('activitys', ['activity' => $re['url_id']]);
-        } else if ($re['type'] == Parameter::good) {
-            $re['url'] = route('mallgoods', ['mallgood' => $re['url_id']]);
-        } else if ($re['type'] == Parameter::other) {
-            $re['url'] = $re(['url']);
-        }
         DB::beginTransaction();
         try {
             MallSwiper::where('id', request()->mall_swiper)->update($re);
