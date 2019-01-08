@@ -141,7 +141,7 @@ class OrderController extends Controller
             $price = $good->price;
             $good->error = 0; //无错误
             if ($good->limit != 0) {
-                $orderGoods = OrderGood::where([['fan_id', $fan_id], 'up_id', $good->up_id])->get();
+                $orderGoods = OrderGood::where([['fan_id', $fan_id], ['up_id', $good->up_id]])->get();
                 if (count($orderGoods) > $good->limit) {
                     $good->error = 6; //商品已达到购买上限
                 }
@@ -336,7 +336,7 @@ class OrderController extends Controller
                     'type' => $good->type, 'order_id' => $order->id, 'good_id' => $rGood['id'], 'num' => $rGood['num'],
                     'price' => $good->price, 'discount' => $good->discount, 'fan_id' => $fan_id, 'up_id' => $good->up_id
                 ]);
-                MallGood::where('id', $rGood['id'])->update(['stock' => $good->stock - $rGood['num']]);
+                MallGood::where('id', $rGood['id'])->update(['stock' => $good->stock - $rGood['num'],'monthly_sales'=> $good->monthly_sales + $rGood['num']]);
             }
             DB::commit();
             return response()->json(['status' => 1, 'msg' => '新增成功！', 'id' => $order->id]);
@@ -553,13 +553,14 @@ class OrderController extends Controller
         $order = Order::where('id',$id)->with('orderGoods')->first();
         $oGoods = $order->orderGoods;
         $fan_id = Token::getUid();
-        foreach ($oGoods as $oGood){
-            if($oGood->type == Parameter::group){
-                MallGoodGroup::where([['fan_id',$fan_id],['good_id',$oGood->good_id],['is_effect',1]])->update(['is_effect'=>0]);
-            }else{
-                break;
-            }
-        }
+//        退款判断 ： 直接修改团购表状态
+//        foreach ($oGoods as $oGood){
+//            if($oGood->type == Parameter::group){
+//                MallGoodGroup::where([['fan_id',$fan_id],['good_id',$oGood->good_id],['state',1]])->update(['state'=>0]);
+//            }else{
+//                break;
+//            }
+//        }
         Order::where([['id',$id],['use_state','==',0]])->update(['use_state'=>-1]);
     }
 
