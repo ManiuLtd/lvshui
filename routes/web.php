@@ -131,6 +131,7 @@ Route::group(['middleware' => ['cors', 'token']], function () {
         Route::get('nav/{nav_id}', 'Api\Malls\MallNavController@getNavWithGood');
 //        获取用户订单
         Route::get('orders', 'Api\Orders\OrderController@getFanOrder');
+        Route::post('order/state','Api\Orders\OrderController@getFanOrderByState');
 //        积分设置
         Route::apiResource('settings', 'Api\Malls\MallSettingController');
 //        团购

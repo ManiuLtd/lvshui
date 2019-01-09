@@ -102,6 +102,34 @@ class OrderController extends Controller
         return response()->json(['data' => $orders]);
     }
 
+    public function getFanOrderByState()
+    {
+        $fan_id = Token::getUid();
+        $list = request(['pay_state','use_state']);
+        //    当前用户未支付订单
+        if($list['pay_state'] == 0 ){
+            $orders = Order::where([['fan_id', $fan_id],['pay_state',0]])
+                ->orderBy('created_at', 'desc')
+                ->with(['goods' => function ($query) {
+                    $query->with('imgs');
+                }])
+                ->with('orderGoods')
+                ->with('setting')
+                ->paginate(20);
+            return response()->json(['data' => $orders]);
+        }else{
+            //    当前用户已支付 未使用/已使用订单
+            $orders = Order::where([['fan_id', $fan_id],['pay_state',1],['use_state',$list['use_state']]])
+                ->orderBy('created_at', 'desc')
+                ->with(['goods' => function ($query) {
+                    $query->with('imgs');
+                }])
+                ->with('orderGoods')
+                ->with('setting')
+                ->paginate(20);
+            return response()->json(['data' => $orders]);
+        }
+    }
 //   获取单笔订单
     public function show()
     {
