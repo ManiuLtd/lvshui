@@ -18,6 +18,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class MallGoodGroupController extends Controller
 {
+//    支付 退款两种情况 积分 展示
     //开团
     public function store()
     {
@@ -74,6 +75,7 @@ class MallGoodGroupController extends Controller
         }
     }
 
+//    跟团
     public function add()
     {
         $fan_id = Token::getUid();
@@ -142,106 +144,108 @@ class MallGoodGroupController extends Controller
             return response()->json(['status' => 'error', 'msg' => '新增失败' . $e]);
         }
     }
-    public function storeSucess()
-    {
-        $list = request(['id','paytime','trans_no']);
-        $fan_id = Token::getUid();
-        $order = Order::where('id',$list['id'])->with('orderGoods')->first();
-        $orderGoods = $order->orderGoods;
-        $good_id = $orderGoods[0]->good_id;
-        $rand = $this->randomkeys(4);
-        $use_no = $order->order_no . $rand;
-        $integral = 0;
-        $order->use_no = $use_no;
-        // 积分处理
-        $mallSetting = MallSetting::first();
-        if ($mallSetting) {
-            $switch = $mallSetting->switch;
-            if ($switch == 1) {
-                $radio = $mallSetting->radio;
-                $price = $order->price;
-                $integral = round($price * $radio); //积分
-            }
-        }
-        $order->integral = $integral;
-        $order->pay_time = $list['paytime'];
-        $order->trans_no = $list['trans_no'];
-        //截止日
-        $orderSettings = OrderSetting::where('switch', 1)->first();
-        $order->end_id = $orderSettings->id;
-        if ($orderSettings->type = 'date') {
-            $order->end_date = $orderSettings->date();
-        } else {
-            $day = $orderSettings->day();
-            $order->end_date = Carbon::now()->addDays($day);
-        }
-        DB::beginTransaction();
-        try {
-            Order::where('id', $list['id'])->update($order->toArray());
-            QrCode::format('png')->size(200)->generate($use_no, public_path('storage/qrcodes/' . $list['id'] . '.png'));
-            MallGoodGroup::create([
-                'fan_id' => $fan_id, 'good_id' => $good_id, 'head_id' => 0, 'order_id' => $order->id
-            ]);
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['status' => 'error', 'msg' => '修改失败' . $e]);
-        }
-        return response()->json(['status' => 'success', 'msg' => '修改成功！']);
-    }
-    public function addSucess()
-    {
-        $list = request(['id','paytime','trans_no']);
-        $fan_id = Token::getUid();
-        $order = Order::where('id',$list['id'])->with('orderGoods')->first();
-        $orderGoods = $order->orderGoods;
-        $good_id = $orderGoods[0]->good_id;
-        $good = MallGood::find($good_id);
-        $rand = $this->randomkeys(4);
-        $use_no = $order->order_no . $rand;
-        $integral = 0;
-        $order->use_no = $use_no;
-        // 积分处理
-        $mallSetting = MallSetting::first();
-        if ($mallSetting) {
-            $switch = $mallSetting->switch;
-            if ($switch == 1) {
-                $radio = $mallSetting->radio;
-                $price = $order->price;
-                $integral = round($price * $radio); //积分
-            }
-        }
-        $order->integral = $integral;
-        $order->pay_time = $list['paytime'];
-        $order->trans_no = $list['trans_no'];
-        //截止日
-        $orderSettings = OrderSetting::where('switch', 1)->first();
-        $order->end_id = $orderSettings->id;
-        if ($orderSettings->type = 'date') {
-            $order->end_date = $orderSettings->date();
-        } else {
-            $day = $orderSettings->day();
-            $order->end_date = Carbon::now()->addDays($day);
-        }
-        $gourp_count = MallGoodGroup::where('id', $list['head_id'])->orWhere('head_id', $list['head_id'])->count();
-        $state = 0;
-        if ($good->group_num == $gourp_count + 1) {
-            $state = 1;
-        }
-        DB::beginTransaction();
-        try {
-            Order::where('id', $list['id'])->update($order->toArray());
-            QrCode::format('png')->size(200)->generate($use_no, public_path('storage/qrcodes/' . $list['id'] . '.png'));
-            MallGoodGroup::create([
-                'fan_id' => $fan_id, 'good_id' => $good_id, 'head_id' => 0, 'order_id' => $order->id,'state'=>$state
-            ]);
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['status' => 'error', 'msg' => '修改失败' . $e]);
-        }
-        return response()->json(['status' => 'success', 'msg' => '修改成功！']);
-    }
+//    public function storeSucess()
+//    {
+//        $list = request(['id','paytime','trans_no']);
+//        $fan_id = Token::getUid();
+//        $order = Order::where('id',$list['id'])->with('orderGoods')->first();
+//        $orderGoods = $order->orderGoods;
+//        $good_id = $orderGoods[0]->good_id;
+//        $rand = $this->randomkeys(4);
+//        $use_no = $order->order_no . $rand;
+//        $integral = 0;
+//        $order->use_no = $use_no;
+//        // 积分处理
+//        $mallSetting = MallSetting::first();
+//        if ($mallSetting) {
+//            $switch = $mallSetting->switch;
+//            if ($switch == 1) {
+//                $radio = $mallSetting->radio;
+//                $price = $order->price;
+//                $integral = round($price * $radio); //积分
+//            }
+//        }
+//        $order->integral = $integral;
+//        $order->pay_time = $list['paytime'];
+//        $order->trans_no = $list['trans_no'];
+//        //截止日
+//        $orderSettings = OrderSetting::where('switch', 1)->first();
+//        $order->end_id = $orderSettings->id;
+//        if ($orderSettings->type = 'date') {
+//            $order->end_date = $orderSettings->date();
+//        } else {
+//            $day = $orderSettings->day();
+//            $order->end_date = Carbon::now()->addDays($day);
+//        }
+//        DB::beginTransaction();
+//        try {
+//            Order::where('id', $list['id'])->update($order->toArray());
+////            QrCode::format('png')->size(200)->generate($use_no, public_path('storage/qrcodes/' . $list['id'] . '.png'));
+//            MallGoodGroup::create([
+//                'fan_id' => $fan_id, 'good_id' => $good_id, 'head_id' => 0, 'order_id' => $order->id
+//            ]);
+//            DB::commit();
+//        } catch (\Exception $e) {
+//            DB::rollBack();
+//            return response()->json(['status' => 'error', 'msg' => '修改失败' . $e]);
+//        }
+//        return response()->json(['status' => 'success', 'msg' => '修改成功！']);
+//    }
+
+//    public function addSucess()
+//    {
+//        $list = request(['id','paytime','trans_no']);
+//        $fan_id = Token::getUid();
+//        $order = Order::where('id',$list['id'])->with('orderGoods')->first();
+//        $orderGoods = $order->orderGoods;
+//        $good_id = $orderGoods[0]->good_id;
+//        $good = MallGood::find($good_id);
+//        $rand = $this->randomkeys(4);
+//        $use_no = $order->order_no . $rand;
+//        $integral = 0;
+//        $order->use_no = $use_no;
+//        // 积分处理
+//        $mallSetting = MallSetting::first();
+//        if ($mallSetting) {
+//            $switch = $mallSetting->switch;
+//            if ($switch == 1) {
+//                $radio = $mallSetting->radio;
+//                $price = $order->price;
+//                $integral = round($price * $radio); //积分
+//            }
+//        }
+//        $order->integral = $integral;
+//        $order->pay_time = $list['paytime'];
+//        $order->trans_no = $list['trans_no'];
+//        //截止日
+//        $orderSettings = OrderSetting::where('switch', 1)->first();
+//        $order->end_id = $orderSettings->id;
+//        if ($orderSettings->type = 'date') {
+//            $order->end_date = $orderSettings->date();
+//        } else {
+//            $day = $orderSettings->day();
+//            $order->end_date = Carbon::now()->addDays($day);
+//        }
+//        $gourp_count = MallGoodGroup::where('id', $list['head_id'])->orWhere('head_id', $list['head_id'])->count();
+//        $state = 0;
+//        if ($good->group_num == $gourp_count + 1) {
+//            $state = 1;
+//        }
+//        DB::beginTransaction();
+//        try {
+//            Order::where('id', $list['id'])->update($order->toArray());
+////            QrCode::format('png')->size(200)->generate($use_no, public_path('storage/qrcodes/' . $list['id'] . '.png'));
+//            MallGoodGroup::create([
+//                'fan_id' => $fan_id, 'good_id' => $good_id, 'head_id' => 0, 'order_id' => $order->id,'state'=>$state
+//            ]);
+//            DB::commit();
+//        } catch (\Exception $e) {
+//            DB::rollBack();
+//            return response()->json(['status' => 'error', 'msg' => '修改失败' . $e]);
+//        }
+//        return response()->json(['status' => 'success', 'msg' => '修改成功！']);
+//    }
+
     public function randomkeys($length)
     {
         $pattern = '1234567890abcdefghijklmnopqrstuvwxyz 
@@ -251,5 +255,76 @@ class MallGoodGroupController extends Controller
         }
         return $key;
     }
+
+//    开团支付成功
+    public function storeSucess()
+    {
+        $list = request(['id', 'paytime', 'trans_no']);
+        $fan_id = Token::getUid();
+        $order = Order::where('id', $list['id'])->with('orderGoods')->first();
+        $orderGoods = $order->orderGoods;
+        $good_id = $orderGoods[0]->good_id;
+        $order->pay_time = $list['paytime'];
+        $order->trans_no = $list['trans_no'];
+        $order->pay_state = 1;
+        DB::beginTransaction();
+        try {
+            Order::where('id', $list['id'])->update($order->toArray());
+            MallGoodGroup::create([
+                'fan_id' => $fan_id, 'good_id' => $good_id, 'head_id' => 0, 'order_id' => $order->id, 'is_effect' => 0
+            ]);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => 'error', 'msg' => '修改失败' . $e]);
+        }
+        return response()->json(['status' => 'success', 'msg' => '修改成功！']);
+    }
+
+//    跟团支付成功
+    public function addSucess()
+    {
+        $list = request(['id', 'paytime', 'trans_no']);
+        $fan_id = Token::getUid();
+        $order = Order::where('id', $list['id'])->with('orderGoods')->first();
+        $orderGoods = $order->orderGoods;
+        $good_id = $orderGoods[0]->good_id;
+        $good = MallGood::find($good_id);
+        $order->pay_time = $list['paytime'];
+        $order->trans_no = $list['trans_no'];
+
+        $gourp_count = MallGoodGroup::where('id', $list['head_id'])->orWhere('head_id', $list['head_id'])->count();
+        $state = 0;
+        if ($good->group_num == $gourp_count + 1) {
+            $state = 1;
+        }
+        DB::beginTransaction();
+        try {
+            Order::where('id', $list['id'])->update($order->toArray());
+            MallGoodGroup::create([
+                'fan_id' => $fan_id, 'good_id' => $good_id, 'head_id' => 0, 'order_id' => $order->id, 'is_effect' => $state
+            ]);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => 'error', 'msg' => '修改失败' . $e]);
+        }
+        return response()->json(['status' => 'success', 'msg' => '修改成功！']);
+    }
+
+//    展示
+    public function getGroup()
+    {
+//        团购详情
+        $order_id = request('order_id');
+        $group = MallGoodGroup::where('order_id', $order_id)->with('childGroups')->first();
+        if ($group->head_id != 0) {
+            $group = MallGoodGroup::where('id',$group->head_id)->with('childGroups')->first();
+        }
+        return response()->json(['data' => $group]);
+//        更改状态
+
+    }
+
 
 }

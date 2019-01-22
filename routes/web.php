@@ -102,31 +102,46 @@ Route::group(['middleware' => ['cors', 'token']], function () {
     Route::get('mall-parameter', 'Api\Malls\MallNavController@getParameter');
     //分类
     Route::apiResource('mall-navs', 'Api\Malls\MallNavController');
+
     // 商品
     Route::post('mall-goods/{good}/change', 'Api\Malls\MallGoodController@change');
-    Route::apiResource('mall-goods', 'Api\Malls\MallGoodController');
+    Route::apiResource('mall-goods','Api\Malls\MallGoodController');
+
     // 轮播图
     Route::put('mall-groups/{group}/change', 'Api\Malls\MallSwiperGroupController@change');
     Route::apiResource('mall-groups', 'Api\Malls\MallSwiperGroupController');
     Route::apiResource('mall-swipers', 'Api\Malls\MallSwiperController');
     // 公众号
     Route::group(['prefix' => 'mall'], function () {
+//        获取会员商品
         Route::get('members', 'Api\Malls\MallGoodController@getMemberGoods');
+//        获取优惠商品
         Route::get('discounts', 'Api\Malls\MallGoodController@getDiscountGoods');
+//        获取一般商品
         Route::get('generals', 'Api\Malls\MallGoodController@getGeneralGoods');
+//        获取团购商品
         Route::get('groups', 'Api\Malls\MallGoodController@getGroupGoods');
+//        获取会员、优惠、团购 各前四笔资料
         Route::get('hots', 'Api\Malls\MallGoodController@getMallHots');
+//        轮播图
         Route::get('swipers', 'Api\Malls\MallSwiperGroupController@getSwipers');
+//        购物车验证
         Route::post('cart', 'Api\Orders\OrderController@cartVerify');
+//        分类
         Route::get('nav/{nav_id}', 'Api\Malls\MallNavController@getNavWithGood');
 //        获取用户订单
         Route::get('orders', 'Api\Orders\OrderController@getFanOrder');
+        Route::post('order/state','Api\Orders\OrderController@getFanOrderByState');
 //        积分设置
         Route::apiResource('settings', 'Api\Malls\MallSettingController');
 //        团购
+//        开团
         Route::post('group/opens','Api\Malls\MallGoodGroupController@store');
+//        加团
         Route::post('group/adds','Api\Malls\MallGoodGroupController@add');
+//        开团支付成功
         Route::post('group/open/sucess','Api\Malls\MallGoodGroupController@storeSucess');
+//        加团支付成功
         Route::post('group/add/sucess','Api\Malls\MallGoodGroupController@addSucess');
 
     });
@@ -148,6 +163,12 @@ Route::group(['middleware' => ['cors', 'token']], function () {
         Route::apiResource('settings', 'Api\Orders\OrderSettingController');
 //        使用
         Route::post('uses', 'Api\Orders\OrderController@use');
+//        取消订单
+        Route::get('cancel/{order}','Api\Orders\OrderController@cancle');
+//        申请退款
+        Route::get('refund/{order}','Api\Orders\OrderController@applyRefund');
+//        拒绝退款
+        Route::get('decline/{order}','Api\Orders\OrderController@declineRefund');
     });
 
     Route::group(['prefix' => 'wechat'], function () {

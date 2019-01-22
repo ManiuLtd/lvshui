@@ -14,7 +14,7 @@ class MallNavController extends Controller
     //
     public function index()
     {
-        $mallNav = MallNav::where('sid', 0)->with(['allChildrenNavs'=>function($query){
+        $mallNav = MallNav::where('sid', 0)->with(['allChildrenNavs' => function ($query) {
             $query->withCount('goods');
         }])->get()->toArray();
         $data = $this->TreeToArray($mallNav, 0);
@@ -24,7 +24,7 @@ class MallNavController extends Controller
     public function show()
     {
         $id = request()->mall_nav;
-        $mallGood = MallNav::where('id',$id)->with(['goods'=>function($query){
+        $mallGood = MallNav::where('id', $id)->with(['goods' => function ($query) {
             $query->with('imgs');
         }])->get();
         return response()->json(['data' => $mallGood]);
@@ -103,16 +103,25 @@ class MallNavController extends Controller
 
     public function getParameter()
     {
-        $good = [["ch" => Parameter::ch_discount, "value" => Parameter::discount], ["ch" => Parameter::ch_general, "value" => Parameter::general], ["ch" => Parameter::ch_member, "value" => Parameter::member]];
-        $swiper = [["ch" => Parameter::ch_good, "value" => Parameter::good], ["ch" => Parameter::ch_active, "value" => Parameter::active], ["ch" => Parameter::ch_other, "value" => Parameter::other]];
-        return response()->json(['good' => $good,'swiper'=>$swiper]);
+        $good = [
+            ["ch" => Parameter::ch_discount, "value" => Parameter::discount],
+            ["ch" => Parameter::ch_general, "value" => Parameter::general],
+            ["ch" => Parameter::ch_member, "value" => Parameter::member],
+            ["ch" => Parameter::ch_group, "value" => Parameter::group]
+        ];
+        $swiper = [
+            ["ch" => Parameter::ch_good, "value" => Parameter::good],
+            ["ch" => Parameter::ch_active, "value" => Parameter::active],
+            ["ch" => Parameter::ch_other, "value" => Parameter::other]
+        ];
+        return response()->json(['good' => $good, 'swiper' => $swiper]);
     }
 
     public function getNavWithGood()
     {
         $id = request()->nav_id;
-        $mallGood = MallNav::where('id',$id)->with(['goods'=>function($query){
-            $query->with('imgs')->where('is_up',1);
+        $mallGood = MallNav::where('id', $id)->with(['goods' => function ($query) {
+            $query->with('imgs')->where('is_up', 1);
         }])->get();
         return response()->json(['data' => $mallGood]);
 

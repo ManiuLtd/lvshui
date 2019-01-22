@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Malls;
 
 use App\Models\MallGood;
+use App\models\MallGoodGroup;
 use App\Models\MallGoodMallNav;
 use App\Models\MallGoodUp;
 use App\Models\MallImage;
@@ -29,7 +30,7 @@ class MallGoodController extends Controller
 
     public function store()
     {
-        $rGoods = request(['name', 'type', 'content', 'total', 'limit', 'price', 'discount', 'monthly_sales', 'sratr_date', 'end_date', 'nav_id', 'stock', 'group_num']);
+        $rGoods = request(['name', 'type', 'content', 'limit', 'price', 'discount', 'monthly_sales', 'sratr_date', 'end_date', 'nav_id', 'stock', 'group_num']);
         $rImgs = request('imgs');
         DB::beginTransaction();
         try {
@@ -48,7 +49,7 @@ class MallGoodController extends Controller
 
     public function update()
     {
-        $rGoods = request(['name', 'content', 'type', 'total', 'limit', 'price', 'discount', 'monthly_sales', 'is_up', 'sratr_date', 'end_date', 'nav_id', 'stock', 'group_num']);
+        $rGoods = request(['name', 'content', 'type',  'limit', 'price', 'discount', 'monthly_sales', 'is_up', 'sratr_date', 'end_date', 'nav_id', 'stock', 'group_num']);
         $rImgs = request('imgs');
         $id = request()->mall_good;
         DB::beginTransaction();
@@ -70,9 +71,11 @@ class MallGoodController extends Controller
 
     public function getMallHots()
     {
-        $memGoods = MallGood::where('type', Parameter::member)->with('navs')->with('imgs')->orderBy('created_at', 'desc')->limit(4)->get();
-        $disGoods = MallGood::where('type', Parameter::discount)->with('navs')->with('imgs')->orderBy('created_at', 'desc')->limit(4)->get();
-        return response()->json(['member' => $memGoods, 'discount' => $disGoods]);
+        $memGoods = MallGood::where([['type', Parameter::member],['is_up', 1]])->with('navs')->with('imgs')->orderBy('monthly_sales', 'desc')->limit(4)->get();
+        $disGoods = MallGood::where([['type', Parameter::discount],['is_up', 1]])->with('navs')->with('imgs')->orderBy('monthly_sales', 'desc')->limit(4)->get();
+        $groupGoods = MallGood::where([['type', Parameter::group],['is_up', 1]])->with('navs')->with('imgs')->orderBy('monthly_sales', 'desc')->limit(4)->get();
+        $generalGoods = MallGood::where([['type', Parameter::general],['is_up', 1]])->with('navs')->with('imgs')->orderBy('monthly_sales', 'desc')->limit(4)->get();
+        return response()->json(['member' => $memGoods, 'discount' => $disGoods,'group'=>$groupGoods,'general'=>$generalGoods]);
     }
 
     public function getMemberGoods()
@@ -93,7 +96,7 @@ class MallGoodController extends Controller
         return response()->json(['data' => $mallGoods]);
     }
 
-    public function getGroupGoods()
+     public function getGroupGoods()
     {
         $mallGoods = MallGood::where([['type', Parameter::group], ['is_up', 1]])->with('navs')->with('imgs')->orderBy('created_at', 'desc')->paginate(20);
         return response()->json(['data' => $mallGoods]);
@@ -111,7 +114,7 @@ class MallGoodController extends Controller
                 MallGood::where('id',$good_id)->update(['is_up'=>0]);
             }
             if ($is_up == 1) {
-                $up = MallGoodUp::create(['is_up' => 1]);
+                $up = MallGoodUp::create(['is_up' => 1,'good_id'=>$good_id]);
                 MallGood::where('id',$good_id)->update(['up_id'=>$up->id,'is_up'=>1]);
             }
             DB::commit();
