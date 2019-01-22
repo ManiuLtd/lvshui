@@ -11,12 +11,13 @@ class PayController extends Controller
     public function unify()
     {
         //TODO: 获取订单信息
+        
         $order = [
-            'body' => '任意门支付测试',
-            'out_trade_no' => \App\Utils\Common::generateOrderNo(),
-            'total_fee' => 0.01 * 100,
+            'body' => $order->body,
+            'out_trade_no' => $order->order_no,
+            'total_fee' => $order->price * 100,
             'trade_type' => 'JSAPI',
-            'openid' => 'o_FNZ1OcVWhKprNi2LjuOP-5DyAc',
+            'openid' => $order->fan->openid,
         ];
 
         $payment = WechatPay::unify($order);
