@@ -19,6 +19,7 @@
         $.ajax({
             url: "https://www.zhlsqj.com/wechat/unify",
             success: function (result) {
+                console.log(result)
                 onBridgeReady(result.payment);
             }
         })
