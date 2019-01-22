@@ -182,7 +182,7 @@ Route::group(['middleware' => ['cors', 'token']], function () {
 });
 
 Route::group(['prefix' => 'wechat'], function () {
-        Route::any('pay', 'Api\Wechat\PayController@unify');
+    Route::any('unify', 'Api\Wechat\PayController@unify');
     Route::any('server', 'Api\Wechat\OfficialAccountController@server');    
     Route::any('oauth', 'Api\Wechat\OfficialAccountController@oauth');
     Route::any('oauth-callback', 'Api\Wechat\OfficialAccountController@oauthCallback');
