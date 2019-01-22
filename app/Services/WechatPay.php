@@ -22,14 +22,14 @@ class WechatPay extends Model
     {
         $app = self::getApp();
 
-        $result = $app->order->unify([
-            'body' => $order->body,
-            'out_trade_no' => $order->order_no,
-            'total_fee' => $order->price * 100,
-            'trade_type' => 'JSAPI',
-            'openid' => $order->fan->openid,
-        ]);
-        // $result = $app->order->unify($order);
+        // $result = $app->order->unify([
+        //     'body' => $order->body,
+        //     'out_trade_no' => $order->order_no,
+        //     'total_fee' => $order->price * 100,
+        //     'trade_type' => 'JSAPI',
+        //     'openid' => $order->fan->openid,
+        // ]);
+        $result = $app->order->unify($order);
 
         $prepay_id = $result['prepay_id'];
         
