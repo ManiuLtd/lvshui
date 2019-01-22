@@ -16,7 +16,7 @@ class PayController extends Controller
             'out_trade_no' => \App\Utils\Common::generateOrderNo(),
             'total_fee' => 1,
             'trade_type' => 'JSAPI',
-            'openid' => 'oLOcY0jf0SLhG_LN27yU0FIZJWUo',
+            'openid' => 'o_FNZ1OcVWhKprNi2LjuOP-5DyAc',
         ];
 
         $payment = WechatPay::unify($order);
