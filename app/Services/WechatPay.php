@@ -9,26 +9,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class WechatPay extends Model
 {
-    private $app;
-
-    public function __construct() 
+    public static function getApp()
     {
         $config = config('wechat.payment.default');
 
-        $this->app = Factory::payment($config);
+        $app = Factory::payment($config);
+
+        return $app;
     }
-
-    // public static function getApp()
-    // {
-    //     $config = config('wechat.payment.default');
-
-    //     $app = Factory::payment($config);
-
-    //     return $app;
-    // }
 
     public static function unify($order)
     {
+        $app = self::getApp();
+
         // $result = $app->order->unify([
         //     'body' => $order->body,
         //     'out_trade_no' => $order->order_no,
@@ -36,18 +29,20 @@ class WechatPay extends Model
         //     'trade_type' => 'JSAPI',
         //     'openid' => $order->fan->openid,
         // ]);
-        $result = $this->app->order->unify($order);
+        $result = $app->order->unify($order);
 
         $prepay_id = $result['prepay_id'];
         
-        $payment =  $this->app->jssdk->bridgeConfig($prepay_id, false);
+        $payment =  $app->jssdk->bridgeConfig($prepay_id, false);
 
         return $payment;
     }
 
     public function refund($order, $desc = '取消订单') 
     {
-        $result = $this->app->refund->byTransactionId($order->trans_no, 'TK'.$order->order_no, $order->price * 100, $order->price * 100, [
+        $app = self::getApp();
+
+        $result = $app->refund->byTransactionId($order->trans_no, 'TK'.$order->order_no, $order->price * 100, $order->price * 100, [
             // 可在此处传入其他参数，详细参数见微信支付文档
             'refund_desc' => $desc,
         ]);
