@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateFanTicketTable extends Migration
+class CreateFanTicketsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateFanTicketTable extends Migration
      */
     public function up()
     {
-        Schema::create('fan_ticket', function (Blueprint $table) {
+        Schema::create('fan_tickets', function (Blueprint $table) {
             $table->increments('id');
             $table->tinyInteger('fan_id')->commend('粉丝id');
             $table->tinyInteger('ticket_id')->commend('门票id');
@@ -31,6 +31,6 @@ class CreateFanTicketTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('fan_ticket');
+        Schema::dropIfExists('fan_tickets');
     }
 }
