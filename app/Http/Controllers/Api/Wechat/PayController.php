@@ -113,9 +113,9 @@ class PayController extends Controller
                         \Log::info("支付".$order);
                         DB::beginTransaction();
                         try {
-                            Order::where('id', $order->id)->update($order->toArray());
+                            Order::where('id', $order->id)->update($order);
                             //Fans表 积分处理
-                            Fan::where('id',Token::getUid())->increment('point',$integral);
+                            Fan::where('id',$order->fan_id)->increment('point',$integral);
                             DB::commit();
                             \Log::info("支付成功");
                         } catch (\Exception $e) {
