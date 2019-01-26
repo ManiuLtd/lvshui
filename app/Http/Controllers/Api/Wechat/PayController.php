@@ -62,7 +62,8 @@ class PayController extends Controller
 
     public function notify() 
     {
-
+        \Log::info('支付完成');
+        
         $app = WechatPay::getApp();
 
         $response = $app->handlePaidNotify(function($message, $fail) {
