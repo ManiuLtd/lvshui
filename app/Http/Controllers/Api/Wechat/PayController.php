@@ -76,11 +76,14 @@ class PayController extends Controller
             if ($message['return_code'] === 'SUCCESS') { // return_code 表示通信状态，不代表支付状态
                 // 用户是否支付成功
                 if ($message['result_code'] === 'SUCCESS') {
+                    \Log::info("支付成功执行回调");
                     $order->pay_time = date('Y-m-d H:i:s', time()); // 更新支付时间为当前时间
                     $order->trans_no = $message['transaction_id'];
                     $order->pay_state = 1;
-
                     if($order->type = Parameter::mall){
+
+                        \Log::info("支付：商城");
+
                         $rand = $this->randomkeys(4);
                         $use_no = $order->order_no . $rand;
                         $order->use_no = $use_no;
@@ -88,6 +91,7 @@ class PayController extends Controller
                         // 积分处理
                         $mallSetting = MallSetting::first();
                         if ($mallSetting) {
+                            \Log::info("支付：积分处理存在");
                             $switch = $mallSetting->switch;
                             if ($switch == 1) {
                                 $radio = $mallSetting->radio;
@@ -97,6 +101,7 @@ class PayController extends Controller
                         }
                         $order->integral = $integral;
                         //截止日
+                        \Log::info("支付：截止日");
                         $orderSettings = OrderSetting::where('switch', 1)->first();
                         $order->end_id = $orderSettings->id;
                         if ($orderSettings->type = 'date') {
@@ -105,18 +110,18 @@ class PayController extends Controller
                             $day = $orderSettings->day;
                             $order->end_date = Carbon::tomorrow(Carbon::now()->addDays($day));
                         }
-
+                        \Log::info("支付".$order);
                         DB::beginTransaction();
                         try {
                             Order::where('id', $order->id)->update($order->toArray());
                             //Fans表 积分处理
                             Fan::where('id',Token::getUid())->increment('point',$integral);
                             DB::commit();
+                            \Log::info("支付成功");
                         } catch (\Exception $e) {
                             DB::rollBack();
-                            return response()->json(['status' => 'error', 'msg' => '修改失败' . $e]);
+                            \Log::info("支付失败：". $e);
                         }
-                        return response()->json(['status' => 'success', 'msg' => '修改成功！']);
 
                     }else if($order->type = Parameter::active){
                         $rand = $this->randomkeys(4);
