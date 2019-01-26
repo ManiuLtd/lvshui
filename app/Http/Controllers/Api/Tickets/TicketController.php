@@ -12,22 +12,22 @@ class TicketController extends Controller
 {
     public function index()
     {
-        $tickes=Ticket::paginate(20);
+        $tickets=Ticket::paginate(20);
         ;
-        return response()->json(['status' => 'success', 'data' => $tickes]);
+        return response()->json(['status' => 'success', 'data' => $tickets]);
     }
 
     public function show()
     {
-        $ticke=Ticket::with('id')->find(request()->id);
-        return response()->json(['status' => 'success', 'data' => $ticke]);
+        $ticket=Ticket::with('id')->find(request()->ticket);
+        return response()->json(['status' => 'success', 'data' => $ticket]);
     }
 
     public function store()
     {
         $data= request()->all();
-        $ticke=Ticket::create($data);
-        if ($ticke) {
+        $ticket=Ticket::create($data);
+        if ($ticket) {
             return response()->json(['status' => 'success', 'msg' => '新增成功!']);
         }
         return response()->json(['status' => 'error', 'msg' => '新增失败！']);
@@ -36,7 +36,7 @@ class TicketController extends Controller
     public function update()
     {
         $data = request()->all();
-        if (Ticket::where('id', request()->id)->update($data)) {
+        if (Ticket::find(request()->ticket)->update($data)) {
             return response()->json(['status' => 'success', 'msg' => '更新成功！']);
         }
         return response()->json(['status' => 'error', 'msg' => '更新失败！']);
@@ -44,7 +44,7 @@ class TicketController extends Controller
 
     public function destroy()
     {
-        if (Ticket::find(request()->id)->delete()) {
+        if (Ticket::find(request()->ticket)->delete()) {
             return response()->json(['status' => 'success', 'msg' => '删除成功！']);
         }
 
