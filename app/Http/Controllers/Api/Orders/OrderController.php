@@ -360,6 +360,8 @@ class OrderController extends Controller
                         $discount_type = 2;
                         $pDiscount = $pDiscount + $gPrice - sprintf("%.2f", $gPrice * $discount);
                         $price = $price + sprintf("%.2f", $gPrice * $discount);
+                    }else {
+                        $genealPrice = 100;
                     }
                 }else {
                     $genealPrice = $genealPrice + $gPrice;
