@@ -33,8 +33,6 @@ class PayController extends Controller
             'openid' => $openid,
         ];
 
-        return response()->json(['order' => $order]);
-
         $payment = WechatPay::unify($order);
         
         return response()->json(['payment' => $payment]);    
