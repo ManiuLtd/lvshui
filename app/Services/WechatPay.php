@@ -24,8 +24,9 @@ class WechatPay extends Model
 
         $result = $app->order->unify($order);
 
+        \Log::info($result);
         return $result;
-        
+
         $prepay_id = $result['prepay_id'];
         
         $payment =  $app->jssdk->bridgeConfig($prepay_id, false);
