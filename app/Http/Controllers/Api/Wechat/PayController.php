@@ -24,7 +24,7 @@ class PayController extends Controller
         //TODO: 获取订单信息
         $id = request('id');
         $order = Order::find($id);
-        $openid = Fan::find($order->fan_id)['open'];
+        $openid = Fan::find($order->fan_id)['openid'];
         $order = [
             'body' => $order->body,
             'out_trade_no' => $order->order_no,
