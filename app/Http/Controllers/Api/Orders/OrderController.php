@@ -304,6 +304,7 @@ class OrderController extends Controller
             $offer_status = $memberSet->offer_status;
             $offers = json_decode($memberSet->offer);
         }
+
         $goods = MallGood::whereIn('id', $rgIDs)->get(); //商品集合
         foreach ($rGoods as $rGood) {
             $good = $goods->where('id', $rGood['id'])->first();
@@ -359,9 +360,9 @@ class OrderController extends Controller
                         $discount_type = 2;
                         $pDiscount = $pDiscount + $gPrice - sprintf("%.2f", $gPrice * $discount);
                         $price = $price + sprintf("%.2f", $gPrice * $discount);
-                    } else {
-                        $genealPrice = $genealPrice + $gPrice;
                     }
+                }else {
+                    $genealPrice = $genealPrice + $gPrice;
                 }
             }
         }
@@ -548,6 +549,7 @@ class OrderController extends Controller
     {
         $pattern = '1234567890abcdefghijklmnopqrstuvwxyz 
                ABCDEFGHIJKLOMNOPQRSTUVWXYZ';
+        $key ="";
         for ($i = 0; $i < $length; $i++) {
             $key .= $pattern{mt_rand(0, 35)};    //生成php随机数
         }
