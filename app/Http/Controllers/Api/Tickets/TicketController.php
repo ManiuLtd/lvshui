@@ -36,7 +36,7 @@ class TicketController extends Controller
     public function update()
     {
         $data = request()->all();
-        if (Ticket::find(request()->id)->update($data)) {
+        if (Ticket::where('id', request()->id)->update($data)) {
             return response()->json(['status' => 'success', 'msg' => '更新成功！']);
         }
         return response()->json(['status' => 'error', 'msg' => '更新失败！']);
