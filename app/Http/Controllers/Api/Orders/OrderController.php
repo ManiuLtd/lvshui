@@ -633,7 +633,7 @@ class OrderController extends Controller
 
             OrderGood::create([
                 'type' => $type, 'order_id' => $order->id, 'good_id' => $fanTicket->id,
-                'num' => $booking_date, 'price' => $price
+                'num' => $booking_date, 'price' => $ticket->price
             ]);
 
             DB::commit();
