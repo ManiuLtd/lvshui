@@ -25,6 +25,7 @@ class PayController extends Controller
         $id = request('id');
         $order = Order::find($id);
         $openid = Fan::find($order->fan_id)['openid'];
+
         $order = [
             'body' => $order->body,
             'out_trade_no' => $order->order_no,
@@ -32,7 +33,7 @@ class PayController extends Controller
             'trade_type' => 'JSAPI',
             'openid' => $openid,
         ];
-
+        
         $payment = WechatPay::unify($order);
         
         return response()->json(['payment' => $payment]);    
@@ -62,8 +63,6 @@ class PayController extends Controller
 
     public function notify() 
     {
-        \Log::info('支付完成');
-
         $app = WechatPay::getApp();
 
         $response = $app->handlePaidNotify(function($message, $fail) {
