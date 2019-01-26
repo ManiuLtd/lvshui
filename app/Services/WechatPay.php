@@ -23,6 +23,8 @@ class WechatPay extends Model
         $app = self::getApp();
 
         $result = $app->order->unify($order);
+
+        return $result;
         
         $prepay_id = $result['prepay_id'];
         
