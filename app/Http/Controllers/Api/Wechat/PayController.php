@@ -86,6 +86,7 @@ class PayController extends Controller
                         $rand = $this->randomkeys(4);
                         $use_no = $order->order_no . $rand;
                         $order->use_no = $use_no;
+
                         $integral = 0;
                         // 积分处理
                         $mallSetting = MallSetting::first();
@@ -112,7 +113,13 @@ class PayController extends Controller
                         \Log::info("支付".$order);
                         DB::beginTransaction();
                         try {
-                            Order::where('id', $order->id)->update($order->toArray());
+                            Order::where('id', $order->id)->update([
+                                'pay_state'=>$order->pay_state,'use_state'=>$order->use_state,
+                                'pay_time'=>$order->pay_time,'trans_no'=>$order->trans_no,
+                                'end_id'=>$order->end_id,'end_date'=>$order->end_date,
+                                'integral'=>$order->integral,'discount_type'=>$order->discount_type,
+                                'discount'=>$order->discount,'use_no'=>$order->use_no
+                            ]);
                             //Fans表 积分处理
                             Fan::where('id',$order->fan_id)->increment('point',$integral);
                             DB::commit();
