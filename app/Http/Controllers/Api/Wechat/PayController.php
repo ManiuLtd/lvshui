@@ -165,6 +165,7 @@ class PayController extends Controller
     {
         $pattern = '1234567890abcdefghijklmnopqrstuvwxyz 
                ABCDEFGHIJKLOMNOPQRSTUVWXYZ';
+        $key ="";
         for ($i = 0; $i < $length; $i++) {
             $key .= $pattern{mt_rand(0, 35)};    //生成php随机数
         }
