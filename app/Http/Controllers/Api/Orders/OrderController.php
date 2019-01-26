@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Orders;
 
 use App\Models\Activity;
 use App\Models\Fan;
+use App\Models\FanTicket;
 use App\Models\JoinSetting;
 use App\Models\MallGood;
 use App\models\MallGoodGroup;
@@ -14,6 +15,7 @@ use App\Models\Order;
 use App\Models\OrderGood;
 use App\Models\OrderSetting;
 use App\Models\SignHistory;
+use App\Models\Ticket;
 use App\Services\Token;
 use App\Utils\Parameter;
 use Carbon\Carbon;
@@ -101,33 +103,71 @@ class OrderController extends Controller
             ->paginate(20);
         return response()->json(['data' => $orders]);
     }
-
+//    依类型获取订单
     public function getFanOrderByState()
     {
         $fan_id = Token::getUid();
-        $list = request(['pay_state','use_state']);
+        $list = request(['pay_state','use_state','type']);
         //    当前用户未支付订单
         if($list['pay_state'] == 0 ){
-            $orders = Order::where([['fan_id', $fan_id],['pay_state',0]])
-                ->orderBy('created_at', 'desc')
-                ->with(['goods' => function ($query) {
-                    $query->with('imgs');
-                }])
-                ->with('orderGoods')
-                ->with('setting')
-                ->paginate(20);
-            return response()->json(['data' => $orders]);
+
+           if( $list['type']==Parameter::mall){
+               $orders = Order::where([['fan_id', $fan_id],['pay_state',0],['type',$list['type']]])
+                   ->orderBy('created_at', 'desc')
+                   ->with(['goods' => function ($query) {
+                       $query->with('imgs');
+                   }])
+                   ->with('orderGoods')
+                   ->with('setting')
+                   ->paginate(20);
+               return response()->json(['data' => $orders]);
+           }else if ($list['type']==Parameter::active){
+               $orders = Order::where([['fan_id', $fan_id],['pay_state',0],['type',$list['type']]])
+                   ->orderBy('created_at', 'desc')
+                   ->with('active')
+                   ->with('orderGoods')
+                   ->with('setting')
+                   ->paginate(20);
+               return response()->json(['data' => $orders]);
+           }else if($list['type']==Parameter::join){
+               $orders = Order::where([['fan_id', $fan_id],['pay_state',0],['type',$list['type']]])
+                   ->orderBy('created_at', 'desc')
+                   ->with('join')
+                   ->with('orderGoods')
+                   ->with('setting')
+                   ->paginate(20);
+               return response()->json(['data' => $orders]);
+           }
         }else{
             //    当前用户已支付 未使用/已使用订单
-            $orders = Order::where([['fan_id', $fan_id],['pay_state',1],['use_state',$list['use_state']]])
-                ->orderBy('created_at', 'desc')
-                ->with(['goods' => function ($query) {
-                    $query->with('imgs');
-                }])
-                ->with('orderGoods')
-                ->with('setting')
-                ->paginate(20);
-            return response()->json(['data' => $orders]);
+            if($list['type']==Parameter::mall){
+                $orders = Order::where([['fan_id', $fan_id],['pay_state',1],['use_state',$list['use_state']]])
+                    ->orderBy('created_at', 'desc')
+                    ->with(['goods' => function ($query) {
+                        $query->with('imgs');
+                    }])
+                    ->with('orderGoods')
+                    ->with('setting')
+                    ->paginate(20);
+                return response()->json(['data' => $orders]);
+            }else if($list['type']==Parameter::active){
+                $orders = Order::where([['fan_id', $fan_id],['pay_state',0],['type',$list['type']]])
+                    ->orderBy('created_at', 'desc')
+                    ->with('active')
+                    ->with('orderGoods')
+                    ->with('setting')
+                    ->paginate(20);
+                return response()->json(['data' => $orders]);
+            }else if($list['type']==Parameter::join){
+                $orders = Order::where([['fan_id', $fan_id],['pay_state',0],['type',$list['type']]])
+                    ->orderBy('created_at', 'desc')
+                    ->with('join')
+                    ->with('orderGoods')
+                    ->with('setting')
+                    ->paginate(20);
+                return response()->json(['data' => $orders]);
+            }
+
         }
     }
 //   获取单笔订单
@@ -232,6 +272,9 @@ class OrderController extends Controller
                 break;
             case Parameter::join:
                 $result = $this->orderJoin($data['join_id']);
+                break;
+            case Parameter::ticket;
+                $result = $this->orderTicket($data['ticket_id'],$data['name'],$data['mobile'],$data['purchase_quantity'],$data['booking_date']);
                 break;
         }
         return $result;
@@ -565,6 +608,42 @@ class OrderController extends Controller
             return response()->json(['status' => 'error', 'msg' => '新增失败' . $e]);
         }
         return response()->json(['status' => 'success', 'msg' => '新增成功！']);
+    }
+
+    public function orderTicket($ticket_id,$name,$mobile,$purchase_quantity,$booking_date){
+        $type = Parameter::ticket;
+        $fan_id = Token::getUid();
+        $body = Parameter::body_CO . '-门票';
+        $ticket = Ticket::find($ticket_id);
+        $price = $ticket->price * $purchase_quantity;
+
+        $date = Carbon::now()->format('Ymdhi');
+        $oNum = sprintf("%04d", Order::where('order_no', 'like', $date . '%')->count() + 1);
+        $order_no = $date . $oNum;
+
+        DB::beginTransaction();
+        try {
+            $order = Order::create(['type' => $type, 'fan_id' => $fan_id, 'price' => $price, 'order_no' => $order_no, 'body' => $body]);
+
+            $fanTicket = FanTicket::create([
+                'fan_id'=>$fan_id,'ticket_id'=>$ticket_id,'name'=>$name,'mobile' => $mobile,
+                'purchase_quantity' => $purchase_quantity,'booking_date'=>$booking_date
+
+            ]);
+
+            OrderGood::create([
+                'type' => $type, 'order_id' => $order->id, 'good_id' => $fanTicket->id,
+                'num' => $booking_date, 'price' => $price
+            ]);
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['status' => 'error', 'msg' => '新增失败' . $e]);
+        }
+        return response()->json(['status' => 'success', 'msg' => '新增成功！']);
+
+
     }
 
 //    取消订单

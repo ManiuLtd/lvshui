@@ -33,6 +33,7 @@ class Parameter
 
 //    订单
     const mall = 'mall';
+    const ticket = 'ticket';
     const body_CO ='任意门网络';
 
 
