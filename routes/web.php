@@ -171,6 +171,7 @@ Route::group(['middleware' => ['cors', 'token']], function () {
     // 门票
     Route::group(['prefix' => 'ticket'], function () {
         Route::apiResource('ticket', 'Api\Tickets\TicketController');
+        Route::apiResource('fan-ticket', 'Api\Tickets\FanTicketController');
     });
 
 
