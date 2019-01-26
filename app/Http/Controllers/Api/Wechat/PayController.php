@@ -30,7 +30,7 @@ class PayController extends Controller
             'out_trade_no' => $order->order_no,
             'total_fee' => $order->price * 100,
             'trade_type' => 'JSAPI',
-            'openid' => $order->fan->openid,
+            'openid' => $openid,
         ];
 
         return response()->json(['order' => $order]);
