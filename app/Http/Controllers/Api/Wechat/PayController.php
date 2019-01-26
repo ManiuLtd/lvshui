@@ -167,7 +167,8 @@ class PayController extends Controller
                ABCDEFGHIJKLOMNOPQRSTUVWXYZ';
         $key ="";
         for ($i = 0; $i < $length; $i++) {
-            $key .= $pattern{mt_rand(0, 35)};    //生成php随机数
+            //生成php随机数
+            $key .= $pattern{mt_rand(0, 35)};
         }
         return $key;
     }
