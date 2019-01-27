@@ -51,6 +51,21 @@ class TicketController extends Controller
         return response()->json(['status' => 'error', 'msg' => '删除失败！']);
     }
 
+    public function is_up()
+    {
+        if( request()->is_up == 0) {
+            $is_up = 0;
+            $msg = '下架';
+        } else {
+            $is_up = 1;
+            $msg = '上架';
+        }
+        if (Ticket::find(request()->ticket)->update('is_up',$is_up)) {
+            return response()->json(['status' => 'success', 'msg' => $msg+'成功！']);
+        }
+        return response()->json(['status' => 'error', 'msg' => $msg+'失败！']);
+    }
+
     //  门票验证
     public function ticketVerify()
     {
@@ -66,7 +81,7 @@ class TicketController extends Controller
                 $ticket->error = 6; //票数已达到用户单次购买上限
             }
             if ($fan_ticket->purchase_quantity > $ticke->daily_inventory) {
-                $ticket->errot = 3; //票数超出每日上限
+                $ticket->errot = 3; //票数超出每日库存
             }
         }
         if ($ticket->stock == 0) {
