@@ -19,7 +19,7 @@ class TicketController extends Controller
 
     public function show()
     {
-        $ticket=Ticket::with('id')->find(request()->ticket);
+        $ticket=Ticket::find(request()->ticket);
         return response()->json(['status' => 'success', 'data' => $ticket]);
     }
 
