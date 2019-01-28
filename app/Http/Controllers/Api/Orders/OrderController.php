@@ -137,11 +137,25 @@ class OrderController extends Controller
                    ->with('setting')
                    ->paginate(20);
                return response()->json(['data' => $orders]);
+           }else if($list['type']==Parameter::ticket){
+               $orders = Order::where([['fan_id', $fan_id],['pay_state',0],['type',$list['type']]])
+                   ->orderBy('created_at', 'desc')
+                   ->with(['fanTicket' => function ($query) {
+                       $query->with('ticket');
+                   }])
+                   ->with('orderGoods')
+                   ->with('setting')
+                   ->paginate(20);
+               return response()->json(['data' => $orders]);
            }
         }else{
             //    当前用户已支付 未使用/已使用订单
             if($list['type']==Parameter::mall){
-                $orders = Order::where([['fan_id', $fan_id],['pay_state',1],['use_state',$list['use_state']]])
+                $orders = Order::where([ ['fan_id', $fan_id],
+                                         ['pay_state',1],
+                                         ['use_state',$list['use_state']],
+                                         ['type',$list['type']]
+                                         ])
                     ->orderBy('created_at', 'desc')
                     ->with(['goods' => function ($query) {
                         $query->with('imgs');
@@ -151,7 +165,11 @@ class OrderController extends Controller
                     ->paginate(20);
                 return response()->json(['data' => $orders]);
             }else if($list['type']==Parameter::active){
-                $orders = Order::where([['fan_id', $fan_id],['pay_state',0],['type',$list['type']]])
+                $orders = Order::where([['fan_id', $fan_id],
+                                        ['pay_state',1],
+                                        ['use_state',$list['use_state']],
+                                        ['type',$list['type']]
+                                        ])
                     ->orderBy('created_at', 'desc')
                     ->with('active')
                     ->with('orderGoods')
@@ -159,13 +177,32 @@ class OrderController extends Controller
                     ->paginate(20);
                 return response()->json(['data' => $orders]);
             }else if($list['type']==Parameter::join){
-                $orders = Order::where([['fan_id', $fan_id],['pay_state',0],['type',$list['type']]])
+                $orders = Order::where([['fan_id', $fan_id],
+                                        ['pay_state',1],
+                                        ['use_state',$list['use_state']],
+                                        ['type',$list['type']]
+                                        ])
                     ->orderBy('created_at', 'desc')
                     ->with('join')
                     ->with('orderGoods')
                     ->with('setting')
                     ->paginate(20);
                 return response()->json(['data' => $orders]);
+            }else if($list['type']==Parameter::ticket){
+                $orders = Order::where([['fan_id', $fan_id],
+                                        ['pay_state',1],
+                                        ['use_state',$list['use_state']],
+                                        ['type',$list['type']]
+                ])
+                    ->orderBy('created_at', 'desc')
+                    ->with(['fanTicket' => function ($query) {
+                        $query->with('ticket');
+                    }])
+                    ->with('orderGoods')
+                    ->with('setting')
+                    ->paginate(20);
+                return response()->json(['data' => $orders]);
+
             }
 
         }
