@@ -189,7 +189,7 @@ class OrderController extends Controller
 //            $order['qrcode'] = '';
 //        }
 
-            Order::where('id', $id)
+        $order=  Order::where('id', $id)
                 ->when('type' == Parameter::mall,function ($query){
                     $query->with(['goods' => function ($query) {
                         $query->with('imgs');
