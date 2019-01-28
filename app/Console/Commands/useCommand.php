@@ -46,7 +46,7 @@ class useCommand extends Command
         DB::beginTransaction();
         try {
             Order::where('use_state',0)
-                ->whereDate('end_date','<=',$today->toDateString())
+                ->whereDate('end_date','<',$today->toDateString())
                 ->update(['use_state'=>-4]);
             DB::commit();
             \Log::info('成功');
