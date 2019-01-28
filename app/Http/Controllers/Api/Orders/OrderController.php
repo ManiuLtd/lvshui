@@ -171,7 +171,7 @@ class OrderController extends Controller
         }
     }
 //   获取单笔订单
-    public function show()
+    public function showOrder()
     {
         $id = request()->order;
         $type = request('type');

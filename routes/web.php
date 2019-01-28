@@ -145,7 +145,7 @@ Route::group(['middleware' => ['cors', 'token']], function () {
 
     Route::group(['prefix' => 'order'], function () {
 //         获取订单
-        Route::post('orders/{order}', 'Api\Orders\OrderController@show');
+        Route::post('orders/{order}', 'Api\Orders\OrderController@showOrder');
 //        保存订单
         Route::apiResource('orders', 'Api\Orders\OrderController');
 //        获取所有商城订单
