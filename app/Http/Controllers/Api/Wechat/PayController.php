@@ -48,12 +48,10 @@ class PayController extends Controller
         $result = WechatPay::refund($order);
 
         if($result['result_code'] == 'SUCCESS' && $result['return_msg'] == 'OK') {
-            if($order->update(['status' => OrderStatus::REFUND_SUCCESS])){
-
-
-
-
-                return response()->json(['status' => 'success', 'msg' => '退款成功！']);         
+            $sucess = $order->update([ 'use_state'=> -2 ,
+                                       'refund_time'=> date('Y-m-d H:i:s', time()) ]);
+            if($sucess){
+                return response()->json(['status' => 'success', 'msg' => '退款成功！']);
             }
         }else {
             return response()->json(['status' => 'error', 'msg' => $result['err_code_des']]);  
