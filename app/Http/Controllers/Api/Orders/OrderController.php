@@ -174,6 +174,7 @@ class OrderController extends Controller
     public function show()
     {
         $id = request()->order;
+        $type = request('type');
 //        $order = Order::where('id', $id)
 //            ->with(['goods' => function ($query) {
 //                $query->with('imgs');
@@ -190,12 +191,12 @@ class OrderController extends Controller
 //        }
 
         $order=  Order::where('id', $id)
-                ->when('type' == Parameter::mall,function ($query){
+                ->when($type == Parameter::mall,function ($query){
                     $query->with(['goods' => function ($query) {
                         $query->with('imgs');
                     }]);
                 })
-                ->when('type' == Parameter::ticket,function ($query){
+                ->when($type == Parameter::ticket,function ($query){
                     $query->with(['fanTicket' => function ($query) {
                         $query->with('ticket');
                     }]);
