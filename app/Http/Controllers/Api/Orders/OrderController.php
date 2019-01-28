@@ -174,13 +174,13 @@ class OrderController extends Controller
     public function show()
     {
         $id = request()->order;
-        $order = Order::where('id', $id)
-            ->with(['goods' => function ($query) {
-                $query->with('imgs');
-            }])
-            ->with('orderGoods')
-            ->with('setting')
-            ->get();
+//        $order = Order::where('id', $id)
+//            ->with(['goods' => function ($query) {
+//                $query->with('imgs');
+//            }])
+//            ->with('orderGoods')
+//            ->with('setting')
+//            ->get();
 //        if ($order['pay_state'] == 1 && $order['use_state'] == 0) {
 //            if (Storage::exists('qrcodes/' . $id . '.png')) {
 //                $order['qrcode'] = asset('storage/qrcodes/' . $id . '.png');
@@ -188,6 +188,20 @@ class OrderController extends Controller
 //        } else {
 //            $order['qrcode'] = '';
 //        }
+
+            Order::where('id', $id)
+                ->when('type' == Parameter::mall,function ($query){
+                    $query->with(['goods' => function ($query) {
+                        $query->with('imgs');
+                    }]);
+                })
+                ->when('type' == Parameter::ticket,function ($query){
+                    $query->with(['fanTicket' => function ($query) {
+                        $query->with('ticket');
+                    }]);
+                })->with('orderGoods')
+                ->with('setting')
+                ->get();
         return response()->json(['data' => $order]);
     }
 
