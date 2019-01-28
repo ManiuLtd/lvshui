@@ -15,7 +15,7 @@ class CreateMallImagesTable extends Migration
     {
         Schema::create('mall_images', function (Blueprint $table) {
             $table->increments('id');
-            $table->tinyInteger('good_id')->comment('商品id');
+            $table->integer('good_id')->comment('商品id');
             $table->string('url',300)->comment('图片链接');
             $table->timestamps();
         });

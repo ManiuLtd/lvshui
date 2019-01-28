@@ -15,7 +15,7 @@ class CreateMallManageTable extends Migration
     {
         Schema::create('mall_manage', function (Blueprint $table) {
             $table->increments('id');
-            $table->tinyInteger('fan_id')->comment('用户');
+            $table->integer('fan_id')->comment('用户');
 //            $table->tinyInteger('level')->comment('层级');
             $table->timestamps();
         });
