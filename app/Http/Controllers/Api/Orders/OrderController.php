@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use PhpParser\Node\Param;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+
 //退货、退款
 class OrderController extends Controller
 {
@@ -33,8 +34,8 @@ class OrderController extends Controller
     {
         $pay_state = request('pay_state');
         $use_state = request('use_state');
-        if($pay_state == 0 ){
-            $orders = Order::where([['type', Parameter::mall],['pay_state',0]])
+        if ($pay_state == 0) {
+            $orders = Order::where([['type', Parameter::mall], ['pay_state', 0]])
                 ->orderBy('created_at', 'desc')
                 ->with(['goods' => function ($query) {
                     $query->with('imgs');
@@ -42,9 +43,9 @@ class OrderController extends Controller
                 ->with('setting')
                 ->paginate(20);
             return response()->json(['data' => $orders]);
-        }else if($pay_state ==1){
-            if($use_state){
-                $orders = Order::where([['type', Parameter::mall],['pay_state',1],['use_state',$use_state]])
+        } else if ($pay_state == 1) {
+            if ($use_state) {
+                $orders = Order::where([['type', Parameter::mall], ['pay_state', 1], ['use_state', $use_state]])
                     ->orderBy('created_at', 'desc')
                     ->with(['goods' => function ($query) {
                         $query->with('imgs');
@@ -52,8 +53,8 @@ class OrderController extends Controller
                     ->with('setting')
                     ->paginate(20);
                 return response()->json(['data' => $orders]);
-            }else{
-                $orders = Order::where([['type', Parameter::mall],['pay_state',1]])
+            } else {
+                $orders = Order::where([['type', Parameter::mall], ['pay_state', 1]])
                     ->orderBy('created_at', 'desc')
                     ->with(['goods' => function ($query) {
                         $query->with('imgs');
@@ -103,110 +104,43 @@ class OrderController extends Controller
             ->paginate(20);
         return response()->json(['data' => $orders]);
     }
+
 //    依类型获取订单
     public function getFanOrderByState()
     {
         $fan_id = Token::getUid();
-        $list = request(['pay_state','use_state','type']);
-        //    当前用户未支付订单
-        if($list['pay_state'] == 0 ){
+        $list = request(['pay_state', 'use_state', 'type']);
 
-           if( $list['type']==Parameter::mall){
-               $orders = Order::where([['fan_id', $fan_id],['pay_state',0],['type',$list['type']]])
-                   ->orderBy('created_at', 'desc')
-                   ->with(['goods' => function ($query) {
-                       $query->with('imgs');
-                   }])
-                   ->with('orderGoods')
-                   ->with('setting')
-                   ->paginate(20);
-               return response()->json(['data' => $orders]);
-           }else if ($list['type']==Parameter::active){
-               $orders = Order::where([['fan_id', $fan_id],['pay_state',0],['type',$list['type']]])
-                   ->orderBy('created_at', 'desc')
-                   ->with('active')
-                   ->with('orderGoods')
-                   ->with('setting')
-                   ->paginate(20);
-               return response()->json(['data' => $orders]);
-           }else if($list['type']==Parameter::join){
-               $orders = Order::where([['fan_id', $fan_id],['pay_state',0],['type',$list['type']]])
-                   ->orderBy('created_at', 'desc')
-                   ->with('join')
-                   ->with('orderGoods')
-                   ->with('setting')
-                   ->paginate(20);
-               return response()->json(['data' => $orders]);
-           }else if($list['type']==Parameter::ticket){
-               $orders = Order::where([['fan_id', $fan_id],['pay_state',0],['type',$list['type']]])
-                   ->orderBy('created_at', 'desc')
-                   ->with(['fanTicket' => function ($query) {
-                       $query->with('ticket');
-                   }])
-                   ->with('orderGoods')
-                   ->with('setting')
-                   ->paginate(20);
-               return response()->json(['data' => $orders]);
-           }
-        }else{
-            //    当前用户已支付 未使用/已使用订单
-            if($list['type']==Parameter::mall){
-                $orders = Order::where([ ['fan_id', $fan_id],
-                                         ['pay_state',1],
-                                         ['use_state',$list['use_state']],
-                                         ['type',$list['type']]
-                                         ])
-                    ->orderBy('created_at', 'desc')
-                    ->with(['goods' => function ($query) {
-                        $query->with('imgs');
-                    }])
-                    ->with('orderGoods')
-                    ->with('setting')
-                    ->paginate(20);
-                return response()->json(['data' => $orders]);
-            }else if($list['type']==Parameter::active){
-                $orders = Order::where([['fan_id', $fan_id],
-                                        ['pay_state',1],
-                                        ['use_state',$list['use_state']],
-                                        ['type',$list['type']]
-                                        ])
-                    ->orderBy('created_at', 'desc')
-                    ->with('active')
-                    ->with('orderGoods')
-                    ->with('setting')
-                    ->paginate(20);
-                return response()->json(['data' => $orders]);
-            }else if($list['type']==Parameter::join){
-                $orders = Order::where([['fan_id', $fan_id],
-                                        ['pay_state',1],
-                                        ['use_state',$list['use_state']],
-                                        ['type',$list['type']]
-                                        ])
-                    ->orderBy('created_at', 'desc')
-                    ->with('join')
-                    ->with('orderGoods')
-                    ->with('setting')
-                    ->paginate(20);
-                return response()->json(['data' => $orders]);
-            }else if($list['type']==Parameter::ticket){
-                $orders = Order::where([['fan_id', $fan_id],
-                                        ['pay_state',1],
-                                        ['use_state',$list['use_state']],
-                                        ['type',$list['type']]
-                ])
-                    ->orderBy('created_at', 'desc')
-                    ->with(['fanTicket' => function ($query) {
-                        $query->with('ticket');
-                    }])
-                    ->with('orderGoods')
-                    ->with('setting')
-                    ->paginate(20);
-                return response()->json(['data' => $orders]);
+        $orders = Order::where([
+            ['fan_id', $fan_id],
+            ['pay_state', $list['pay_state']],
+            ['type', $list['type']],
+            ['use_state', $list['use_state']]
 
-            }
-
-        }
+        ])
+            ->orderBy('created_at', 'desc')
+            ->when($list['type'] == Parameter::mall, function ($query) {
+                $query->with(['goods' => function ($query) {
+                    $query->with('imgs');
+                }]);
+            })
+            ->when($list['type'] == Parameter::active, function ($query) {
+                $query->with('active');
+            })
+            ->when($list['type'] == Parameter::join, function ($query) {
+                $query->with('join');
+            })
+            ->when($list['type'] == Parameter::ticket, function ($query) {
+                $query->with(['fanTicket' => function ($query) {
+                    $query->with('ticket');
+                }]);
+            })
+            ->with('orderGoods')
+            ->with('setting')
+            ->paginate(20);
+        return response()->json(['data' => $orders]);
     }
+
 //   获取单笔订单
     public function showOrder()
     {
@@ -227,19 +161,19 @@ class OrderController extends Controller
 //            $order['qrcode'] = '';
 //        }
 
-        $order=  Order::where('id', $id)
-                ->when($type == Parameter::mall,function ($query){
-                    $query->with(['goods' => function ($query) {
-                        $query->with('imgs');
-                    }]);
-                })
-                ->when($type == Parameter::ticket,function ($query){
-                    $query->with(['fanTicket' => function ($query) {
-                        $query->with('ticket');
-                    }]);
-                })->with('orderGoods')
-                ->with('setting')
-                ->get();
+        $order = Order::where('id', $id)
+            ->when($type == Parameter::mall, function ($query) {
+                $query->with(['goods' => function ($query) {
+                    $query->with('imgs');
+                }]);
+            })
+            ->when($type == Parameter::ticket, function ($query) {
+                $query->with(['fanTicket' => function ($query) {
+                    $query->with('ticket');
+                }]);
+            })->with('orderGoods')
+            ->with('setting')
+            ->get();
         return response()->json(['data' => $order]);
     }
 
@@ -326,7 +260,7 @@ class OrderController extends Controller
                 $result = $this->orderJoin($data['join_id']);
                 break;
             case Parameter::ticket;
-                $result = $this->orderTicket($data['ticket_id'],$data['name'],$data['mobile'],$data['purchase_quantity'],$data['booking_date']);
+                $result = $this->orderTicket($data['ticket_id'], $data['name'], $data['mobile'], $data['purchase_quantity'], $data['booking_date']);
                 break;
         }
         return $result;
@@ -412,10 +346,10 @@ class OrderController extends Controller
                         $discount_type = 2;
                         $pDiscount = $pDiscount + $gPrice - sprintf("%.2f", $gPrice * $discount);
                         $price = $price + sprintf("%.2f", $gPrice * $discount);
-                    }else {
+                    } else {
                         $genealPrice = $genealPrice + $gPrice;
                     }
-                }else {
+                } else {
                     $genealPrice = $genealPrice + $gPrice;
                 }
             }
@@ -462,7 +396,7 @@ class OrderController extends Controller
                     'type' => $good->type, 'order_id' => $order->id, 'good_id' => $rGood['id'], 'num' => $rGood['num'],
                     'price' => $good->price, 'discount' => $good->discount, 'fan_id' => $fan_id, 'up_id' => $good->up_id
                 ]);
-                MallGood::where('id', $rGood['id'])->update(['stock' => $good->stock - $rGood['num'],'monthly_sales'=> $good->monthly_sales + $rGood['num']]);
+                MallGood::where('id', $rGood['id'])->update(['stock' => $good->stock - $rGood['num'], 'monthly_sales' => $good->monthly_sales + $rGood['num']]);
             }
             DB::commit();
             return response()->json(['status' => 1, 'msg' => '新增成功！', 'id' => $order->id]);
@@ -510,6 +444,7 @@ class OrderController extends Controller
         }
         return response()->json(['status' => 'success', 'msg' => '修改成功！']);
     }
+
 //  支付成功
     public function pay()
     {
@@ -545,7 +480,7 @@ class OrderController extends Controller
         try {
             Order::where('id', $list['id'])->update($order->toArray());
             //Fans表 积分处理
-            Fan::where('id',Token::getUid())->increment('point',$integral);
+            Fan::where('id', Token::getUid())->increment('point', $integral);
 //            QrCode::format('png')->size(200)->generate($use_no, public_path('storage/qrcodes/' . $list['id'] . '.png'));
             DB::commit();
         } catch (\Exception $e) {
@@ -603,7 +538,7 @@ class OrderController extends Controller
     {
         $pattern = '1234567890abcdefghijklmnopqrstuvwxyz 
                ABCDEFGHIJKLOMNOPQRSTUVWXYZ';
-        $key ="";
+        $key = "";
         for ($i = 0; $i < $length; $i++) {
             $key .= $pattern{mt_rand(0, 35)};    //生成php随机数
         }
@@ -666,7 +601,8 @@ class OrderController extends Controller
         return response()->json(['status' => 'success', 'msg' => '新增成功！']);
     }
 
-    public function orderTicket($ticket_id,$name,$mobile,$purchase_quantity,$booking_date){
+    public function orderTicket($ticket_id, $name, $mobile, $purchase_quantity, $booking_date)
+    {
         $type = Parameter::ticket;
         $fan_id = Token::getUid();
         $body = Parameter::body_CO . '-门票';
@@ -682,8 +618,8 @@ class OrderController extends Controller
             $order = Order::create(['type' => $type, 'fan_id' => $fan_id, 'price' => $price, 'order_no' => $order_no, 'body' => $body]);
 
             $fanTicket = FanTicket::create([
-                'fan_id'=>$fan_id,'ticket_id'=>$ticket_id,'name'=>$name,'mobile' => $mobile,
-                'purchase_quantity' => $purchase_quantity,'booking_date'=>$booking_date
+                'fan_id' => $fan_id, 'ticket_id' => $ticket_id, 'name' => $name, 'mobile' => $mobile,
+                'purchase_quantity' => $purchase_quantity, 'booking_date' => $booking_date
 
             ]);
 
@@ -704,14 +640,14 @@ class OrderController extends Controller
     public function cancle()
     {
         $id = request()->order;
-        Order::where('id',$id)->update(['pay_state'=>-1]);
+        Order::where('id', $id)->update(['pay_state' => -1]);
     }
 
 //    申请退款
     public function applyRefund()
     {
         $id = request()->order;
-        $order = Order::where('id',$id)->with('orderGoods')->first();
+        $order = Order::where('id', $id)->with('orderGoods')->first();
         $oGoods = $order->orderGoods;
         $fan_id = Token::getUid();
 //        退款判断 ： 直接修改团购表状态
@@ -722,31 +658,31 @@ class OrderController extends Controller
 //                break;
 //            }
 //        }
-        Order::where([['id',$id],['use_state','==',0]])->update(['use_state'=>-1]);
+        Order::where([['id', $id], ['use_state', '==', 0]])->update(['use_state' => -1]);
     }
 
 //    拒绝退款
     public function declineRefund()
     {
         $id = request()->order;
-        Order::where('id',$id)->update(['use_state'=>-3]);
+        Order::where('id', $id)->update(['use_state' => -3]);
     }
 
 //    退款成功
     public function refund()
     {
         $list = request(['id', 'refund_time']);
-        $order = Order::where('id',$list['id'])->with('orderGoods')->first();
+        $order = Order::where('id', $list['id'])->with('orderGoods')->first();
         $oGoods = $order->orderGoods;
         $fan_id = Token::getUid();
         DB::beginTransaction();
         try {
-            Order::where('id', $list['id'])->update(['use_state'=>-2]);
+            Order::where('id', $list['id'])->update(['use_state' => -2]);
             //Fans表 积分处理
-            Fan::where('id',Token::getUid())->decrement('point',$order->integral);
+            Fan::where('id', Token::getUid())->decrement('point', $order->integral);
             //商品数量
-            foreach ($oGoods as $oGood){
-                MallGood::where([['id',$oGood->good_id],['up_id',$oGood->up_id]])->increment('stock', $oGood->num);
+            foreach ($oGoods as $oGood) {
+                MallGood::where([['id', $oGood->good_id], ['up_id', $oGood->up_id]])->increment('stock', $oGood->num);
             }
             DB::commit();
         } catch (\Exception $e) {
@@ -755,8 +691,6 @@ class OrderController extends Controller
         }
         return response()->json(['status' => 'success', 'msg' => '修改成功！']);
     }
-
-
 
 
 }
