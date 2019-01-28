@@ -144,10 +144,12 @@ Route::group(['middleware' => ['cors', 'token']], function () {
     });
 
     Route::group(['prefix' => 'order'], function () {
-//         获取订单
+//         依照类型、支付状态、使用状态获取当前用户所有资料
         Route::post('orders/{order}', 'Api\Orders\OrderController@showOrder');
 //        保存订单
         Route::apiResource('orders', 'Api\Orders\OrderController');
+//        依照类型、支付状态、使用状态获取所有资料
+        Route::post('states','Api\Orders\OrderController@getOrder');
 //        获取所有商城订单
         Route::get('malls', 'Api\Orders\OrderController@getMallOrder');
 //        获取所有活动订单

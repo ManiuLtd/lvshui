@@ -81,6 +81,39 @@ class OrderController extends Controller
         return response()->json(['data' => $orders]);
     }
 
+//    获取订单
+    public function getOrder()
+    {
+        $list = request(['pay_state', 'use_state', 'type']);
+        $orders = Order::where([
+            ['pay_state', $list['pay_state']],
+            ['type', $list['type']],
+            ['use_state', $list['use_state']]
+
+        ])
+            ->orderBy('created_at', 'desc')
+            ->when($list['type'] == Parameter::mall, function ($query) {
+                $query->with(['goods' => function ($query) {
+                    $query->with('imgs');
+                }]);
+            })
+            ->when($list['type'] == Parameter::active, function ($query) {
+                $query->with('active');
+            })
+            ->when($list['type'] == Parameter::join, function ($query) {
+                $query->with('join');
+            })
+            ->when($list['type'] == Parameter::ticket, function ($query) {
+                $query->with(['fanTicket' => function ($query) {
+                    $query->with('ticket');
+                }]);
+            })
+            ->with('orderGoods')
+            ->with('setting')
+            ->paginate(20);
+        return response()->json(['data' => $orders]);
+    }
+
 //   获取申请退款订单
     public function getRefundOrder()
     {
@@ -90,7 +123,7 @@ class OrderController extends Controller
         return response()->json(['all' => $order, '$mall' => $mall, 'active' => $active]);
     }
 
-//   获取用户所有订单
+//   获取用户所有商城订单
     public function getFanOrder()
     {
         $fan_id = Token::getUid();
@@ -105,7 +138,7 @@ class OrderController extends Controller
         return response()->json(['data' => $orders]);
     }
 
-//    依类型获取订单
+//    依类型获取当前订单
     public function getFanOrderByState()
     {
         $fan_id = Token::getUid();
@@ -146,21 +179,6 @@ class OrderController extends Controller
     {
         $id = request()->order;
         $type = request('type');
-//        $order = Order::where('id', $id)
-//            ->with(['goods' => function ($query) {
-//                $query->with('imgs');
-//            }])
-//            ->with('orderGoods')
-//            ->with('setting')
-//            ->get();
-//        if ($order['pay_state'] == 1 && $order['use_state'] == 0) {
-//            if (Storage::exists('qrcodes/' . $id . '.png')) {
-//                $order['qrcode'] = asset('storage/qrcodes/' . $id . '.png');
-//            }
-//        } else {
-//            $order['qrcode'] = '';
-//        }
-
         $order = Order::where('id', $id)
             ->when($type == Parameter::mall, function ($query) {
                 $query->with(['goods' => function ($query) {
