@@ -7,6 +7,7 @@ use App\Console\Commands\orderCommand;
 use App\Console\Commands\useCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Console\Commands\ticketCommand;
 
 class Kernel extends ConsoleKernel
 {
@@ -20,6 +21,7 @@ class Kernel extends ConsoleKernel
         goodCommand::class,
         orderCommand::class,
         useCommand::class,
+        ticketCommand::class,
     ];
 
     /**
@@ -33,6 +35,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('good:date')->dailyAt('00:00');
         $schedule->command('order:date')->everyMinute();
         $schedule->command('use:date')->dailyAt('00:00');
+        $schedule->command('ticket:date')->dailyAt('00:00');
     }
 
     /**
