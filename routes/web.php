@@ -127,9 +127,12 @@ Route::group(['middleware' => ['cors', 'token']], function () {
         Route::post('cart', 'Api\Orders\OrderController@cartVerify');
 //        分类
         Route::get('nav/{nav_id}', 'Api\Malls\MallNavController@getNavWithGood');
-//        获取用户订单
+//        获取用户商城所有订单
         Route::get('orders', 'Api\Orders\OrderController@getFanOrder');
+//        依照状态获取用户某一类型订单
         Route::post('order/state', 'Api\Orders\OrderController@getFanOrderByState');
+//        依照类型获取用户某一类型所有订单
+        Route::post('order/type', 'Api\Orders\OrderController@getFanOrderByType');
 //        积分设置
         Route::apiResource('settings', 'Api\Malls\MallSettingController');
 //        团购

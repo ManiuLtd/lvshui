@@ -173,6 +173,39 @@ class OrderController extends Controller
             ->paginate(20);
         return response()->json(['data' => $orders]);
     }
+//    依照类型获取用户某一类型所有订单
+    public function getFanOrderByType()
+    {
+        $fan_id = Token::getUid();
+        $type = request('type');
+        $orders = Order::where([
+            ['fan_id', $fan_id],
+            ['type', $type],
+        ])
+            ->orderBy('created_at', 'desc')
+            ->when($type == Parameter::mall, function ($query) {
+                $query->with(['goods' => function ($query) {
+                    $query->with('imgs');
+                }]);
+            })
+            ->when($type == Parameter::active, function ($query) {
+                $query->with('active');
+            })
+            ->when($type == Parameter::join, function ($query) {
+                $query->with('join');
+            })
+            ->when($type == Parameter::ticket, function ($query) {
+                $query->with(['fanTicket' => function ($query) {
+                    $query->with('ticket');
+                }]);
+            })
+            ->with('orderGoods')
+            ->with('setting')
+            ->paginate(20);
+        return response()->json(['data' => $orders]);
+    }
+
+
 
 //   获取单笔订单
     public function showOrder()
@@ -422,90 +455,6 @@ class OrderController extends Controller
             DB::rollBack();
             return response()->json(['status' => 'error', 'msg' => '新增失败' . $e]);
         }
-    }
-
-    public function payment(int $order_id, $paytime, $trans_no)
-    {
-        $order = Order::find($order_id);
-        $rand = $this->randomkeys(4);
-        $use_no = $order->order_no . $rand;
-        $integral = 0;
-        $order->use_no = $use_no;
-        // 积分处理
-        $mallSetting = MallSetting::first();
-        $switch = $mallSetting->switch;
-        if ($switch == 1) {
-            $radio = $mallSetting->radio;
-            $price = $order->price;
-            $integral = round($price * $radio); //积分
-        }
-        $order->integral = $integral;
-        $order->paytime = $paytime;
-        $order->trans_no = $trans_no;
-        //截止日
-        $orderSettings = OrderSetting::where('switch', 1)->first();
-        $order->end_id = $orderSettings->id;
-        if ($orderSettings->type = 'date') {
-            $order->end_date = $orderSettings->date();
-        } else {
-            $day = $orderSettings->day();
-            $order->end_date = Carbon::tomorrow(Carbon::now()->addDays($day));
-        }
-        DB::beginTransaction();
-        try {
-            Order::where('id', $order_id)->update($order);
-//            QrCode::format('png')->size(200)->generate($use_no, public_path('storage/qrcodes/' . $order_id . '.png'));
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['status' => 'error', 'msg' => '修改失败' . $e]);
-        }
-        return response()->json(['status' => 'success', 'msg' => '修改成功！']);
-    }
-
-//  支付成功
-    public function pay()
-    {
-        $list = request(['id', 'paytime', 'trans_no']);
-        $order = Order::find($list['id']);
-        $rand = $this->randomkeys(4);
-        $use_no = $order->order_no . $rand;
-        $integral = 0;
-        $order->use_no = $use_no;
-        // 积分处理
-        $mallSetting = MallSetting::first();
-        if ($mallSetting) {
-            $switch = $mallSetting->switch;
-            if ($switch == 1) {
-                $radio = $mallSetting->radio;
-                $price = $order->price;
-                $integral = round($price * $radio); //积分
-            }
-        }
-        $order->integral = $integral;
-        $order->pay_time = $list['paytime'];
-        $order->trans_no = $list['trans_no'];
-        //截止日
-        $orderSettings = OrderSetting::where('switch', 1)->first();
-        $order->end_id = $orderSettings->id;
-        if ($orderSettings->type = 'date') {
-            $order->end_date = $orderSettings->date();
-        } else {
-            $day = $orderSettings->day();
-            $order->end_date = Carbon::tomorrow(Carbon::now()->addDays($day));
-        }
-        DB::beginTransaction();
-        try {
-            Order::where('id', $list['id'])->update($order->toArray());
-            //Fans表 积分处理
-            Fan::where('id', Token::getUid())->increment('point', $integral);
-//            QrCode::format('png')->size(200)->generate($use_no, public_path('storage/qrcodes/' . $list['id'] . '.png'));
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['status' => 'error', 'msg' => '修改失败' . $e]);
-        }
-        return response()->json(['status' => 'success', 'msg' => '修改成功！']);
     }
 
 //  二维码使用
