@@ -641,13 +641,11 @@ class OrderController extends Controller
             ]);
 
             DB::commit();
+            return response()->json(['status' => 1, 'msg' => '新增成功！', 'id' => $order->id]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['status' => 'error', 'msg' => '新增失败' . $e]);
         }
-        return response()->json(['status' => 'success', 'msg' => '新增成功！']);
-
-
     }
 
 //    取消订单
