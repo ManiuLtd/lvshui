@@ -22,7 +22,7 @@ class CreateTicketsTable extends Migration
             $table->integer('total')->comment('每日数量');
             $table->integer('limit')->comment('用户每日购买上限');
             $table->integer('daily_inventory')->comment('每日库存');
-            $table->decimal('price')->comment('价格');
+            $table->decimal('price',5,2)->comment('价格');
             $table->tinyInteger('is_up')->default(1)->comment('是否上架,1表是，0表否');
             $table->integer('from_now')->comment('限制天数');
             $table->timestamps();

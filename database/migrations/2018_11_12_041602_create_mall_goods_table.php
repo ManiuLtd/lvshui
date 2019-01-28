@@ -19,8 +19,8 @@ class CreateMallGoodsTable extends Migration
             $table->longText('content')->comment('详细描述');
             $table->integer('total')->comment('商品数量');
             $table->integer('limit')->comment('用户购买上限');
-            $table->decimal('price')->comment('价格');
-            $table->decimal('discount')->comment('优惠价');
+            $table->decimal('price', 5, 2)->comment('价格');
+            $table->decimal('discount', 5, 2)->comment('优惠价');
             $table->integer('monthly_sales')->comment('月销量');
             $table->tinyInteger('is_up')->default(1)->comment('是否上架,1表是，0表否');
             $table->dateTime('sratr_date')->comment('生效日期');
