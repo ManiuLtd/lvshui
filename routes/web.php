@@ -147,7 +147,7 @@ Route::group(['middleware' => ['cors', 'token']], function () {
     });
 
     Route::group(['prefix' => 'order'], function () {
-//         依照类型、支付状态、使用状态获取当前用户所有资料
+//         依照类型获取当前用户订单资料
         Route::post('orders/{order}', 'Api\Orders\OrderController@showOrder');
 //        保存订单
         Route::apiResource('orders', 'Api\Orders\OrderController');
@@ -159,6 +159,8 @@ Route::group(['middleware' => ['cors', 'token']], function () {
         Route::get('actives', 'Api\Orders\OrderController@getAcitveOrder');
 //        获取所有开通会员订单
         Route::get('joins', 'Api\Orders\OrderController@getJoinOrder');
+//        获取所有门票订单
+        Route::get('tickets', 'Api\Orders\OrderController@getTicketOrder');
 //        获取所有退款订单
         Route::get('refunds', 'Api\Orders\OrderController@getRefundOrder');
 //        获取最新订单截止日

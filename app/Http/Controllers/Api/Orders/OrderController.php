@@ -81,6 +81,17 @@ class OrderController extends Controller
         return response()->json(['data' => $orders]);
     }
 
+//    获取门票订单
+    public function getTicketOrder()
+    {
+        $orders = Order::where('type',Parameter::ticket)
+            ->orderBy('created_at', 'desc')
+            ->with(['fanTicket' => function ($query) {
+                $query->with('ticket');
+            }])->paginate(20);
+        return response()->json(['data' => $orders]);
+    }
+
 //    获取订单
     public function getOrder()
     {
