@@ -127,10 +127,15 @@ class OrderController extends Controller
 
     public function getTicketByDateOrTID()
     {
-        $list = request(['booking_date','ticket_id']);
-        $orders = Order::where([
-            ['type', Parameter::ticket],
-        ])->orderBy('created_at', 'desc')
+        $list = request(['booking_date','ticket_id','pay_state','use_state']);
+        $orders = Order::where('type', Parameter::ticket)
+            ->when($list['pay_state']!='',function ($query)use($list) {
+                $query->where('pay_state',$list['pay_state']);
+            })
+            ->when($list['use_state']!='',function ($query)use($list) {
+                $query->where('use_state',$list['use_state']);
+            })
+            ->orderBy('created_at', 'desc')
             ->whereHas('fanTicket',function ($query)use($list){
             $query->where('booking_date',$list['booking_date'])
                 ->orWhere('ticket_id',$list['ticket_id'])
