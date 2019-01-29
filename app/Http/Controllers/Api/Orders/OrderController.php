@@ -625,7 +625,7 @@ class OrderController extends Controller
 //                break;
 //            }
 //        }
-        Order::where([['id', $id], ['use_state', '==', 0]])->update(['use_state' => -1]);
+        Order::where([['id', $id], ['use_state', 0]])->update(['use_state' => -1]);
     }
 
 //    拒绝退款
