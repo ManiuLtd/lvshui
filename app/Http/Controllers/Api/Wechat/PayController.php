@@ -170,7 +170,7 @@ class PayController extends Controller
                             'remark' => '温馨提示：请在预定日期 '. $fanTicket->booking_date .' 当天使用'
                         ];
                         $template->sendNotice($fan->openid,'HZ8pJsXjhakqwtQQw1ijgTlbizfdHJUbZqsWE3HGepw',
-                        'zhlsqj.com/#/share',$fanArray);
+                        'https://zhlsqj.com/#/ticketOrderList',$fanArray);
 
                         //通知管理员
                         $admins = Admin::with('fan')->get();
@@ -185,7 +185,7 @@ class PayController extends Controller
                         foreach($admins as $admin) {
                             $template->sendNotice($admin->fan->openid,
                             'f2F3iCL9fCZkyxqvXY8nMl_BI1QFF_bS-uIUeThpIQs',
-                        'zhlsqj.com/#/share',$adminArray);
+                        'https://zhlsqj.com/#/manageTicketOrder',$adminArray);
                         }
                         
 
