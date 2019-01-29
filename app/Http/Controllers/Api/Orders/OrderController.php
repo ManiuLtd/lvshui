@@ -502,8 +502,13 @@ class OrderController extends Controller
         $today = Carbon::today();
         $qrcode = request('qrcode');
         $order = Order::where('use_no', $qrcode)->first();
-        $order_setting = OrderSetting::find($order->end_id);
-        $end_date = Carbon::parse($order_setting->end_date);
+        if($order->type = Parameter::mall){
+            $order_setting = OrderSetting::find($order->end_id);
+            $end_date = Carbon::parse($order_setting->end_date);
+        }else if($order->type = Parameter::ticket){
+            $end_date =$order->end_date;
+        }
+
 
         if ($order->pay_state != 1) {
             return response()->json(['status' => 0, 'error' => 1, 'msg' => '该订单未支付或已取消']);
