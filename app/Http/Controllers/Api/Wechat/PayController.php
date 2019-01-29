@@ -170,7 +170,7 @@ class PayController extends Controller
                             'keyword2' => $order->order_no,
                             'keyword3' => $order->price.'元',
                             'keyword4' => $order->pay_time,
-                            'remark' => '温馨提示：请在预定日期 '. $ticket->booking_date .' 当天使用'
+                            'remark' => '温馨提示：请在预定日期 '. $fanTicket->booking_date .' 当天使用'
                         ];
                         $template->sendNotice($fan->openid,'HZ8pJsXjhakqwtQQw1ijgTlbizfdHJUbZqsWE3HGepw',
                         'zhlsqj.com/#/share',$fanArray);
@@ -183,7 +183,7 @@ class PayController extends Controller
                             'keyword2' => $order->price.'元',
                             'keyword3' => $order->order_no,
                             'keyword4' => $order->pay_time,
-                            'remark' => '预约时间：'. $ticket->booking_date 
+                            'remark' => '预约日期：'. $fanTicket->booking_date 
                         ];
                         foreach($admins as $admin) {
                             $template->sendNotice($admin->fan->openid,
