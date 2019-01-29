@@ -633,7 +633,8 @@ class OrderController extends Controller
                 'purchase_quantity' => $purchase_quantity, 'booking_date' => $booking_date
 
             ]);
-
+            // 每日上限减去购票数
+            Ticket::where('id',$ticket_id)->update(['status'=> $ticket->daily_inventory - $purchase_quantity]);
             OrderGood::create([
                 'type' => $type, 'order_id' => $order->id, 'good_id' => $fanTicket->id,
                 'num' => $purchase_quantity, 'price' => $ticket->price

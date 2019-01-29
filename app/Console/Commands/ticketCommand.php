@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\Ticket;
+use App\Models\FanTicket;
 
 class ticketCommand extends Command
 {
@@ -44,7 +45,9 @@ class ticketCommand extends Command
         try {
             foreach ($tickets as $ticket) {
                 $goods = $new->orderGoods;
-                Ticket::where('id', $ticket->id)->update(['daily_inventory' => $ticket->total]);
+                // Ticket::where('id', $ticket->id)->update(['daily_inventory' => $ticket->total]);
+                $purchase_quantity = FanTicket::whereDate('booking_date', '=', date('Ymd'))->count();
+                Ticket::where('id',$ticket_id)->update(['status'=> $ticket->total - $purchase_quantity]);
             }
             DB::commit();
             \Log::info('重置每日库存成功');

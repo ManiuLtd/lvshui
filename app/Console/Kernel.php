@@ -35,7 +35,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('good:date')->dailyAt('00:00');
         $schedule->command('order:date')->everyMinute();
         $schedule->command('use:date')->dailyAt('00:00');
-        $schedule->command('ticket:date')->dailyAt('00:00');
+        // $schedule->command('ticket:date')->dailyAt('00:00');
+        $schedule->command('ticket:date')->everyMinute();;
     }
 
     /**
