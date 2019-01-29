@@ -176,7 +176,7 @@ class PayController extends Controller
                         //通知管理员
                         $admins = Admin::with('fan')->get();
                         $adminArray = [
-                            'first'=>'套餐已购买成功！',
+                            'first'=>$ticket->name.' 套餐成功售出！请留意！',
                             'keyword1' => $fanTicket->mobile,
                             'keyword2' => $order->price.'元',
                             'keyword3' => $order->order_no,
