@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Models\Ticket;
 use App\Models\FanTicket;
+use Illuminate\Support\Facades\DB;
 
 class ticketCommand extends Command
 {
@@ -44,13 +45,11 @@ class ticketCommand extends Command
         DB::beginTransaction();
         try {
             foreach ($tickets as $ticket) {
-                $goods = $new->orderGoods;
-                // Ticket::where('id', $ticket->id)->update(['daily_inventory' => $ticket->total]);
                 $purchase_quantity = FanTicket::whereDate('booking_date', '=', date('Ymd'))->count();
-                Ticket::where('id',$ticket_id)->update(['status'=> $ticket->total - $purchase_quantity]);
+                $daily_inventory = $ticket->total - $purchase_quantity;
+                Ticket::where('id', $ticket->id)->update(['daily_inventory' => $daily_inventory]);
             }
             DB::commit();
-            \Log::info('重置每日库存成功');
         }catch (\Exception $e) {
             DB::rollBack();
             \Log::info('重置每日库存失败：'.$e);
