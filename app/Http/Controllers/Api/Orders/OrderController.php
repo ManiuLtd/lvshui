@@ -2,28 +2,29 @@
 
 namespace App\Http\Controllers\Api\Orders;
 
-use App\Models\Activity;
+use Carbon\Carbon;
 use App\Models\Fan;
-use App\Models\FanTicket;
-use App\Models\JoinSetting;
-use App\Models\MallGood;
-use App\models\MallGoodGroup;
-use App\Models\MallSetting;
-use App\Models\Member;
-use App\Models\MemberSetting;
+use App\Models\Admin;
 use App\Models\Order;
-use App\Models\OrderGood;
-use App\Models\OrderSetting;
-use App\Models\SignHistory;
+use App\Models\Member;
 use App\Models\Ticket;
 use App\Services\Token;
+use App\Models\Activity;
+use App\Models\MallGood;
 use App\Utils\Parameter;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
+use App\Models\FanTicket;
+use App\Models\OrderGood;
 use PhpParser\Node\Param;
+use App\Models\JoinSetting;
+use App\Models\MallSetting;
+use App\Models\SignHistory;
+use App\Models\OrderSetting;
+use Illuminate\Http\Request;
+use App\models\MallGoodGroup;
+use App\Models\MemberSetting;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 //退货、退款
@@ -490,6 +491,19 @@ class OrderController extends Controller
 //  二维码使用
     public function use()
     {
+        //判断是否是管理员进行核销
+        $flag = false;
+        $admin = Admin::where('fan_id',Token::getUid())->first();
+        if(isset($admin)) {
+            $flag = true;
+        } else {
+            $flag = \Auth::guard('users')->id() > 0 ? true : false;
+        }
+        
+        if(!$flag) {
+            return response()->json(['status' => 'error', 'msg' => '你不是管理员，无操作权限']);   
+        }
+
         $today = Carbon::today();
         $qrcode = request('qrcode');
         $order = Order::where('use_no', $qrcode)->first();
