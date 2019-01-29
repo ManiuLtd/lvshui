@@ -54,7 +54,6 @@ class orderCommand extends Command
                 }
             }
         }
-        \Log::info('订单是否超时处理'.time());
 
        DB::beginTransaction();
         try {
@@ -66,10 +65,8 @@ class orderCommand extends Command
                 }
             }
             DB::commit();
-            \Log::info('成功');
         }catch (\Exception $e) {
             DB::rollBack();
-            \Log::info('失败：'.$e);
         }
 
     }
