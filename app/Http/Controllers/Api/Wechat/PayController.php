@@ -147,7 +147,6 @@ class PayController extends Controller
                         $order->save();
 
                     }else if($order->type == Parameter::ticket){
-                        \Log::info('门票支付');
                         $rand = $this->randomkeys(4);
                         $use_no = $order->order_no . $rand;
                         $order->use_no = $use_no;
@@ -157,8 +156,6 @@ class PayController extends Controller
                         $fanTicket = FanTicket::find($goods[0]->good_id);
                         $ticket = Ticket::find($fanTicket->ticket_id);
                         $fan = Fan::find($fanTicket->fan_id);
-                        \Log::info($fan->name.':'.$fan->openid);
-
                         $order->end_date = $fanTicket->booking_date;
                         $order->save();
 
