@@ -125,6 +125,25 @@ class OrderController extends Controller
         return response()->json(['data' => $orders]);
     }
 
+    public function getTicketByDateOrTID()
+    {
+        $list = request(['booking_date','ticket_id']);
+        $orders = Order::where([
+            ['pay_state', $list['pay_state']],
+            ['type', $list['type']],
+            ['use_state', $list['use_state']]
+
+        ])->whereHas('fanTicket',function ($query)use($list){
+            $query->where('booking_date',$list['booking_date'])
+                ->orWhere('ticket_id',$list['ticket_id'])
+                ->with('ticket');
+        }) ->with('orderGoods')
+            ->with('setting')
+            ->paginate(20);
+        return response()->json(['data' => $orders]);
+
+    }
+
 //   获取申请退款订单
     public function getRefundOrder()
     {
