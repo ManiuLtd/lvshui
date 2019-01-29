@@ -502,10 +502,10 @@ class OrderController extends Controller
         $today = Carbon::today();
         $qrcode = request('qrcode');
         $order = Order::where('use_no', $qrcode)->first();
-        if($order->type = Parameter::mall){
+        if($order->type == Parameter::mall){
             $order_setting = OrderSetting::find($order->end_id);
             $end_date = Carbon::parse($order_setting->end_date);
-        }else if($order->type = Parameter::ticket){
+        }else if($order->type == Parameter::ticket){
             $end_date =$order->end_date;
         }
 
