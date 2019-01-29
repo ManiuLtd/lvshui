@@ -619,7 +619,8 @@ class OrderController extends Controller
         $body = Parameter::body_CO . '-门票';
         $ticket = Ticket::find($ticket_id);
         $price = $ticket->price * $purchase_quantity;
-
+        $daily_inventory = $ticket->total - $purchase_quantity;
+        
         $date = Carbon::now()->format('Ymdhi');
         $oNum = sprintf("%04d", Order::where('order_no', 'like', $date . '%')->count() + 1);
         $order_no = $date . $oNum;
@@ -634,7 +635,8 @@ class OrderController extends Controller
 
             ]);
             // 每日上限减去购票数
-            Ticket::where('id',$ticket_id)->update(['status'=> $ticket->daily_inventory - $purchase_quantity]);
+            Ticket::where('id', $ticket_id)->decrement('daily_inventory',  $daily_inventory);
+
             OrderGood::create([
                 'type' => $type, 'order_id' => $order->id, 'good_id' => $fanTicket->id,
                 'num' => $purchase_quantity, 'price' => $ticket->price
