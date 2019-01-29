@@ -93,7 +93,7 @@ class PayController extends Controller
                     $order->pay_time = date('Y-m-d H:i:s', time()); // 更新支付时间为当前时间
                     $order->trans_no = $message['transaction_id'];
                     $order->pay_state = 1;
-                    if($order->type = Parameter::mall){
+                    if($order->type == Parameter::mall){
 
                         $rand = $this->randomkeys(4);
                         $use_no = $order->order_no . $rand;
@@ -136,7 +136,7 @@ class PayController extends Controller
                             DB::rollBack();
                         }
 
-                    }else if($order->type = Parameter::active){
+                    }else if($order->type == Parameter::active){
                         $rand = $this->randomkeys(4);
                         $use_no = $order->order_no . $rand;
                         $order->use_no = $use_no;
@@ -146,7 +146,7 @@ class PayController extends Controller
                         $order->end_date = $active->end_time;
                         $order->save();
 
-                    }else if($order->type = Parameter::ticket){
+                    }else if($order->type == Parameter::ticket){
                         \Log::info('门票支付');
                         $rand = $this->randomkeys(4);
                         $use_no = $order->order_no . $rand;
@@ -192,7 +192,7 @@ class PayController extends Controller
                         }
                         
 
-                    }else if($order->type = Parameter::join){
+                    }else if($order->type == Parameter::join){
                         $order->save();
                     }
 
