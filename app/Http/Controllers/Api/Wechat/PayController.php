@@ -4,13 +4,14 @@ namespace App\Http\Controllers\Api\Wechat;
 
 use Carbon\Carbon;
 use App\Models\Fan;
+use App\Models\FanTicket;
+use App\Models\MallGood;
+use App\Models\MallSetting;
 use App\Models\Order;
 use App\Models\Ticket;
 use App\Services\Token;
 use App\Models\Activity;
 use App\Utils\Parameter;
-use App\Models\FanTicket;
-use App\Models\MallSetting;
 use App\Services\WechatPay;
 use App\Models\OrderSetting;
 use Illuminate\Http\Request;
@@ -44,16 +45,29 @@ class PayController extends Controller
     {
         //TODO: 获取订单信息
         $id = request('id');
-        $order = Order::find($id);
-
+        $order = Order::where('id', $id)->with('orderGoods')->first();
+        $oGoods = $order->orderGoods;
         $result = WechatPay::refund($order);
 
         if($result['result_code'] == 'SUCCESS' && $result['return_msg'] == 'OK') {
-            $sucess = $order->update([ 'use_state'=> -2 ,
-                                       'refund_time'=> date('Y-m-d H:i:s', time()) ]);
-            if($sucess){
+            DB::beginTransaction();
+            try {
+                $order->update([ 'use_state'=> -2 ,
+                                 'refund_time'=> date('Y-m-d H:i:s', time()) ]);
+                if($order->type = Parameter::mall){
+                    Fan::where('id', $order->fan_id)->decrement('point', $order->integral);
+                    foreach ($oGoods as $oGood) {
+                        MallGood::where([['id', $oGood->good_id], ['up_id', $oGood->up_id]])->increment('stock', $oGood->num);
+                    }
+                }else if($order->type = Parameter::ticket){
+
+                }
+                DB::commit();
                 return response()->json(['status' => 'success', 'msg' => '退款成功！']);
+            } catch (\Exception $e) {
+                DB::rollBack();
             }
+
         }else {
             return response()->json(['status' => 'error', 'msg' => $result['err_code_des']]);  
         }  
