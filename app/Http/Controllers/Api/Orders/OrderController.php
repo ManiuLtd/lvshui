@@ -615,8 +615,8 @@ class OrderController extends Controller
     {
         $id = request()->order;
         $order = Order::where('id', $id)->with('orderGoods')->first();
-        $oGoods = $order->orderGoods;
-        $fan_id = Token::getUid();
+//        $oGoods = $order->orderGoods;
+//        $fan_id = Token::getUid();
 //        退款判断 ： 直接修改团购表状态
 //        foreach ($oGoods as $oGood){
 //            if($oGood->type == Parameter::group){
@@ -625,7 +625,7 @@ class OrderController extends Controller
 //                break;
 //            }
 //        }
-        Order::where([['id', $id], ['use_state', '==', 0]])->update(['use_state' => -1]);
+        Order::where([['id', $id], ['use_state',0]])->update(['use_state' => -1]);
     }
 
 //    拒绝退款
