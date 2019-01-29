@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers\Api\Wechat;
 
-use App\Models\Activity;
+use Carbon\Carbon;
 use App\Models\Fan;
-use App\Models\FanTicket;
-use App\Models\MallSetting;
 use App\Models\Order;
-use App\Models\OrderSetting;
 use App\Models\Ticket;
 use App\Services\Token;
-use App\Services\WechatPay;
+use App\Models\Activity;
 use App\Utils\Parameter;
-use Carbon\Carbon;
+use App\Models\FanTicket;
+use App\Models\MallSetting;
+use App\Services\WechatPay;
+use App\Models\OrderSetting;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use App\Services\TemplateNotice;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 
 class PayController extends Controller
 {
@@ -137,10 +138,23 @@ class PayController extends Controller
 
                         $goods = $order->orderGoods;
 
-                        $ticket = FanTicket::find($goods[0]->good_id);
+                        $fanTicket = FanTicket::find($goods[0]->good_id);
+                        $ticket = Ticket::find($fanTicket->ticket_id);
+                        $fan = Fan::find($fanTicket->fan_id);
 
-                        $order->end_date = $ticket->booking_date;
+                        $order->end_date = $fanTicket->booking_date;
                         $order->save();
+
+                        $template = new  TemplateNotice();
+                        $array = ['first'=>'您已完成分享活动！',
+                            'keyword1' => $ticket->name,
+                            'keyword2' => $order->order_no,
+                            'keyword3' => $order->pay_time,
+                            'keyword4' => date('Y-m-d H:i:s', time()),
+                            'remark' => '温馨提示：请在预定日期 '. $ticket->booking_date .' 当天使用'
+                        ];
+                        $template->sendNotice($fan->openid,'HZ8pJsXjhakqwtQQw1ijgTlbizfdHJUbZqsWE3HGepw',
+                        'zhlsqj.com/#/share',$array);
 
                     }else if($order->type = Parameter::join){
                         $order->save();
