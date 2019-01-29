@@ -7,7 +7,6 @@
  */
 
 namespace App\Models;
-use App\Models\Model;
 
 class Admin extends Model
 {
