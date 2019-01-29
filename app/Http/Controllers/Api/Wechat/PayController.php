@@ -184,7 +184,8 @@ class PayController extends Controller
                             'remark' => '预约时间：'. $ticket->booking_date 
                         ];
                         foreach($admins as $admin) {
-                            $template->sendNotice($admin->fan->openid,'f2F3iCL9fCZkyxqvXY8nMl_BI1QFF_bS-uIUeThpIQs',
+                            $template->sendNotice($admin->fan->openid,
+                            'f2F3iCL9fCZkyxqvXY8nMl_BI1QFF_bS-uIUeThpIQs',
                         'zhlsqj.com/#/share',$adminArray);
                         }
                         
