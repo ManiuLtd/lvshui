@@ -2,19 +2,17 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Order;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
+use App\Models\Ticket;
 
-class useCommand extends Command
+class ticketCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'use:date';
+    protected $signature = 'ticket:date';
 
     /**
      * The console command description.
@@ -37,22 +35,22 @@ class useCommand extends Command
      * Execute the console command.
      *
      * @return mixed
-     * @throws \Exception
      */
     public function handle()
     {
-        //
-        $today = Carbon::today();
+        // 重置每日库存
+        $tickets = Ticket::where('is_up',1)->get();
         DB::beginTransaction();
         try {
-            Order::where('use_state',0)
-                ->whereDate('end_date','<',$today->toDateString())
-                ->update(['use_state'=>-4]);
+            foreach ($tickets as $ticket) {
+                $goods = $new->orderGoods;
+                Ticket::where('id', $ticket->id)->update(['daily_inventory' => $ticket->total]);
+            }
             DB::commit();
-            \Log::info('成功');
+            \Log::info('重置每日库存成功');
         }catch (\Exception $e) {
             DB::rollBack();
-            \Log::info('失败：'.$e);
+            \Log::info('重置每日库存失败：'.$e);
         }
     }
 }

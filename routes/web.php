@@ -127,9 +127,12 @@ Route::group(['middleware' => ['cors', 'token']], function () {
         Route::post('cart', 'Api\Orders\OrderController@cartVerify');
 //        分类
         Route::get('nav/{nav_id}', 'Api\Malls\MallNavController@getNavWithGood');
-//        获取用户订单
+//        获取用户商城所有订单
         Route::get('orders', 'Api\Orders\OrderController@getFanOrder');
+//        依照状态获取用户某一类型订单
         Route::post('order/state', 'Api\Orders\OrderController@getFanOrderByState');
+//        依照类型获取用户某一类型所有订单
+        Route::post('order/type', 'Api\Orders\OrderController@getFanOrderByType');
 //        积分设置
         Route::apiResource('settings', 'Api\Malls\MallSettingController');
 //        团购
@@ -144,8 +147,12 @@ Route::group(['middleware' => ['cors', 'token']], function () {
     });
 
     Route::group(['prefix' => 'order'], function () {
+//         依照类型、支付状态、使用状态获取当前用户所有资料
+        Route::post('orders/{order}', 'Api\Orders\OrderController@showOrder');
 //        保存订单
         Route::apiResource('orders', 'Api\Orders\OrderController');
+//        依照类型、支付状态、使用状态获取所有资料
+        Route::post('states','Api\Orders\OrderController@getOrder');
 //        获取所有商城订单
         Route::get('malls', 'Api\Orders\OrderController@getMallOrder');
 //        获取所有活动订单
@@ -172,6 +179,8 @@ Route::group(['middleware' => ['cors', 'token']], function () {
     Route::group(['prefix' => 'ticket'], function () {
         Route::apiResource('ticket', 'Api\Tickets\TicketController');
         Route::apiResource('fan-ticket', 'Api\Tickets\FanTicketController');
+        // 上下架
+        Route::post('is-up/{ticket}', 'Api\Tickets\FanTicketController@isUp');
     });
 
 

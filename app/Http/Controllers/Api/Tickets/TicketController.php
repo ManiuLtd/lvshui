@@ -12,22 +12,22 @@ class TicketController extends Controller
 {
     public function index()
     {
-        $tickes=Ticket::paginate(20);
+        $tickets=Ticket::paginate(20);
         ;
-        return response()->json(['status' => 'success', 'data' => $tickes]);
+        return response()->json(['status' => 'success', 'data' => $tickets]);
     }
 
     public function show()
     {
-        $ticke=Ticket::with('id')->find(request()->id);
-        return response()->json(['status' => 'success', 'data' => $ticke]);
+        $ticket=Ticket::find(request()->ticket);
+        return response()->json(['status' => 'success', 'data' => $ticket]);
     }
 
     public function store()
     {
         $data= request()->all();
-        $ticke=Ticket::create($data);
-        if ($ticke) {
+        $ticket=Ticket::create($data);
+        if ($ticket) {
             return response()->json(['status' => 'success', 'msg' => '新增成功!']);
         }
         return response()->json(['status' => 'error', 'msg' => '新增失败！']);
@@ -36,7 +36,7 @@ class TicketController extends Controller
     public function update()
     {
         $data = request()->all();
-        if (Ticket::find(request()->id)->update($data)) {
+        if (Ticket::find(request()->ticket)->update($data)) {
             return response()->json(['status' => 'success', 'msg' => '更新成功！']);
         }
         return response()->json(['status' => 'error', 'msg' => '更新失败！']);
@@ -44,11 +44,26 @@ class TicketController extends Controller
 
     public function destroy()
     {
-        if (Ticket::find(request()->id)->delete()) {
+        if (Ticket::find(request()->ticket)->delete()) {
             return response()->json(['status' => 'success', 'msg' => '删除成功！']);
         }
 
         return response()->json(['status' => 'error', 'msg' => '删除失败！']);
+    }
+
+    public function is_up()
+    {
+        if( request()->is_up == 0) {
+            $is_up = 0;
+            $msg = '下架';
+        } else {
+            $is_up = 1;
+            $msg = '上架';
+        }
+        if (Ticket::find(request()->ticket)->update('is_up',$is_up)) {
+            return response()->json(['status' => 'success', 'msg' => $msg+'成功！']);
+        }
+        return response()->json(['status' => 'error', 'msg' => $msg+'失败！']);
     }
 
     //  门票验证
@@ -66,7 +81,7 @@ class TicketController extends Controller
                 $ticket->error = 6; //票数已达到用户单次购买上限
             }
             if ($fan_ticket->purchase_quantity > $ticke->daily_inventory) {
-                $ticket->errot = 3; //票数超出每日上限
+                $ticket->errot = 3; //票数超出每日库存
             }
         }
         if ($ticket->stock == 0) {
