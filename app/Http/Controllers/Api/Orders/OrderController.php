@@ -129,8 +129,12 @@ class OrderController extends Controller
     {
         $list = request(['booking_date','ticket_id']);
         $orders = Order::where([
+            ['pay_state', ],
             ['type', Parameter::ticket],
-        ])->whereHas('fanTicket',function ($query)use($list){
+            ['use_state', $list['use_state']]
+
+        ])->orderBy('created_at', 'desc')
+            ->whereHas('fanTicket',function ($query)use($list){
             $query->where('booking_date',$list['booking_date'])
                 ->orWhere('ticket_id',$list['ticket_id'])
                 ->with('ticket');
