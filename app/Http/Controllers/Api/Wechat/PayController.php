@@ -4,14 +4,15 @@ namespace App\Http\Controllers\Api\Wechat;
 
 use Carbon\Carbon;
 use App\Models\Fan;
-use App\Models\FanTicket;
-use App\Models\MallGood;
-use App\Models\MallSetting;
+use App\Models\Admin;
 use App\Models\Order;
 use App\Models\Ticket;
 use App\Services\Token;
 use App\Models\Activity;
+use App\Models\MallGood;
 use App\Utils\Parameter;
+use App\Models\FanTicket;
+use App\Models\MallSetting;
 use App\Services\WechatPay;
 use App\Models\OrderSetting;
 use Illuminate\Http\Request;
@@ -160,15 +161,33 @@ class PayController extends Controller
                         $order->save();
 
                         $template = new  TemplateNotice();
-                        $array = ['first'=>'您已完成分享活动！',
+                        //通知用户
+                        $fanArray = [
+                            'first'=>'套餐已购买成功！',
                             'keyword1' => $ticket->name,
                             'keyword2' => $order->order_no,
-                            'keyword3' => $order->pay_time,
-                            'keyword4' => date('Y-m-d H:i:s', time()),
+                            'keyword3' => $order->price.'元',
+                            'keyword4' => $order->pay_time,
                             'remark' => '温馨提示：请在预定日期 '. $ticket->booking_date .' 当天使用'
                         ];
                         $template->sendNotice($fan->openid,'HZ8pJsXjhakqwtQQw1ijgTlbizfdHJUbZqsWE3HGepw',
-                        'zhlsqj.com/#/share',$array);
+                        'zhlsqj.com/#/share',$fanArray);
+
+                        //通知管理员
+                        $admins = Admin::with('fan')->get();
+                        $adminArray = [
+                            'first'=>'套餐已购买成功！',
+                            'keyword1' => $fanTicket->mobile,
+                            'keyword2' => $order->price.'元',
+                            'keyword3' => $order->order_no,
+                            'keyword4' => $order->pay_time,
+                            'remark' => '预约时间：'. $ticket->booking_date 
+                        ];
+                        foreach($admins as $admin) {
+                            $template->sendNotice($admin->fan->openid,'f2F3iCL9fCZkyxqvXY8nMl_BI1QFF_bS-uIUeThpIQs',
+                        'zhlsqj.com/#/share',$adminArray);
+                        }
+                        
 
                     }else if($order->type = Parameter::join){
                         $order->save();
