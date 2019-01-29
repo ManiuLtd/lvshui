@@ -495,15 +495,7 @@ class OrderController extends Controller
     public function use()
     {
         //判断是否是管理员进行核销
-        $flag = false;
-        $admin = Admin::where('fan_id',Token::getUid())->first();
-        if(isset($admin)) {
-            $flag = true;
-        } else {
-            $flag = \Auth::guard('users')->id() > 0 ? true : false;
-        }
-        
-        if(!$flag) {
+        if(!Admin::isAdmin()) {
             return response()->json(['status' => 'error', 'msg' => '你不是管理员，无操作权限']);   
         }
 
