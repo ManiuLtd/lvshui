@@ -161,6 +161,8 @@ Route::group(['middleware' => ['cors', 'token']], function () {
         Route::get('joins', 'Api\Orders\OrderController@getJoinOrder');
 //        获取所有门票订单
         Route::get('tickets', 'Api\Orders\OrderController@getTicketOrder');
+//        依照门票id或预约日期筛选门票资料
+        Route::post('tickets/filter', 'Api\Orders\OrderController@getTicketByDateOrTID');
 //        获取所有退款订单
         Route::get('refunds', 'Api\Orders\OrderController@getRefundOrder');
 //        获取最新订单截止日
