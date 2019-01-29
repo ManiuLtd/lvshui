@@ -33,7 +33,7 @@ class PayController extends Controller
             'trade_type' => 'JSAPI',
             'openid' => $openid,
         ];
-        
+
         $payment = WechatPay::unify($order);
         
         return response()->json(['payment' => $payment]);    
@@ -49,10 +49,6 @@ class PayController extends Controller
 
         if($result['result_code'] == 'SUCCESS' && $result['return_msg'] == 'OK') {
             if($order->update(['status' => OrderStatus::REFUND_SUCCESS])){
-
-
-
-
                 return response()->json(['status' => 'success', 'msg' => '退款成功！']);         
             }
         }else {
