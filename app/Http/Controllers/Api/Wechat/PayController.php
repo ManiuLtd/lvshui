@@ -53,7 +53,7 @@ class PayController extends Controller
         if($result['result_code'] == 'SUCCESS' && $result['return_msg'] == 'OK') {
             DB::beginTransaction();
             try {
-                $order->update([ 'use_state'=> -2 ,
+                Order::where('id',$id)->update([ 'use_state'=> -2 ,
                                  'refund_time'=> date('Y-m-d H:i:s', time()) ]);
                 if($order->type = Parameter::mall){
                     Fan::where('id', $order->fan_id)->decrement('point', $order->integral);
