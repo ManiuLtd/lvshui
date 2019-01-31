@@ -31,7 +31,7 @@ class WechatPay extends Model
         return $payment;
     }
 
-    public function refund($order, $desc = '取消订单') 
+    public static function refund($order, $desc = '取消订单') 
     {
         $app = self::getApp();
 
