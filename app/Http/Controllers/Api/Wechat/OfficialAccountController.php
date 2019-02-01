@@ -66,7 +66,58 @@ class OfficialAccountController extends Controller
     public function menuCreate() 
     {
         $app = Factory::officialAccount(config('wechat.official_account.default'));
-        $menu = request('menu');
+        // $menu = request('menu');
+        $menu = '{
+            "button": [
+                {
+                    "type": "view_limited",
+                    "name": "农场介绍",
+                    "sub_button": [],
+                    "media_id": "2fAwTR38pn8d1ATgPXSwUICF-HCma3bXy2-BlUqooLM"
+                },
+                {
+                    "name": "会员中心",
+                    "sub_button": [
+                        {
+                            "type": "view",
+                            "name": "幸运大转盘",
+                            "url": "http://zhlsqj.com/#/lottery",
+                            "sub_button": []
+                        },
+                        {
+                            "type": "view",
+                            "name": "优惠券",
+                            "url": "http://zhlsqj.com/#/coupons",
+                            "sub_button": []
+                        },
+                        {
+                            "type": "view",
+                            "name": "分享活动",
+                            "url": "http://zhlsqj.com/#/share",
+                            "sub_button": []
+                        }
+                    ]
+                },
+                {
+                    "name": "购票",
+                    "sub_button": [
+                        {
+                            "type": "view",
+                            "name": "门票套餐",
+                            "url": "https://zhlsqj.com/#/ticketList",
+                            "sub_button": []
+                        },
+                        {
+                            "type": "media_id", 
+                            "name": "付款码", 
+                            "media_id": "2fAwTR38pn8d1ATgPXSwUG6uh4dc5Mx7Gx1n86-xszo"
+                         }
+                    ]
+                }
+            ]
+        }';
+        $menu = json_decode($menu);
+        dd($menu);
         $res = $app->menu->create($menu);
         return $res;
     }
