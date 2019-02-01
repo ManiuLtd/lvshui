@@ -116,8 +116,7 @@ class OfficialAccountController extends Controller
                 }
             ]
         }';
-        $menu = json_decode($menu);
-        dd($menu);
+        $menu = json_decode($menu,true);
         $res = $app->menu->create($menu);
         return $res;
     }
