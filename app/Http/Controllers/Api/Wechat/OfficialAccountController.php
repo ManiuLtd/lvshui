@@ -110,7 +110,8 @@ class OfficialAccountController extends Controller
                         {
                             "type": "media_id", 
                             "name": "付款码", 
-                            "media_id": "2fAwTR38pn8d1ATgPXSwUG6uh4dc5Mx7Gx1n86-xszo"
+                            "media_id": "2fAwTR38pn8d1ATgPXSwUG6uh4dc5Mx7Gx1n86-xszo",
+                            "sub_button": []
                          }
                     ]
                 }
