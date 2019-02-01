@@ -67,7 +67,7 @@ class OfficialAccountController extends Controller
     {
         $app = Factory::officialAccount(config('wechat.official_account.default'));
         // $menu = request('menu');
-        $menu = '{[
+        $menu = '[
                 {
                     "type": "view_limited",
                     "name": "农场介绍",
@@ -114,8 +114,7 @@ class OfficialAccountController extends Controller
                         }
                     ]
                 }
-            ]
-        }';
+            ]';
         $menu = json_decode($menu,true);
         $res = $app->menu->create($menu);
         return $res;
