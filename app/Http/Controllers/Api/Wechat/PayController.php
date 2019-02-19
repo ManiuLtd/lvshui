@@ -60,8 +60,11 @@ class PayController extends Controller
                     foreach ($oGoods as $oGood) {
                         MallGood::where([['id', $oGood->good_id], ['up_id', $oGood->up_id]])->increment('stock', $oGood->num);
                     }
-                }else if($order->type = Parameter::ticket){
+                }else if($order->type == Parameter::ticket){
 
+                }else if($order->type == Parameter::active){
+                    $active_id = $oGoods[0]->good_id;
+                    Activity::find($active_id)->fans()->deteach($order->fan_id);
                 }
                 DB::commit();
                 return response()->json(['status' => 'success', 'msg' => '退款成功！']);
@@ -145,7 +148,6 @@ class PayController extends Controller
                         $active = Activity::find($goods[0]->good_id);
                         $order->end_date = $active->end_time;
                         $order->save();
-
                     }else if($order->type == Parameter::ticket){
                         $rand = $this->randomkeys(4);
                         $use_no = $order->order_no . $rand;

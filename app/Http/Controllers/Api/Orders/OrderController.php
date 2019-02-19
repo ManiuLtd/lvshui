@@ -339,7 +339,7 @@ class OrderController extends Controller
                 $result = $this->orderMall($data['ps'], $data['goods']);
                 break;
             case Parameter::active:
-                $result = $this->orderActive($data['active_id']);
+                $result = $this->orderActive($data['active_id'],$data['name'],$data['contact_way]);']);
                 break;
             case Parameter::join:
                 $result = $this->orderJoin($data['join_id']);
@@ -556,15 +556,18 @@ class OrderController extends Controller
         return $key;
     }
 
-    public function orderActive($active_id)
+    public function orderActive($active_id,$name,$contact_way)
     {
         $type = Parameter::active;
         $fan_id = Token::getUid();
         $body = Parameter::body_CO . '-活动报名';
-        $active = Activity::find($active_id);
+        $active = Activity::withCound('fans')->find($active_id);
         $sign_end_time = Carbon::parse($active->sign_end_time);
         if ($sign_end_time->lt(Carbon::now())) {
             return response()->json(['state' => 'error', 'message' => '活动报名已结束']);
+        }
+        if($active->fans_count == $active->places && $active->places!= 0 ){
+            return response()->json(['state' => 'error', 'message' => '人数已满']);
         }
         $price = $active->sign_price;
 
@@ -577,6 +580,8 @@ class OrderController extends Controller
             $order = Order::create(['type' => $type, 'fan_id' => $fan_id, 'price' => $price, 'order_no' => $order_no, 'body' => $body]);
 
             OrderGood::create(['type' => $type, 'order_id' => $order->id, 'good_id' => $active_id, 'num' => 1, 'price' => $price]);
+
+            Activity::find($active_id)->fans()->attach($fan_id,['name'=>$name,'contact_way'=>$contact_way]);
 
             DB::commit();
         } catch (\Exception $e) {
