@@ -72,6 +72,7 @@ Route::group(['middleware' => ['cors', 'token']], function () {
         //活动
         Route::get('activitys/wx', 'Api\Activities\ActivitySignController@index');
         Route::post('activitys/wx/{activity}', 'Api\Activities\ActivitySignController@show');
+        Route::post('activitys/wx/signin','Api\Activities\ActivitySignController@signIn');
         Route::apiResource('activitys', 'Api\Activities\ActivityController');
     });
 

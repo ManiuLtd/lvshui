@@ -55,9 +55,6 @@ class ActivitySignController extends Controller
         if($activity_sign_count>=$activity->places&&$activity->places!=0){
             return response()->json(['status' => 'error', 'msg' => '报名人数已满']);
         }
-        if($activity->sign_type==1){
-            //微信支付
-        }
         $sign_in=$activity->fans()
         ->attach($fan_id,['name'=>request()->name,'contact_way'=>request()->contact_way]);
          return response()->json(['status' => 'success', 'msg' => '更新成功！']);
