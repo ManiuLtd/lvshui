@@ -15,8 +15,8 @@ class CreateMallGoodMallNavTable extends Migration
     {
         Schema::create('mall_good_mall_nav', function (Blueprint $table) {
             $table->increments('id');
-            $table->tinyInteger('good_id')->comment('商品id');
-            $table->tinyInteger('nav_id')->comment('分类id');
+            $table->integer('good_id')->comment('商品id');
+            $table->integer('nav_id')->comment('分类id');
             $table->timestamps();
         });
     }

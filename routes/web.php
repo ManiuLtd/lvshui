@@ -17,7 +17,6 @@ Route::get('/', function () {
 Route::post('/login', 'Api\LoginController@login')->middleware(['cors']);
 
 Route::group(['middleware' => ['cors', 'token']], function () {
-
     Route::post('qiniu/upload', 'Controller@upload');  //上传图片
     Route::post('qiniu/delete', 'Controller@delete');   //删除图片
 
@@ -48,7 +47,6 @@ Route::group(['middleware' => ['cors', 'token']], function () {
         //会员等级
         Route::get('/groups/{group_id}/default', 'Api\Members\GroupController@default');
         Route::apiResource('/groups', 'Api\Members\GroupController');
-
     });
 
     Route::group(['prefix' => 'coupon'], function () {
@@ -88,14 +86,14 @@ Route::group(['middleware' => ['cors', 'token']], function () {
         Route::apiResource('tasks', 'Api\Fans\ShareController');
     });
 
-    Route::group(['prefix'=>'lottery'],function (){
-       Route::get('fan/history','Api\Lotteries\PrizeController@history');
-       Route::post('fan/add','Api\Lotteries\ActivityController@addFanLottery');
-       Route::get('fan/activity/{activity}','Api\Lotteries\ActivityController@wxShow');
-       Route::post('result','Api\Lotteries\PrizeController@result');
-       Route::apiResource('activitys','Api\Lotteries\ActivityController');
-       Route::get('prizes/{activity}','Api\Lotteries\PrizeController@index');
-       Route::apiResource('prizes','Api\Lotteries\PrizeController');
+    Route::group(['prefix'=>'lottery'], function () {
+        Route::get('fan/history', 'Api\Lotteries\PrizeController@history');
+        Route::post('fan/add', 'Api\Lotteries\ActivityController@addFanLottery');
+        Route::get('fan/activity/{activity}', 'Api\Lotteries\ActivityController@wxShow');
+        Route::post('result', 'Api\Lotteries\PrizeController@result');
+        Route::apiResource('activitys', 'Api\Lotteries\ActivityController');
+        Route::get('prizes/{activity}', 'Api\Lotteries\PrizeController@index');
+        Route::apiResource('prizes', 'Api\Lotteries\PrizeController');
     });
 
     //商城
@@ -106,7 +104,7 @@ Route::group(['middleware' => ['cors', 'token']], function () {
 
     // 商品
     Route::post('mall-goods/{good}/change', 'Api\Malls\MallGoodController@change');
-    Route::apiResource('mall-goods','Api\Malls\MallGoodController');
+    Route::apiResource('mall-goods', 'Api\Malls\MallGoodController');
 
     // 轮播图
     Route::put('mall-groups/{group}/change', 'Api\Malls\MallSwiperGroupController@change');
@@ -130,32 +128,42 @@ Route::group(['middleware' => ['cors', 'token']], function () {
         Route::post('cart', 'Api\Orders\OrderController@cartVerify');
 //        分类
         Route::get('nav/{nav_id}', 'Api\Malls\MallNavController@getNavWithGood');
-//        获取用户订单
+//        获取用户商城所有订单
         Route::get('orders', 'Api\Orders\OrderController@getFanOrder');
-        Route::post('order/state','Api\Orders\OrderController@getFanOrderByState');
+//        依照状态获取用户某一类型订单
+        Route::post('order/state', 'Api\Orders\OrderController@getFanOrderByState');
+//        依照类型获取用户某一类型所有订单
+        Route::post('order/type', 'Api\Orders\OrderController@getFanOrderByType');
 //        积分设置
         Route::apiResource('settings', 'Api\Malls\MallSettingController');
 //        团购
 //        开团
-        Route::post('group/opens','Api\Malls\MallGoodGroupController@store');
+        Route::post('group/opens', 'Api\Malls\MallGoodGroupController@store');
 //        加团
-        Route::post('group/adds','Api\Malls\MallGoodGroupController@add');
+        Route::post('group/adds', 'Api\Malls\MallGoodGroupController@add');
 //        开团支付成功
-        Route::post('group/open/sucess','Api\Malls\MallGoodGroupController@storeSucess');
+        Route::post('group/open/sucess', 'Api\Malls\MallGoodGroupController@storeSucess');
 //        加团支付成功
-        Route::post('group/add/sucess','Api\Malls\MallGoodGroupController@addSucess');
-
+        Route::post('group/add/sucess', 'Api\Malls\MallGoodGroupController@addSucess');
     });
 
     Route::group(['prefix' => 'order'], function () {
+//         依照类型获取当前用户订单资料
+        Route::post('orders/{order}', 'Api\Orders\OrderController@showOrder');
 //        保存订单
         Route::apiResource('orders', 'Api\Orders\OrderController');
+//        依照类型、支付状态、使用状态获取所有资料
+        Route::post('states','Api\Orders\OrderController@getOrder');
 //        获取所有商城订单
         Route::get('malls', 'Api\Orders\OrderController@getMallOrder');
 //        获取所有活动订单
         Route::get('actives', 'Api\Orders\OrderController@getAcitveOrder');
 //        获取所有开通会员订单
         Route::get('joins', 'Api\Orders\OrderController@getJoinOrder');
+//        获取所有门票订单
+        Route::get('tickets', 'Api\Orders\OrderController@getTicketOrder');
+//        依照门票id或预约日期筛选门票资料
+        Route::post('tickets/filter', 'Api\Orders\OrderController@getTicketByDateOrTID');
 //        获取所有退款订单
         Route::get('refunds', 'Api\Orders\OrderController@getRefundOrder');
 //        获取最新订单截止日
@@ -165,26 +173,35 @@ Route::group(['middleware' => ['cors', 'token']], function () {
 //        使用
         Route::post('uses', 'Api\Orders\OrderController@use');
 //        取消订单
-        Route::get('cancel/{order}','Api\Orders\OrderController@cancle');
+        Route::get('cancel/{order}', 'Api\Orders\OrderController@cancle');
 //        申请退款
-        Route::get('refund/{order}','Api\Orders\OrderController@applyRefund');
+        Route::get('refund/{order}', 'Api\Orders\OrderController@applyRefund');
 //        拒绝退款
-        Route::get('decline/{order}','Api\Orders\OrderController@declineRefund');
+        Route::get('decline/{order}', 'Api\Orders\OrderController@declineRefund');
     });
 
+    // 门票
+    Route::group(['prefix' => 'ticket'], function () {
+        Route::apiResource('ticket', 'Api\Tickets\TicketController');
+        Route::apiResource('fan-ticket', 'Api\Tickets\FanTicketController');
+        // 上下架
+        Route::post('is-up/{ticket}', 'Api\Tickets\FanTicketController@isUp');
+    });
+
+
     Route::group(['prefix' => 'wechat'], function () {
+        Route::any('unify', 'Api\Wechat\PayController@unify');
         Route::any('config', 'Api\Wechat\OfficialAccountController@getConfig');
         Route::any('menu/create', 'Api\Wechat\OfficialAccountController@menuCreate');
         Route::any('menu/list', 'Api\Wechat\OfficialAccountController@menuList');
         Route::any('menu/delete', 'Api\Wechat\OfficialAccountController@menuDelete');
-        Route::any('material/list','Api\Wechat\OfficialAccountController@getMaterialList');    
+        Route::any('material/list', 'Api\Wechat\OfficialAccountController@getMaterialList');
         Route::any('refund', 'Api\Wechat\PayController@refund');
     });
 });
 
 Route::group(['prefix' => 'wechat','middleware' => ['cors']], function () {
-    Route::any('unify', 'Api\Wechat\PayController@unify');
-    Route::any('server', 'Api\Wechat\OfficialAccountController@server');    
+    Route::any('server', 'Api\Wechat\OfficialAccountController@server');
     Route::any('oauth', 'Api\Wechat\OfficialAccountController@oauth');
     Route::any('oauth-callback', 'Api\Wechat\OfficialAccountController@oauthCallback');
     Route::any('pay-notify', 'Api\Wechat\PayController@notify');
@@ -196,4 +213,3 @@ Route::group(['middleware' => ['token']], function () {
         return 'wechat';
     });
 });
-
