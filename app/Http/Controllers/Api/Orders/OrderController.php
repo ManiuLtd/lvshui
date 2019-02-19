@@ -584,11 +584,11 @@ class OrderController extends Controller
             Activity::find($active_id)->fans()->attach($fan_id,['name'=>$name,'contact_way'=>$contact_way]);
 
             DB::commit();
+            return response()->json(['status' => 'success', 'msg' => '新增成功！', 'id' => $order->id]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['status' => 'error', 'msg' => '新增失败' . $e]);
         }
-        return response()->json(['status' => 'success', 'msg' => '新增成功！']);
     }
 
     public function orderJoin($join_id)
