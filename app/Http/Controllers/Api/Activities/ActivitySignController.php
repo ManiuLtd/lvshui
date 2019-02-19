@@ -49,7 +49,7 @@ class ActivitySignController extends Controller
 
      public function signIn()
      {
-        $fan_id=request()->fan_id;
+        $fan_id=Token::getUid();
         $activity=Activity::withCount('fans')->find(request()->avtivity_id);
         $activity_sign_count=$activity->fans_count;
         if($activity_sign_count>=$activity->places&&$activity->places!=0){
