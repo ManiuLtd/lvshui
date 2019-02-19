@@ -339,7 +339,7 @@ class OrderController extends Controller
                 $result = $this->orderMall($data['ps'], $data['goods']);
                 break;
             case Parameter::active:
-                $result = $this->orderActive($data['active_id'],$data['name'],$data['contact_way]);']);
+                $result = $this->orderActive($data['active_id'],$data['name'],$data['contact_way']);
                 break;
             case Parameter::join:
                 $result = $this->orderJoin($data['join_id']);
@@ -561,7 +561,7 @@ class OrderController extends Controller
         $type = Parameter::active;
         $fan_id = Token::getUid();
         $body = Parameter::body_CO . '-活动报名';
-        $active = Activity::withCound('fans')->find($active_id);
+        $active = Activity::withCount('fans')->find($active_id);
         $sign_end_time = Carbon::parse($active->sign_end_time);
         if ($sign_end_time->lt(Carbon::now())) {
             return response()->json(['state' => 'error', 'message' => '活动报名已结束']);
