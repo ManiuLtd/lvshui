@@ -12,6 +12,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Activity;
 use App\Models\Fan;
 use Carbon\Carbon;
+use App\Services\Token;
 
 class ActivitySignController extends Controller
 {
