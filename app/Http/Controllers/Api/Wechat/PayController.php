@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Wechat;
 
+use App\Models\FanActivity;
 use Carbon\Carbon;
 use App\Models\Fan;
 use App\Models\Admin;
@@ -145,7 +146,8 @@ class PayController extends Controller
                         $order->use_no = $use_no;
 
                         $goods = $order->orderGoods;
-                        $active = Activity::find($goods[0]->good_id);
+                        $fan_activity = FanActivity::find($goods[0]->good_id);
+                        $active = Activity::find($fan_activity->activity_id);
                         $order->end_date = $active->end_time;
                         $order->save();
                     }else if($order->type == Parameter::ticket){
