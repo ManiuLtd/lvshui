@@ -256,7 +256,11 @@ class OrderController extends Controller
                 $query->with(['fanTicket' => function ($query) {
                     $query->with('ticket');
                 }]);
-            })->with('orderGoods')
+            })
+            ->when($type == Parameter::active, function ($query) {
+                $query->with('active');
+            })
+            ->with('orderGoods')
             ->with('setting')
             ->get();
         return response()->json(['data' => $order]);
