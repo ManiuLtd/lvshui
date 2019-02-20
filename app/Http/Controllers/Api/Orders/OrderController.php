@@ -26,6 +26,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use App\Models\FanActivity;
 
 //退货、退款
 class OrderController extends Controller
@@ -257,8 +258,12 @@ class OrderController extends Controller
                     $query->with('ticket');
                 }]);
             })
+            // ->when($type == Parameter::active, function ($query) {
+            //     $query->with('active');
+            // })
             ->when($type == Parameter::active, function ($query) {
-                $query->with('active');
+                // $query->with(['fanActivity' => function ($query) {
+                    $query->with('active');
             })
             ->with('orderGoods')
             ->with('setting')
@@ -583,9 +588,11 @@ class OrderController extends Controller
         try {
             $order = Order::create(['type' => $type, 'fan_id' => $fan_id, 'price' => $price, 'order_no' => $order_no, 'body' => $body]);
 
-            OrderGood::create(['type' => $type, 'order_id' => $order->id, 'good_id' => $active->id, 'num' => 1, 'price' => $price]);
+            $fan_activity = FanActivity::create(['fan_id' => $fan_id, 'activity_id' => $active_id,'name'=>$name,'contact_way'=>$contact_way]);
+            OrderGood::create(['type' => $type, 'order_id' => $order->id, 'good_id' => $fan_activity->id, 'num' => 1, 'price' => $price]);
 
-            Activity::find($active_id)->fans()->attach($fan_id,['name'=>$name,'contact_way'=>$contact_way]);
+            // Activity::find($active_id)->fans()->attach($fan_id,['name'=>$name,'contact_way'=>$contact_way]);
+
 
             DB::commit();
             return response()->json(['status' => 'success', 'msg' => '新增成功！', 'id' => $order->id]);
