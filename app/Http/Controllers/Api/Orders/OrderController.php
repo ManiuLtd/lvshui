@@ -583,7 +583,7 @@ class OrderController extends Controller
         try {
             $order = Order::create(['type' => $type, 'fan_id' => $fan_id, 'price' => $price, 'order_no' => $order_no, 'body' => $body]);
 
-            OrderGood::create(['type' => $type, 'order_id' => $order->id, 'good_id' => $active_id, 'num' => 1, 'price' => $price]);
+            OrderGood::create(['type' => $type, 'order_id' => $order->id, 'good_id' => $active->id, 'num' => 1, 'price' => $price]);
 
             Activity::find($active_id)->fans()->attach($fan_id,['name'=>$name,'contact_way'=>$contact_way]);
 
