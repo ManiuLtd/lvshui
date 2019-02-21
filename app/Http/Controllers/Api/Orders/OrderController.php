@@ -45,7 +45,7 @@ class OrderController extends Controller
                 ->with('setting')
                 ->paginate(20);
             return response()->json(['data' => $orders]);
-        } else if ($pay_state == 1) {
+        } elseif ($pay_state == 1) {
             if ($use_state) {
                 $orders = Order::where([['type', Parameter::mall], ['pay_state', 1], ['use_state', $use_state]])
                     ->orderBy('created_at', 'desc')
@@ -65,18 +65,17 @@ class OrderController extends Controller
                     ->paginate(20);
                 return response()->json(['data' => $orders]);
             }
-
         }
     }
 
-//   获取活动订单
+    //   获取活动订单
     public function getAcitveOrder()
     {
         $orders = Order::where('type', Parameter::active)->orderBy('created_at', 'desc')->with('active')->paginate(20);
         return response()->json(['data' => $orders]);
     }
 
-//   获取会员订单
+    //   获取会员订单
     public function getJoinOrder()
     {
         $orders = Order::where('type', Parameter::join)->orderBy('created_at', 'desc')->with('join')->paginate(20);
@@ -86,7 +85,7 @@ class OrderController extends Controller
 //    获取门票订单
     public function getTicketOrder()
     {
-        $orders = Order::where('type',Parameter::ticket)
+        $orders = Order::where('type', Parameter::ticket)
             ->orderBy('created_at', 'desc')
             ->with(['fanTicket' => function ($query) {
                 $query->with('ticket');
@@ -131,25 +130,24 @@ class OrderController extends Controller
     {
         $list = request(['booking_date','ticket_id','pay_state','use_state']);
         $orders = Order::where('type', Parameter::ticket)
-            ->when($list['pay_state']!='',function ($query)use($list) {
-                $query->where('pay_state',$list['pay_state']);
+            ->when($list['pay_state']!='', function ($query) use ($list) {
+                $query->where('pay_state', $list['pay_state']);
             })
-            ->when($list['use_state']!='',function ($query)use($list) {
-                $query->where('use_state',$list['use_state']);
+            ->when($list['use_state']!='', function ($query) use ($list) {
+                $query->where('use_state', $list['use_state']);
             })
             ->orderBy('created_at', 'desc')
-            ->whereHas('fanTicket',function ($query)use($list){
-            $query->where('booking_date',$list['booking_date'])
-                ->orWhere('ticket_id',$list['ticket_id'])
+            ->whereHas('fanTicket', function ($query) use ($list) {
+                $query->where('booking_date', $list['booking_date'])
+                ->orWhere('ticket_id', $list['ticket_id'])
                 ->with('ticket');
-        }) ->with('orderGoods')
+            }) ->with('orderGoods')
             ->with('setting')
             ->paginate(20);
         return response()->json(['data' => $orders]);
-
     }
 
-//   获取申请退款订单
+    //   获取申请退款订单
     public function getRefundOrder()
     {
         $order = Order::where('use_state', -1)->orderBy('created_at', 'desc')->get();
@@ -158,7 +156,7 @@ class OrderController extends Controller
         return response()->json(['all' => $order, '$mall' => $mall, 'active' => $active]);
     }
 
-//   获取用户所有商城订单
+    //   获取用户所有商城订单
     public function getFanOrder()
     {
         $fan_id = Token::getUid();
@@ -242,7 +240,7 @@ class OrderController extends Controller
 
 
 
-//   获取单笔订单
+    //   获取单笔订单
     public function showOrder()
     {
         $id = request()->order;
@@ -258,12 +256,10 @@ class OrderController extends Controller
                     $query->with('ticket');
                 }]);
             })
-            // ->when($type == Parameter::active, function ($query) {
-            //     $query->with('active');
-            // })
             ->when($type == Parameter::active, function ($query) {
-                // $query->with(['fanActivity' => function ($query) {
-                    $query->with('active');
+                $query->with(['fanActivity' => function ($query) {
+                    $query->with('activity');
+                }]);
             })
             ->with('orderGoods')
             ->with('setting')
@@ -271,7 +267,7 @@ class OrderController extends Controller
         return response()->json(['data' => $order]);
     }
 
-//  购物车验证
+    //  购物车验证
     public function cartVerify()
     {
         $rGoods = request('goods');
@@ -338,7 +334,7 @@ class OrderController extends Controller
         return response()->json(['data' => $data]);
     }
 
-//  依类型订单保存
+    //  依类型订单保存
     public function store()
     {
         $data = request()->all();
@@ -348,19 +344,19 @@ class OrderController extends Controller
                 $result = $this->orderMall($data['ps'], $data['goods']);
                 break;
             case Parameter::active:
-                $result = $this->orderActive($data['active_id'],$data['name'],$data['contact_way']);
+                $result = $this->orderActive($data['active_id'], $data['name'], $data['contact_way']);
                 break;
             case Parameter::join:
                 $result = $this->orderJoin($data['join_id']);
                 break;
-            case Parameter::ticket;
+            case Parameter::ticket:
                 $result = $this->orderTicket($data['ticket_id'], $data['name'], $data['mobile'], $data['purchase_quantity'], $data['booking_date']);
                 break;
         }
         return $result;
     }
 
-//  商城订单
+    //  商城订单
     public function orderMall($ps, array $rGoods)
     {
         $type = Parameter::mall;
@@ -397,7 +393,6 @@ class OrderController extends Controller
             if ($good->type == Parameter::member && $member == null) {
                 $good->error = 1; //用户非会员 存在会员商品
                 $is_error = 1;
-
             }
 
             if ($good->limit != 0 && $num > $good->limit) {
@@ -500,21 +495,21 @@ class OrderController extends Controller
         }
     }
 
-//  二维码使用
+    //  二维码使用
     public function use()
     {
         //判断是否是管理员进行核销
-        if(!Admin::isAdmin()) {
-            return response()->json(['status' => 'error', 'msg' => '你不是管理员，无操作权限']);   
+        if (!Admin::isAdmin()) {
+            return response()->json(['status' => 'error', 'msg' => '你不是管理员，无操作权限']);
         }
 
         $today = Carbon::today();
         $qrcode = request('qrcode');
         $order = Order::where('use_no', $qrcode)->first();
-        if($order->type == Parameter::mall){
+        if ($order->type == Parameter::mall) {
             $order_setting = OrderSetting::find($order->end_id);
             $end_date = Carbon::parse($order_setting->end_date);
-        }else if($order->type == Parameter::ticket){
+        } elseif ($order->type == Parameter::ticket) {
             $end_date =$order->end_date;
         }
 
@@ -553,7 +548,7 @@ class OrderController extends Controller
         }
     }
 
-//  生成php随机数
+    //  生成php随机数
     public function randomkeys($length)
     {
         $pattern = '1234567890abcdefghijklmnopqrstuvwxyz 
@@ -565,7 +560,7 @@ class OrderController extends Controller
         return $key;
     }
 
-    public function orderActive($active_id,$name,$contact_way)
+    public function orderActive($active_id, $name, $contact_way)
     {
         $type = Parameter::active;
         $fan_id = Token::getUid();
@@ -575,7 +570,7 @@ class OrderController extends Controller
         if ($sign_end_time->lt(Carbon::now())) {
             return response()->json(['state' => 'error', 'message' => '活动报名已结束']);
         }
-        if($active->fans_count == $active->places && $active->places!= 0 ){
+        if ($active->fans_count == $active->places && $active->places!= 0) {
             return response()->json(['state' => 'error', 'message' => '人数已满']);
         }
         $price = $active->sign_price;
@@ -590,9 +585,6 @@ class OrderController extends Controller
 
             $fan_activity = FanActivity::create(['fan_id' => $fan_id, 'activity_id' => $active_id,'name'=>$name,'contact_way'=>$contact_way]);
             OrderGood::create(['type' => $type, 'order_id' => $order->id, 'good_id' => $fan_activity->id, 'num' => 1, 'price' => $price]);
-
-            // Activity::find($active_id)->fans()->attach($fan_id,['name'=>$name,'contact_way'=>$contact_way]);
-
 
             DB::commit();
             return response()->json(['status' => 'success', 'msg' => '新增成功！', 'id' => $order->id]);
@@ -719,6 +711,4 @@ class OrderController extends Controller
         }
         return response()->json(['status' => 'success', 'msg' => '修改成功！']);
     }
-
-
 }

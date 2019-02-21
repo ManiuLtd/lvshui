@@ -32,7 +32,7 @@ class Order extends Model
 
     public function fanActivity()
     {
-        return $this->hasManyThrough(FanActivity::class,OrderGood::class,'order_id','activity_id','id');
+        return $this->hasManyThrough(FanActivity::class,OrderGood::class,'order_id','id','id','good_id');
     }
 
     public function setting()
