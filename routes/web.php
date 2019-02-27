@@ -216,6 +216,5 @@ Route::group(['middleware' => ['token']], function () {
 
 Route::get('test', function () {
     $app = \EasyWeChat\Factory::officialAccount(config('wechat.official_account.default'));
-    $oauth = $app->oauth;
-    return $oauth->user();
+    return $app->user->list(); 
 });
